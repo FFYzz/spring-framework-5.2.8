@@ -51,8 +51,9 @@ public class FollowMeController {
 	}
 
 	@PostMapping("/file")
-	public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws NoSuchMethodException {
+	public String uploadFile(@RequestParam("files") MultipartFile[] files, RedirectAttributes redirectAttributes) throws NoSuchMethodException {
 		logger.info("接收到请求 /file");
+		MultipartFile file = files[0];
 		if (file.isEmpty()) {
 			redirectAttributes.addFlashAttribute("message", "上传文件为空，请重新选择文件");
 			logger.info("上传文件为空");

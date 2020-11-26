@@ -1,5 +1,7 @@
 package cn.ffyzz.test;
 
+import cn.ffyzz.test.entity.User;
+
 /**
  * @Title:
  * @Author: FFYzz
@@ -8,7 +10,8 @@ package cn.ffyzz.test;
  */
 public interface UserService {
 
-	String getName(String firstName, String lastName);
+	void save(User user);
 
+	void update(User user);
 
 }

@@ -1,5 +1,7 @@
 package cn.ffyzz.test;
 
+import cn.ffyzz.test.entity.User;
+
 /**
  * @Title:
  * @Author: FFYzz
@@ -8,7 +10,12 @@ package cn.ffyzz.test;
  */
 public class UserServiceImpl implements UserService {
 	@Override
-	public String getName(String firstName, String lastName) {
-		return String.format("I am %s%s", firstName, lastName);
+	public void save(User user) {
+		System.out.println("save User");
+	}
+
+	@Override
+	public void update(User user) {
+		System.out.println("update user");
 	}
 }

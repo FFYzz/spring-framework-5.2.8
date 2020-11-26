@@ -19,9 +19,12 @@
 		</bean>
     </mvc:view-resolvers>
 	<bean id="followMeController" class="cn.ffyzz.FollowMeController"/>
-	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<property name="defaultEncoding" value="UTF-8"/>
-		<property name="maxUploadSize" value="#{1024*1024}"/>
-	</bean>
+<!--	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->
+<!--		<property name="defaultEncoding" value="UTF-8"/>-->
+<!--		<property name="maxUploadSize" value="#{1024*1024}"/>-->
+<!--	</bean>-->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
+
+<!--	<bean id="handlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>-->
 
 </beans>
