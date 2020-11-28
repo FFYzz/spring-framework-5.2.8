@@ -19,12 +19,27 @@
 		</bean>
     </mvc:view-resolvers>
 	<bean id="followMeController" class="cn.ffyzz.FollowMeController"/>
-<!--	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->
+	<bean id="simpleUrlHandlerMappingController" class="cn.ffyzz.SimpleUrlHandlerMappingController"/>
+	<bean id="/beanNameUrlHandlerMappingController" class="cn.ffyzz.BeanNameUrlHandlerMappingHandlerController"/>
+	<!--	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->
 <!--		<property name="defaultEncoding" value="UTF-8"/>-->
 <!--		<property name="maxUploadSize" value="#{1024*1024}"/>-->
 <!--	</bean>-->
 	<bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
 
-<!--	<bean id="handlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>-->
+	<bean id="beanNameUrlHandlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+	<bean id="simpleUrlHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/testSimpleUrlHandlerMapping">simpleUrlHandlerMappingController</prop>
+				<prop key="/*/testSimpleUrlHandlerMapping">simpleUrlHandlerMappingController</prop>
+			</props>
+		</property>
+		<property name="urlMap">
+			<props>
+				<prop key="/testSimpleUrlHandlerMapping2">simpleUrlHandlerMappingController</prop>
+			</props>
+		</property>
+	</bean>
 
 </beans>

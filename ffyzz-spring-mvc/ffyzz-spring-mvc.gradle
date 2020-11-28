@@ -22,4 +22,5 @@ dependencies {
     compile(project(":spring-core"))
     compile(project(":spring-jcl"))
     compile(project(":spring-webmvc"))
+    compileOnly("javax.servlet:javax.servlet-api")
 }
