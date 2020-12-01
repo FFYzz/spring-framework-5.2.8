@@ -35,9 +35,13 @@ import org.springframework.lang.Nullable;
  * locale and time zone cannot be changed.
  *
  * @author Juergen Hoeller
- * @since 1.1
  * @see #setDefaultLocale
  * @see #setDefaultTimeZone
+ * @since 1.1
+ */
+
+/**
+ * 解析出固定的 Locale，在创建时就设置好确定的 locale
  */
 public class FixedLocaleResolver extends AbstractLocaleContextResolver {
 
@@ -48,10 +52,13 @@ public class FixedLocaleResolver extends AbstractLocaleContextResolver {
 	 * @see #setDefaultTimeZone
 	 */
 	public FixedLocaleResolver() {
+		// 默认的 Locale 为 jvm 所在环境的 Locale
 		setDefaultLocale(Locale.getDefault());
 	}
 
 	/**
+	 * 构造函数中传入默认的 locale
+	 *
 	 * Create a FixedLocaleResolver that exposes the given locale.
 	 * @param locale the locale to expose
 	 */
@@ -60,6 +67,8 @@ public class FixedLocaleResolver extends AbstractLocaleContextResolver {
 	}
 
 	/**
+	 * 设置默认 locale 与默认的 timeZone
+	 *
 	 * Create a FixedLocaleResolver that exposes the given locale and time zone.
 	 * @param locale the locale to expose
 	 * @param timeZone the time zone to expose
@@ -81,12 +90,23 @@ public class FixedLocaleResolver extends AbstractLocaleContextResolver {
 
 	@Override
 	public LocaleContext resolveLocaleContext(HttpServletRequest request) {
+		// 返回一个 TimeZoneAwareLocaleContext
 		return new TimeZoneAwareLocaleContext() {
+			/**
+			 * 返回默认的 locale
+			 *
+			 * @return
+			 */
 			@Override
 			@Nullable
 			public Locale getLocale() {
 				return getDefaultLocale();
 			}
+
+			/**
+			 * 返回默认的 timezone
+			 * @return
+			 */
 			@Override
 			public TimeZone getTimeZone() {
 				return getDefaultTimeZone();
@@ -95,8 +115,8 @@ public class FixedLocaleResolver extends AbstractLocaleContextResolver {
 	}
 
 	@Override
-	public void setLocaleContext( HttpServletRequest request, @Nullable HttpServletResponse response,
-			@Nullable LocaleContext localeContext) {
+	public void setLocaleContext(HttpServletRequest request, @Nullable HttpServletResponse response,
+								 @Nullable LocaleContext localeContext) {
 
 		throw new UnsupportedOperationException("Cannot change fixed locale - use a different locale resolution strategy");
 	}

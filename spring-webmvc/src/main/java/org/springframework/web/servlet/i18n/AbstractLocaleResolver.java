@@ -31,11 +31,16 @@ import org.springframework.web.servlet.LocaleResolver;
  */
 public abstract class AbstractLocaleResolver implements LocaleResolver {
 
+	/**
+	 * 添加了默认的 defaultLocale
+	 */
 	@Nullable
 	private Locale defaultLocale;
 
 
 	/**
+	 * 设置默认的 Locale
+	 *
 	 * Set a default Locale that this resolver will return if no other locale found.
 	 */
 	public void setDefaultLocale(@Nullable Locale defaultLocale) {
@@ -43,6 +48,8 @@ public abstract class AbstractLocaleResolver implements LocaleResolver {
 	}
 
 	/**
+	 * 获取默认的 Locale
+	 *
 	 * Return the default Locale that this resolver is supposed to fall back to, if any.
 	 */
 	@Nullable

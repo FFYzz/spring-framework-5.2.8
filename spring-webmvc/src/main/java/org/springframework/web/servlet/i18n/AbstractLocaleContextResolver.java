@@ -40,6 +40,10 @@ import org.springframework.web.servlet.LocaleContextResolver;
  */
 public abstract class AbstractLocaleContextResolver extends AbstractLocaleResolver implements LocaleContextResolver {
 
+	/**
+	 * 增加了对 timezone 的支持
+	 * 默认的 timezone
+	 */
 	@Nullable
 	private TimeZone defaultTimeZone;
 
@@ -66,6 +70,13 @@ public abstract class AbstractLocaleContextResolver extends AbstractLocaleResolv
 		return (locale != null ? locale : request.getLocale());
 	}
 
+	/**
+	 * 设置 Locale 的能力
+	 *
+	 * @param request the request to be used for locale modification
+	 * @param response the response to be used for locale modification
+	 * @param locale the new locale, or {@code null} to clear the locale
+	 */
 	@Override
 	public void setLocale(HttpServletRequest request, @Nullable HttpServletResponse response, @Nullable Locale locale) {
 		setLocaleContext(request, response, (locale != null ? new SimpleLocaleContext(locale) : null));

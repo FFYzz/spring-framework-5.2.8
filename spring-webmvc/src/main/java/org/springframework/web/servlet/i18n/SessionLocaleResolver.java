@@ -58,6 +58,11 @@ import org.springframework.web.util.WebUtils;
  * @see #setDefaultLocale
  * @see #setDefaultTimeZone
  */
+
+/**
+ * 接收 session 中的 locale 作为 locale
+ * 程序中可修改
+ */
 public class SessionLocaleResolver extends AbstractLocaleContextResolver {
 
 	/**
@@ -81,8 +86,14 @@ public class SessionLocaleResolver extends AbstractLocaleContextResolver {
 	public static final String TIME_ZONE_SESSION_ATTRIBUTE_NAME = SessionLocaleResolver.class.getName() + ".TIME_ZONE";
 
 
+	/**
+	 * locale 属性名
+	 */
 	private String localeAttributeName = LOCALE_SESSION_ATTRIBUTE_NAME;
 
+	/**
+	 * timezone 属性名
+	 */
 	private String timeZoneAttributeName = TIME_ZONE_SESSION_ATTRIBUTE_NAME;
 
 
@@ -109,8 +120,11 @@ public class SessionLocaleResolver extends AbstractLocaleContextResolver {
 
 	@Override
 	public Locale resolveLocale(HttpServletRequest request) {
+		// 从 session 中获取 locale 属性
 		Locale locale = (Locale) WebUtils.getSessionAttribute(request, this.localeAttributeName);
 		if (locale == null) {
+			// 如果 session 中不包含 locale
+			// 则获取默认的
 			locale = determineDefaultLocale(request);
 		}
 		return locale;
@@ -118,18 +132,28 @@ public class SessionLocaleResolver extends AbstractLocaleContextResolver {
 
 	@Override
 	public LocaleContext resolveLocaleContext(final HttpServletRequest request) {
+		// 返回一个 TimeZoneAwareLocaleContext
 		return new TimeZoneAwareLocaleContext() {
+			/**
+			 * @return
+			 */
 			@Override
 			public Locale getLocale() {
+				// 从 request 的 session 属性中获取 locale
 				Locale locale = (Locale) WebUtils.getSessionAttribute(request, localeAttributeName);
 				if (locale == null) {
 					locale = determineDefaultLocale(request);
 				}
 				return locale;
 			}
+
+			/**
+			 * @return
+			 */
 			@Override
 			@Nullable
 			public TimeZone getTimeZone() {
+				// 从 request 的 session 的获取 timezone
 				TimeZone timeZone = (TimeZone) WebUtils.getSessionAttribute(request, timeZoneAttributeName);
 				if (timeZone == null) {
 					timeZone = determineDefaultTimeZone(request);
@@ -167,8 +191,10 @@ public class SessionLocaleResolver extends AbstractLocaleContextResolver {
 	 * @see javax.servlet.http.HttpServletRequest#getLocale()
 	 */
 	protected Locale determineDefaultLocale(HttpServletRequest request) {
+		// 配置的 默认的
 		Locale defaultLocale = getDefaultLocale();
 		if (defaultLocale == null) {
+			// 未配置默认的，就取当前 JVM 环境所在的 locale
 			defaultLocale = request.getLocale();
 		}
 		return defaultLocale;

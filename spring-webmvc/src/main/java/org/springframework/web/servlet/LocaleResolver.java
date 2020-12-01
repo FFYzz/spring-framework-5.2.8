@@ -51,9 +51,18 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.web.servlet.support.RequestContext#getLocale
  * @see org.springframework.web.servlet.support.RequestContextUtils#getLocale
  */
+
+/**
+ * 从 request 中解析得到 Locale
+ * 两个地方会使用到 Locale：
+ * 1. ViewResolver 解析视图的时候
+ * 2. 使用国际化资源或者主题的时候
+ */
 public interface LocaleResolver {
 
 	/**
+	 * 从 request 中获取 Locale
+	 *
 	 * Resolve the current locale via the given request.
 	 * Can return a default locale as fallback in any case.
 	 * @param request the request to resolve the locale for
@@ -62,6 +71,9 @@ public interface LocaleResolver {
 	Locale resolveLocale(HttpServletRequest request);
 
 	/**
+	 * 将 locale 设置给 request
+	 * 人为控制 locale 的场景，比如网页默认为 zh-cn，但是一个美国人访问，可以手动选择 en
+	 *
 	 * Set the current locale to the given one.
 	 * @param request the request to be used for locale modification
 	 * @param response the response to be used for locale modification

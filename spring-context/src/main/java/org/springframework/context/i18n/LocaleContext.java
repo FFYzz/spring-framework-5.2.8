@@ -31,9 +31,15 @@ import org.springframework.lang.Nullable;
  * @see LocaleContextHolder#getLocale()
  * @see TimeZoneAwareLocaleContext
  */
+
+/**
+ * 用于确定当前 locale 的策略接口
+ */
 public interface LocaleContext {
 
 	/**
+	 * 返回 Locale
+	 *
 	 * Return the current Locale, which can be fixed or determined dynamically,
 	 * depending on the implementation strategy.
 	 * @return the current Locale, or {@code null} if no specific Locale associated

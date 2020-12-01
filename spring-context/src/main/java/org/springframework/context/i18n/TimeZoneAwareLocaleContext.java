@@ -32,9 +32,15 @@ import org.springframework.lang.Nullable;
  * @since 4.0
  * @see LocaleContextHolder#getTimeZone()
  */
+
+/**
+ * 与 Locale 相关，扩展了 LocaleContext
+ */
 public interface TimeZoneAwareLocaleContext extends LocaleContext {
 
 	/**
+	 * 具备了获取 TimeZone 的能力
+	 *
 	 * Return the current TimeZone, which can be fixed or determined dynamically,
 	 * depending on the implementation strategy.
 	 * @return the current TimeZone, or {@code null} if no specific TimeZone associated

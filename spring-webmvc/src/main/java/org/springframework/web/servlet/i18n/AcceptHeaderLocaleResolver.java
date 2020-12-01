@@ -41,15 +41,30 @@ import org.springframework.web.servlet.LocaleResolver;
  * @since 27.02.2003
  * @see javax.servlet.http.HttpServletRequest#getLocale()
  */
+
+/**
+ * 接收 request 中 header 的 acceptlanguage 作为 locale
+ * 程序中不可修改
+ * 直接实现了 LocaleResolver 接口
+ * 默认的 LocaleResolver
+ */
 public class AcceptHeaderLocaleResolver implements LocaleResolver {
 
+	/**
+	 * 支持多个 Locale
+	 */
 	private final List<Locale> supportedLocales = new ArrayList<>(4);
 
+	/**
+	 * 默认的 Locale
+	 */
 	@Nullable
 	private Locale defaultLocale;
 
 
 	/**
+	 * 设置支持的 Locale
+	 *
 	 * Configure supported locales to check against the requested locales
 	 * determined via {@link HttpServletRequest#getLocales()}. If this is not
 	 * configured then {@link HttpServletRequest#getLocale()} is used instead.
@@ -95,15 +110,22 @@ public class AcceptHeaderLocaleResolver implements LocaleResolver {
 
 	@Override
 	public Locale resolveLocale(HttpServletRequest request) {
+		// 获取默认的 Locale
 		Locale defaultLocale = getDefaultLocale();
+		// header 未设置 Accept-Language ，直接返回 defaultLocale
 		if (defaultLocale != null && request.getHeader("Accept-Language") == null) {
 			return defaultLocale;
 		}
+		// 基于 Accept-Language
 		Locale requestLocale = request.getLocale();
 		List<Locale> supportedLocales = getSupportedLocales();
+		// 未设置 supportedLocales 或者
+		// supportedLocales 中包含 requestLocale
+		// 直接返回 requestLocale
 		if (supportedLocales.isEmpty() || supportedLocales.contains(requestLocale)) {
 			return requestLocale;
 		}
+		// 走到这里表示 supportedLocales 不包含 requestLocale
 		Locale supportedLocale = findSupportedLocale(request, supportedLocales);
 		if (supportedLocale != null) {
 			return supportedLocale;
@@ -113,10 +135,14 @@ public class AcceptHeaderLocaleResolver implements LocaleResolver {
 
 	@Nullable
 	private Locale findSupportedLocale(HttpServletRequest request, List<Locale> supportedLocales) {
+		// 从 request 中获取 locales
+		// Accept-Language 支持多个国家
 		Enumeration<Locale> requestLocales = request.getLocales();
 		Locale languageMatch = null;
 		while (requestLocales.hasMoreElements()) {
+			// 遍历 request 的 header Accept-Language 中所有定义的 国家地区
 			Locale locale = requestLocales.nextElement();
+			// supportedLocales 包含从 request 中读到的 locale
 			if (supportedLocales.contains(locale)) {
 				if (languageMatch == null || languageMatch.getLanguage().equals(locale.getLanguage())) {
 					// Full match: language + country, possibly narrowed from earlier language-only match
@@ -125,9 +151,12 @@ public class AcceptHeaderLocaleResolver implements LocaleResolver {
 			}
 			else if (languageMatch == null) {
 				// Let's try to find a language-only match as a fallback
+				// 遍历 supportedLocales 匹配 locale
 				for (Locale candidate : supportedLocales) {
 					if (!StringUtils.hasLength(candidate.getCountry()) &&
+							// 先根据 locale 比较，locale 比较不通过再通过 language 比较
 							candidate.getLanguage().equals(locale.getLanguage())) {
+						// 如果匹配了则作为候选
 						languageMatch = candidate;
 						break;
 					}
@@ -137,6 +166,13 @@ public class AcceptHeaderLocaleResolver implements LocaleResolver {
 		return languageMatch;
 	}
 
+	/**
+	 * 不允许修改 Locale，只能读取 Accept-Language
+	 *
+	 * @param request the request to be used for locale modification
+	 * @param response the response to be used for locale modification
+	 * @param locale the new locale, or {@code null} to clear the locale
+	 */
 	@Override
 	public void setLocale(HttpServletRequest request, @Nullable HttpServletResponse response, @Nullable Locale locale) {
 		throw new UnsupportedOperationException(

@@ -43,8 +43,14 @@ import org.springframework.web.server.ServerWebExchange;
  */
 public class AcceptHeaderLocaleContextResolver implements LocaleContextResolver {
 
+	/**
+	 * 保存支持的 Locale
+	 */
 	private final List<Locale> supportedLocales = new ArrayList<>(4);
 
+	/**
+	 * 默认的 Locale
+	 */
 	@Nullable
 	private Locale defaultLocale;
 

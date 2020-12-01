@@ -36,9 +36,17 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.web.servlet.support.RequestContext#getTimeZone
  * @see org.springframework.web.servlet.support.RequestContextUtils#getTimeZone
  */
+
+/**
+ * 继承自 LocaleResolver 接口
+ * 具备了设置和获取 LocaleContext 的能力
+ *
+ */
 public interface LocaleContextResolver extends LocaleResolver {
 
 	/**
+	 * 根据 request 解析 localeContext
+	 *
 	 * Resolve the current locale context via the given request.
 	 * <p>This is primarily intended for framework-level processing; consider using
 	 * {@link org.springframework.web.servlet.support.RequestContextUtils} or
@@ -59,6 +67,8 @@ public interface LocaleContextResolver extends LocaleResolver {
 	LocaleContext resolveLocaleContext(HttpServletRequest request);
 
 	/**
+	 * 根据设置 localContext
+	 *
 	 * Set the current locale context to the given one,
 	 * potentially including a locale with associated time zone information.
 	 * @param request the request to be used for locale modification

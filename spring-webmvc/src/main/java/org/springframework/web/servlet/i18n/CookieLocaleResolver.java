@@ -54,6 +54,11 @@ import org.springframework.web.util.WebUtils;
  * @see #setDefaultLocale
  * @see #setDefaultTimeZone
  */
+
+/**
+ * 接收 Cookie 中的设置的 Locale
+ * 程序中可修改
+ */
 public class CookieLocaleResolver extends CookieGenerator implements LocaleContextResolver {
 
 	/**
@@ -189,40 +194,64 @@ public class CookieLocaleResolver extends CookieGenerator implements LocaleConte
 
 	@Override
 	public Locale resolveLocale(HttpServletRequest request) {
+		// 尝试从 Cookie 中获取 request
+		// 这里面会将 locale 设置到 request 中
 		parseLocaleCookieIfNecessary(request);
+		// 从 request 中获取 locale
 		return (Locale) request.getAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME);
 	}
 
+	/**
+	 * 解析 LocaleContext，返回一个 LocaleContext
+	 *
+	 * @param request the request to resolve the locale context for
+	 * @return
+	 */
 	@Override
 	public LocaleContext resolveLocaleContext(final HttpServletRequest request) {
 		parseLocaleCookieIfNecessary(request);
+		// 返回一个 TimeZoneAwareLocaleContext
 		return new TimeZoneAwareLocaleContext() {
+			/**
+			 * @return
+			 */
 			@Override
 			@Nullable
 			public Locale getLocale() {
+				// 获取 request 中的 locale 属性
 				return (Locale) request.getAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME);
 			}
 			@Override
 			@Nullable
 			public TimeZone getTimeZone() {
+				// 获取 request 中的 timezone 属性
 				return (TimeZone) request.getAttribute(TIME_ZONE_REQUEST_ATTRIBUTE_NAME);
 			}
 		};
 	}
 
+	/**
+	 * 从 Cookie 中获取 Locale
+	 *
+	 * @param request
+	 */
 	private void parseLocaleCookieIfNecessary(HttpServletRequest request) {
+		// 请求中获取与 Cookies 相关的属性
 		if (request.getAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME) == null) {
 			Locale locale = null;
 			TimeZone timeZone = null;
 
 			// Retrieve and parse cookie value.
+			// 获取 cookie 的 name
 			String cookieName = getCookieName();
 			if (cookieName != null) {
+				// 根据 cookies name 获取 Cookie
 				Cookie cookie = WebUtils.getCookie(request, cookieName);
 				if (cookie != null) {
 					String value = cookie.getValue();
 					String localePart = value;
 					String timeZonePart = null;
+					// 下面获取 locale 以及 timezone
 					int separatorIndex = localePart.indexOf('/');
 					if (separatorIndex == -1) {
 						// Leniently accept older cookies separated by a space...
@@ -259,8 +288,10 @@ public class CookieLocaleResolver extends CookieGenerator implements LocaleConte
 				}
 			}
 
+			// 将 locale 设置到 request 属性中
 			request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME,
 					(locale != null ? locale : determineDefaultLocale(request)));
+			// 将 timezone 设置到 request 属性中
 			request.setAttribute(TIME_ZONE_REQUEST_ATTRIBUTE_NAME,
 					(timeZone != null ? timeZone : determineDefaultTimeZone(request)));
 		}
@@ -271,6 +302,13 @@ public class CookieLocaleResolver extends CookieGenerator implements LocaleConte
 		setLocaleContext(request, response, (locale != null ? new SimpleLocaleContext(locale) : null));
 	}
 
+	/**
+	 * 设置 localeContext
+	 *
+	 * @param request the request to be used for locale modification
+	 * @param response the response to be used for locale modification
+	 * @param localeContext the new locale context, or {@code null} to clear the locale
+	 */
 	@Override
 	public void setLocaleContext(HttpServletRequest request, @Nullable HttpServletResponse response,
 			@Nullable LocaleContext localeContext) {
@@ -280,16 +318,22 @@ public class CookieLocaleResolver extends CookieGenerator implements LocaleConte
 		Locale locale = null;
 		TimeZone timeZone = null;
 		if (localeContext != null) {
+			// 传入的 LocaleContext 中获取 Locale
 			locale = localeContext.getLocale();
+			// 如果是 TimeZoneAwareLocaleContext 的实现类
 			if (localeContext instanceof TimeZoneAwareLocaleContext) {
+				// 获取到传入的 LocaleContext 的 timezone
 				timeZone = ((TimeZoneAwareLocaleContext) localeContext).getTimeZone();
 			}
+			// locale 与 timezone 写入到 Cookie 中
 			addCookie(response,
 					(locale != null ? toLocaleValue(locale) : "-") + (timeZone != null ? '/' + timeZone.getID() : ""));
 		}
 		else {
+			// 移除 response 中的 Cookie，放入一个空值的 Cookie
 			removeCookie(response);
 		}
+		// 设置到 request 属性中
 		request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME,
 				(locale != null ? locale : determineDefaultLocale(request)));
 		request.setAttribute(TIME_ZONE_REQUEST_ATTRIBUTE_NAME,
@@ -326,6 +370,8 @@ public class CookieLocaleResolver extends CookieGenerator implements LocaleConte
 	}
 
 	/**
+	 * 获取默认的 locale
+	 *
 	 * Determine the default locale for the given request,
 	 * Called if no locale cookie has been found.
 	 * <p>The default implementation returns the specified default locale,
@@ -345,6 +391,8 @@ public class CookieLocaleResolver extends CookieGenerator implements LocaleConte
 	}
 
 	/**
+	 * 获取默认的 timezone
+	 *
 	 * Determine the default time zone for the given request,
 	 * Called if no time zone cookie has been found.
 	 * <p>The default implementation returns the specified default time zone,
