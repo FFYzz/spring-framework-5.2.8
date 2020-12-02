@@ -29,9 +29,16 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @since 2.0
  */
+
+/**
+ * 从 request 中获取 viewName
+ * 经过 ViewResolver 解析之后没有得到 View 的一个兜底方案
+ */
 public interface RequestToViewNameTranslator {
 
 	/**
+	 * 根据 request 获得 View
+	 *
 	 * Translate the given {@link HttpServletRequest} into a view name.
 	 * @param request the incoming {@link HttpServletRequest} providing
 	 * the context from which a view name is to be resolved
