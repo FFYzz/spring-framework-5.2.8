@@ -32,6 +32,10 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * @since 20.06.2003
  * @see org.springframework.web.servlet.ThemeResolver
  */
+
+/**
+ * theme 改变的拦截器，根据不同的 ThemeResolver 规则设置 themeName
+ */
 public class ThemeChangeInterceptor extends HandlerInterceptorAdapter {
 
 	/**
@@ -39,6 +43,9 @@ public class ThemeChangeInterceptor extends HandlerInterceptorAdapter {
 	 */
 	public static final String DEFAULT_PARAM_NAME = "theme";
 
+	/**
+	 * 拦截的参数名 默认为 theme
+	 */
 	private String paramName = DEFAULT_PARAM_NAME;
 
 

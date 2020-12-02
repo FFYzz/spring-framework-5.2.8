@@ -26,15 +26,22 @@ import org.springframework.web.servlet.ThemeResolver;
  * @author Jean-Pierre Pawlak
  * @since 17.06.2003
  */
+
+/**
+ * ThemeResolver 的抽象实现类
+ */
 public abstract class AbstractThemeResolver implements ThemeResolver {
 
 	/**
+	 * 默认的 theme 名字
+	 *
 	 * Out-of-the-box value for the default theme name: "theme".
 	 */
 	public static final String ORIGINAL_DEFAULT_THEME_NAME = "theme";
 
 	private String defaultThemeName = ORIGINAL_DEFAULT_THEME_NAME;
 
+	// defaultThemeName 的 get/set 方法
 
 	/**
 	 * Set the name of the default theme.

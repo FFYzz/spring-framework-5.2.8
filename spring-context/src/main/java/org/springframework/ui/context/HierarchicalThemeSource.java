@@ -25,9 +25,15 @@ import org.springframework.lang.Nullable;
  * @author Jean-Pierre Pawlak
  * @author Juergen Hoeller
  */
+
+/**
+ * 层次性 ThemeSource
+ */
 public interface HierarchicalThemeSource extends ThemeSource {
 
 	/**
+	 * 设置父 ThemeSource
+	 *
 	 * Set the parent that will be used to try to resolve theme messages
 	 * that this object can't resolve.
 	 * @param parent the parent ThemeSource that will be used to
@@ -37,6 +43,8 @@ public interface HierarchicalThemeSource extends ThemeSource {
 	void setParentThemeSource(@Nullable ThemeSource parent);
 
 	/**
+	 * 返回父 ThemeSource
+	 *
 	 * Return the parent of this ThemeSource, or {@code null} if none.
 	 */
 	@Nullable

@@ -27,9 +27,15 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @see Theme
  */
+
+/**
+ * 主题资源
+ */
 public interface ThemeSource {
 
 	/**
+	 * 根据 themeName 返回 Theme 实例
+	 *
 	 * Return the Theme instance for the given theme name.
 	 * <p>The returned Theme will resolve theme-specific messages, codes,
 	 * file paths, etc (e.g. CSS and image files in a web environment).

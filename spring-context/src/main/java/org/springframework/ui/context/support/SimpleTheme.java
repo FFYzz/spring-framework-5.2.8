@@ -27,10 +27,20 @@ import org.springframework.util.Assert;
  * @author Juergen Hoeller
  * @since 17.06.2003
  */
+
+/**
+ * Theme 的实现类
+ */
 public class SimpleTheme implements Theme {
 
+	/**
+	 * 主题的名字
+	 */
 	private final String name;
 
+	/**
+	 * 主题持有的 MessageSource
+	 */
 	private final MessageSource messageSource;
 
 

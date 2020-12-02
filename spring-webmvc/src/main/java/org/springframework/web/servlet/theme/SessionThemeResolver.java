@@ -37,6 +37,10 @@ import org.springframework.web.util.WebUtils;
  * @since 17.06.2003
  * @see #setThemeName
  */
+
+/**
+ * 主题保存到 session 中，可以修改
+ */
 public class SessionThemeResolver extends AbstractThemeResolver {
 
 	/**
@@ -52,11 +56,19 @@ public class SessionThemeResolver extends AbstractThemeResolver {
 
 	@Override
 	public String resolveThemeName(HttpServletRequest request) {
+		// 获取 session 属性名为 THEME_SESSION_ATTRIBUTE_NAME 的 themeName
 		String themeName = (String) WebUtils.getSessionAttribute(request, THEME_SESSION_ATTRIBUTE_NAME);
 		// A specific theme indicated, or do we need to fallback to the default?
+		// 如果不为空则返回，否则返回默认的
 		return (themeName != null ? themeName : getDefaultThemeName());
 	}
 
+	/**
+	 * 将 themeName 设置到 session 中
+	 * @param request the request to be used for theme name modification
+	 * @param response the response to be used for theme name modification
+	 * @param themeName the new theme name ({@code null} or empty to reset it)
+	 */
 	@Override
 	public void setThemeName(
 			HttpServletRequest request, @Nullable HttpServletResponse response, @Nullable String themeName) {

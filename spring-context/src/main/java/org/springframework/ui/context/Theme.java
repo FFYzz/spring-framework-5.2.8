@@ -29,15 +29,23 @@ import org.springframework.context.MessageSource;
  * @see ThemeSource
  * @see org.springframework.web.servlet.ThemeResolver
  */
+
+/**
+ * 主题接口
+ */
 public interface Theme {
 
 	/**
+	 * 返回 Theme 的名字
+	 *
 	 * Return the name of the theme.
 	 * @return the name of the theme (never {@code null})
 	 */
 	String getName();
 
 	/**
+	 * 返回 MessageSource
+	 *
 	 * Return the specific MessageSource that resolves messages
 	 * with respect to this theme.
 	 * @return the theme-specific MessageSource (never {@code null})

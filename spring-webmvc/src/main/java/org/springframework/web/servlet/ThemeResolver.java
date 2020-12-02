@@ -46,9 +46,18 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.ui.context.Theme
  * @see org.springframework.ui.context.ThemeSource
  */
+
+/**
+ * 该接口仅返回 "主题名" String
+ * 一套主题对应一个 properties 文件
+ * 主题也支持国际化
+ * 主题样式解析器
+ */
 public interface ThemeResolver {
 
 	/**
+	 * 从 request 中解析出当前的 主题名
+	 *
 	 * Resolve the current theme name via the given request.
 	 * Should return a default theme as fallback in any case.
 	 * @param request the request to be used for resolution
@@ -57,6 +66,8 @@ public interface ThemeResolver {
 	String resolveThemeName(HttpServletRequest request);
 
 	/**
+	 * 设置 themeName
+	 *
 	 * Set the current theme name to the given one.
 	 * @param request the request to be used for theme name modification
 	 * @param response the response to be used for theme name modification

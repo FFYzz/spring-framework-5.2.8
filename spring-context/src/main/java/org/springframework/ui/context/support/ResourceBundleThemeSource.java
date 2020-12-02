@@ -43,24 +43,45 @@ import org.springframework.ui.context.ThemeSource;
  * @see java.util.ResourceBundle
  * @see org.springframework.context.support.ResourceBundleMessageSource
  */
+
+/**
+ * 层次型结构
+ * 基于 Properties 文件的 theme 资源文件
+ */
 public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanClassLoaderAware {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	/**
+	 * 父 themeSource
+	 */
 	@Nullable
 	private ThemeSource parentThemeSource;
 
+	/**
+	 * 前缀
+	 */
 	private String basenamePrefix = "";
 
+	/**
+	 * 默认编码
+	 */
 	@Nullable
 	private String defaultEncoding;
 
+	/**
+	 * 是否以系统 locale 进行兜底
+	 */
 	@Nullable
 	private Boolean fallbackToSystemLocale;
 
 	@Nullable
 	private ClassLoader beanClassLoader;
 
+	/**
+	 * theme 缓存
+	 * theme name -> Theme
+	 */
 	/** Map from theme name to Theme instance. */
 	private final Map<String, Theme> themeCache = new ConcurrentHashMap<>();
 
@@ -127,6 +148,8 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
 
 
 	/**
+	 * 根据 theme name 获取 Theme 实例
+	 *
 	 * This implementation returns a SimpleTheme instance, holding a
 	 * ResourceBundle-based MessageSource whose basename corresponds to
 	 * the given theme name (prefixed by the configured "basenamePrefix").
@@ -138,15 +161,21 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
 	@Override
 	@Nullable
 	public Theme getTheme(String themeName) {
+		// 先查询缓存
 		Theme theme = this.themeCache.get(themeName);
 		if (theme == null) {
 			synchronized (this.themeCache) {
 				theme = this.themeCache.get(themeName);
 				if (theme == null) {
+					// 获取完整的 theme name
 					String basename = this.basenamePrefix + themeName;
+					// 获取 MessageSource
 					MessageSource messageSource = createMessageSource(basename);
+					// 创建一个 Theme
 					theme = new SimpleTheme(themeName, messageSource);
+					// 初始化 themeSource 的 parent 的 messageSource
 					initParent(theme);
+					// 放入缓存
 					this.themeCache.put(themeName, theme);
 					if (logger.isDebugEnabled()) {
 						logger.debug("Theme created: name '" + themeName + "', basename [" + basename + "]");
@@ -158,6 +187,9 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
 	}
 
 	/**
+	 * 为给定的 theme name 创建一个 MessageSource
+	 * 返回一个 ResourceBundleMessageSource
+	 *
 	 * Create a MessageSource for the given basename,
 	 * to be used as MessageSource for the corresponding theme.
 	 * <p>Default implementation creates a ResourceBundleMessageSource.
@@ -184,16 +216,23 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
 	}
 
 	/**
+	 * 设置当前 themeSource 的 parentThemeSource 的 messageSource 为 themeSource parent 绑定的 messageSource
+	 *
 	 * Initialize the MessageSource of the given theme with the
 	 * one from the corresponding parent of this ThemeSource.
 	 * @param theme the Theme to (re-)initialize
 	 */
 	protected void initParent(Theme theme) {
+		// 如果是层次性 MessageSource
 		if (theme.getMessageSource() instanceof HierarchicalMessageSource) {
+			// 转成 HierarchicalMessageSource 类型
 			HierarchicalMessageSource messageSource = (HierarchicalMessageSource) theme.getMessageSource();
+			// themeSource 的 parent 不为 null 但是与 themeSource 绑定的 MessageSource 的 parent 为 null
 			if (getParentThemeSource() != null && messageSource.getParentMessageSource() == null) {
+				// 获取 parent theme
 				Theme parentTheme = getParentThemeSource().getTheme(theme.getName());
 				if (parentTheme != null) {
+					// 给 themeSource 绑定的 messageSource 设置 parent
 					messageSource.setParentMessageSource(parentTheme.getMessageSource());
 				}
 			}
