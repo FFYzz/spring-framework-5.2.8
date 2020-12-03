@@ -29,9 +29,16 @@ import org.springframework.lang.Nullable;
  * @since 3.1
  * @see FlashMap
  */
+
+/**
+ * FlashMap 用于在重定向中传递参数
+ * FlashMapManager 用于管理 FlashMap
+ */
 public interface FlashMapManager {
 
 	/**
+	 * 从上一个请求中获取 flashMap，同时清理过期的 flashMap
+	 *
 	 * Find a FlashMap saved by a previous request that matches to the current
 	 * request, remove it from underlying storage, and also remove other
 	 * expired FlashMap instances.
@@ -46,6 +53,8 @@ public interface FlashMapManager {
 	FlashMap retrieveAndUpdate(HttpServletRequest request, HttpServletResponse response);
 
 	/**
+	 * 保存 flashMap，并设置过期时间
+	 *
 	 * Save the given FlashMap, in some underlying storage and set the start
 	 * of its expiration period.
 	 * <p><strong>NOTE:</strong> Invoke this method prior to a redirect in order

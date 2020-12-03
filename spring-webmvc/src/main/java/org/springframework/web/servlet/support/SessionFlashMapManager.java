@@ -39,21 +39,28 @@ public class SessionFlashMapManager extends AbstractFlashMapManager {
 
 
 	/**
+	 * 获取所有的 flashmaps
+	 *
 	 * Retrieves saved FlashMap instances from the HTTP session, if any.
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	@Nullable
 	protected List<FlashMap> retrieveFlashMaps(HttpServletRequest request) {
+		// 获取 session，如果 session 为 null 不创建
 		HttpSession session = request.getSession(false);
+		// 获取 session 中的 FLASH_MAPS_SESSION_ATTRIBUTE 属性，获取到所有的 flashmaps
 		return (session != null ? (List<FlashMap>) session.getAttribute(FLASH_MAPS_SESSION_ATTRIBUTE) : null);
 	}
 
 	/**
+	 * 更新 flashMap
+	 *
 	 * Saves the given FlashMap instances in the HTTP session.
 	 */
 	@Override
 	protected void updateFlashMaps(List<FlashMap> flashMaps, HttpServletRequest request, HttpServletResponse response) {
+		// 其实就是将属性设置到 Session 中
 		WebUtils.setSessionAttribute(request, FLASH_MAPS_SESSION_ATTRIBUTE, (!flashMaps.isEmpty() ? flashMaps : null));
 	}
 
