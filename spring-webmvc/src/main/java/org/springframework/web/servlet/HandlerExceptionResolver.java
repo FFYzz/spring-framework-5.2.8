@@ -33,9 +33,15 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @since 22.11.2003
  */
+
+/**
+ * 根据异常设置 ModelAndView
+ */
 public interface HandlerExceptionResolver {
 
 	/**
+	 * 尝试从异常中解析出视图
+	 *
 	 * Try to resolve the given exception that got thrown during handler execution,
 	 * returning a {@link ModelAndView} that represents a specific error page if appropriate.
 	 * <p>The returned {@code ModelAndView} may be {@linkplain ModelAndView#isEmpty() empty}

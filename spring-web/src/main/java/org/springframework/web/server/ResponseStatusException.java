@@ -33,11 +33,21 @@ import org.springframework.util.Assert;
  * @author Juergen Hoeller
  * @since 5.0
  */
+
+/**
+ * 响应异常
+ */
 @SuppressWarnings("serial")
 public class ResponseStatusException extends NestedRuntimeException {
 
+	/**
+	 * 响应码
+	 */
 	private final HttpStatus status;
 
+	/**
+	 * 原因描述
+	 */
 	@Nullable
 	private final String reason;
 

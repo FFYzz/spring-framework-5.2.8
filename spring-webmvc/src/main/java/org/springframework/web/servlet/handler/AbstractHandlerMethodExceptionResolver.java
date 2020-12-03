@@ -31,9 +31,15 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Rossen Stoyanchev
  * @since 3.1
  */
+
+/**
+ * 继承自 AbstractHandlerExceptionResolver
+ */
 public abstract class AbstractHandlerMethodExceptionResolver extends AbstractHandlerExceptionResolver {
 
 	/**
+	 * 重写了 shouldApplyTo 方法
+	 *
 	 * Checks if the handler is a {@link HandlerMethod} and then delegates to the
 	 * base class implementation of {@code #shouldApplyTo(HttpServletRequest, Object)}
 	 * passing the bean of the {@code HandlerMethod}. Otherwise returns {@code false}.
@@ -43,9 +49,12 @@ public abstract class AbstractHandlerMethodExceptionResolver extends AbstractHan
 		if (handler == null) {
 			return super.shouldApplyTo(request, null);
 		}
+		// 如果是 handlerMethod 抛出的异常
 		else if (handler instanceof HandlerMethod) {
 			HandlerMethod handlerMethod = (HandlerMethod) handler;
+			// 获取当前 handlerMethod 所在的 Handler
 			handler = handlerMethod.getBean();
+			// 交给父类判断
 			return super.shouldApplyTo(request, handler);
 		}
 		else {
@@ -62,6 +71,8 @@ public abstract class AbstractHandlerMethodExceptionResolver extends AbstractHan
 	}
 
 	/**
+	 * 由子类具体实现
+	 *
 	 * Actually resolve the given exception that got thrown during on handler execution,
 	 * returning a ModelAndView that represents a specific error page if appropriate.
 	 * <p>May be overridden in subclasses, in order to apply specific exception checks.

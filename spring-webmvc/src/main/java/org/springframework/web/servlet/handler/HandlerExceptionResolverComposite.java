@@ -34,8 +34,15 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Rossen Stoyanchev
  * @since 3.1
  */
+
+/**
+ * 是一个 HandlerExceptionResolver 的组合容器
+ */
 public class HandlerExceptionResolverComposite implements HandlerExceptionResolver, Ordered {
 
+	/**
+	 * 保存全部持有的 HandlerExceptionResolver
+	 */
 	@Nullable
 	private List<HandlerExceptionResolver> resolvers;
 
@@ -76,8 +83,11 @@ public class HandlerExceptionResolverComposite implements HandlerExceptionResolv
 			HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex) {
 
 		if (this.resolvers != null) {
+			// 遍历持有的所有的 HandlerExceptionResolver
 			for (HandlerExceptionResolver handlerExceptionResolver : this.resolvers) {
+				// 进行解析
 				ModelAndView mav = handlerExceptionResolver.resolveException(request, response, handler, ex);
+				// 解析成功就返回
 				if (mav != null) {
 					return mav;
 				}

@@ -42,6 +42,10 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Sam Brannen
  * @since 3.0
  */
+
+/**
+ * 是所有直接解析异常类的抽象父类
+ */
 public abstract class AbstractHandlerExceptionResolver implements HandlerExceptionResolver, Ordered {
 
 	private static final String HEADER_CACHE_CONTROL = "Cache-Control";
@@ -52,15 +56,30 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
+	/**
+	 * 保存 exceptionResolver 能够处理的 handler
+	 * 需要手动设置
+	 */
 	@Nullable
 	private Set<?> mappedHandlers;
 
+	/**
+	 * 设置 exceptionResolver 能够处理的 handler Class 类型数组
+	 * 需要手动设置
+	 */
 	@Nullable
 	private Class<?>[] mappedHandlerClasses;
 
+	/**
+	 * warn Logger
+	 */
 	@Nullable
 	private Log warnLogger;
 
+	/**
+	 * 禁用 response 缓存标志
+	 * 阻止缓存响应
+	 */
 	private boolean preventResponseCaching = false;
 
 
@@ -126,6 +145,8 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 
 
 	/**
+	 * 通用的解析流程，并且调用了 模板方法
+	 *
 	 * Check whether this resolver is supposed to apply (i.e. if the supplied handler
 	 * matches any of the configured {@linkplain #setMappedHandlers handlers} or
 	 * {@linkplain #setMappedHandlerClasses handler classes}), and then delegate
@@ -135,18 +156,23 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	@Nullable
 	public ModelAndView resolveException(
 			HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex) {
-
+		// 判断能否处理
 		if (shouldApplyTo(request, handler)) {
 			prepareResponse(ex, response);
+			// 解析异常
+			// 有子类执行
 			ModelAndView result = doResolveException(request, response, handler, ex);
+			// 如果成功解析
 			if (result != null) {
 				// Print debug message when warn logger is not enabled.
 				if (logger.isDebugEnabled() && (this.warnLogger == null || !this.warnLogger.isWarnEnabled())) {
 					logger.debug("Resolved [" + ex + "]" + (result.isEmpty() ? "" : " to " + result));
 				}
 				// Explicitly configured warn logger in logException method.
+				// 输出日志
 				logException(ex, request);
 			}
+			// 返回处理后的 异常 mav
 			return result;
 		}
 		else {
@@ -155,6 +181,8 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	}
 
 	/**
+	 * 返回当前的 exceptionResolver 解析器是否支持解析该 handler 的异常
+	 *
 	 * Check whether this resolver is supposed to apply to the given handler.
 	 * <p>The default implementation checks against the configured
 	 * {@linkplain #setMappedHandlers handlers} and
@@ -169,9 +197,12 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	 */
 	protected boolean shouldApplyTo(HttpServletRequest request, @Nullable Object handler) {
 		if (handler != null) {
+			// 如果包含该 handler
 			if (this.mappedHandlers != null && this.mappedHandlers.contains(handler)) {
+				// 返回能处理
 				return true;
 			}
+			// 同上
 			if (this.mappedHandlerClasses != null) {
 				for (Class<?> handlerClass : this.mappedHandlerClasses) {
 					if (handlerClass.isInstance(handler)) {
@@ -181,6 +212,7 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 			}
 		}
 		// Else only apply if there are no explicit handler mappings.
+		// 都为空则直接匹配
 		return (this.mappedHandlers == null && this.mappedHandlerClasses == null);
 	}
 
@@ -196,11 +228,14 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	 */
 	protected void logException(Exception ex, HttpServletRequest request) {
 		if (this.warnLogger != null && this.warnLogger.isWarnEnabled()) {
+			// warn 级别的日志
 			this.warnLogger.warn(buildLogMessage(ex, request));
 		}
 	}
 
 	/**
+	 * 组装日志信息
+	 *
 	 * Build a log message for the given exception, occurred during processing the given request.
 	 * @param ex the exception that got thrown during handler execution
 	 * @param request current HTTP request (useful for obtaining metadata)
@@ -220,12 +255,15 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	 * @see #preventCaching
 	 */
 	protected void prepareResponse(Exception ex, HttpServletResponse response) {
+		// 如果禁用的话
 		if (this.preventResponseCaching) {
 			preventCaching(response);
 		}
 	}
 
 	/**
+	 * 设置 response 的 header
+	 *
 	 * Prevents the response from being cached, through setting corresponding
 	 * HTTP {@code Cache-Control: no-store} header.
 	 * @param response current HTTP response
@@ -236,6 +274,9 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 
 
 	/**
+	 * 最重要的方法
+	 * 模板方法，由子类具体定义
+	 *
 	 * Actually resolve the given exception that got thrown during handler execution,
 	 * returning a {@link ModelAndView} that represents a specific error page if appropriate.
 	 * <p>May be overridden in subclasses, in order to apply specific exception checks.
