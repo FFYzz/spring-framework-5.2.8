@@ -40,13 +40,24 @@ import org.springframework.util.ReflectionUtils;
  * @author Juergen Hoeller
  * @since 4.0
  */
+
+/**
+ * 在 HandlerMethod 的基础上具有了调用 内部的 bridgedMethod 方法 的能力
+ * 可以调用内部的 bridgedMethod 方法
+ */
 public class InvocableHandlerMethod extends HandlerMethod {
 
 	private static final Object[] EMPTY_ARGS = new Object[0];
 
 
+	/**
+	 * 方法参数解析组合器
+	 */
 	private HandlerMethodArgumentResolverComposite resolvers = new HandlerMethodArgumentResolverComposite();
 
+	/**
+	 * 参数名发现器
+	 */
 	private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
 
@@ -113,38 +124,50 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	 */
 	@Nullable
 	public Object invoke(Message<?> message, Object... providedArgs) throws Exception {
+		// 获取方法的参数值
 		Object[] args = getMethodArgumentValues(message, providedArgs);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Arguments: " + Arrays.toString(args));
 		}
+		// 解析动作
 		return doInvoke(args);
 	}
 
 	/**
+	 * 获取方法参数值
+	 *
 	 * Get the method argument values for the current message, checking the provided
 	 * argument values and falling back to the configured argument resolvers.
 	 * <p>The resulting array will be passed into {@link #doInvoke}.
 	 * @since 5.1.2
 	 */
 	protected Object[] getMethodArgumentValues(Message<?> message, Object... providedArgs) throws Exception {
+		// 获取参数 MethodParameter
 		MethodParameter[] parameters = getMethodParameters();
 		if (ObjectUtils.isEmpty(parameters)) {
 			return EMPTY_ARGS;
 		}
 
+		// 保存方法参数的值
 		Object[] args = new Object[parameters.length];
+		// 遍历
 		for (int i = 0; i < parameters.length; i++) {
 			MethodParameter parameter = parameters[i];
+			// 设置 parameterNameDiscoverer
 			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
 			args[i] = findProvidedArgument(parameter, providedArgs);
+			// 如果找到了，跳过
 			if (args[i] != null) {
 				continue;
 			}
+			// 没有在 providedArgs 中找到参数值
 			if (!this.resolvers.supportsParameter(parameter)) {
+				// 还不能解析，那么只能抛异常了
 				throw new MethodArgumentResolutionException(
 						message, parameter, formatArgumentError(parameter, "No suitable resolver"));
 			}
 			try {
+				// 解析动作
 				args[i] = this.resolvers.resolveArgument(parameter, message);
 			}
 			catch (Exception ex) {
@@ -158,6 +181,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 				throw ex;
 			}
 		}
+		// 返回所有参数的解析结果
 		return args;
 	}
 
@@ -166,8 +190,10 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	 */
 	@Nullable
 	protected Object doInvoke(Object... args) throws Exception {
+		// 反射，获取访问 bridgedMethod 的能力
 		ReflectionUtils.makeAccessible(getBridgedMethod());
 		try {
+			// 调用
 			return getBridgedMethod().invoke(getBean(), args);
 		}
 		catch (IllegalArgumentException ex) {

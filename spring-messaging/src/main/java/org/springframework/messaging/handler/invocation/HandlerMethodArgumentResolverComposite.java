@@ -109,11 +109,13 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 	@Override
 	@Nullable
 	public Object resolveArgument(MethodParameter parameter, Message<?> message) throws Exception {
+		// 获取解析器
 		HandlerMethodArgumentResolver resolver = getArgumentResolver(parameter);
 		if (resolver == null) {
 			throw new IllegalArgumentException("Unsupported parameter type [" +
 					parameter.getParameterType().getName() + "]. supportsParameter should be called first.");
 		}
+		// 有具体解析器去解析
 		return resolver.resolveArgument(parameter, message);
 	}
 
@@ -123,16 +125,22 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 	 */
 	@Nullable
 	private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parameter) {
+		// 尝试从 cache 中查
 		HandlerMethodArgumentResolver result = this.argumentResolverCache.get(parameter);
 		if (result == null) {
+			// 遍历参数解析器
 			for (HandlerMethodArgumentResolver resolver : this.argumentResolvers) {
+				// 找到一个之处解析该参数的
 				if (resolver.supportsParameter(parameter)) {
+					// 设置能解析该参数的解析器
 					result = resolver;
+					// 放入缓存
 					this.argumentResolverCache.put(parameter, result);
 					break;
 				}
 			}
 		}
+		// 返回能解析该参数的 Resolver
 		return result;
 	}
 

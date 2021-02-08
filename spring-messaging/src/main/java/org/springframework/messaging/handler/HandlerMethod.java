@@ -68,6 +68,9 @@ public class HandlerMethod {
 
 	private final Method bridgedMethod;
 
+	/**
+	 * 方法的所有参数
+	 */
 	private final MethodParameter[] parameters;
 
 	@Nullable
@@ -324,6 +327,13 @@ public class HandlerMethod {
 
 	// Support methods for use in "InvocableHandlerMethod" sub-class variants..
 
+	/**
+	 * 从 providedArgs 中查找参数值
+	 *
+	 * @param parameter
+	 * @param providedArgs
+	 * @return
+	 */
 	@Nullable
 	protected static Object findProvidedArgument(MethodParameter parameter, @Nullable Object... providedArgs) {
 		if (!ObjectUtils.isEmpty(providedArgs)) {
