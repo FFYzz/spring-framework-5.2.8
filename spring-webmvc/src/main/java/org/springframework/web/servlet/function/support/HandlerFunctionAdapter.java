@@ -38,6 +38,10 @@ import org.springframework.web.servlet.function.ServerResponse;
  * @author Arjen Poutsma
  * @since 5.2
  */
+
+/**
+ * 实现了 Ordered 接口
+ */
 public class HandlerFunctionAdapter implements HandlerAdapter, Ordered {
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
@@ -72,6 +76,7 @@ public class HandlerFunctionAdapter implements HandlerAdapter, Ordered {
 		HandlerFunction<?> handlerFunction = (HandlerFunction<?>) handler;
 
 		ServerRequest serverRequest = getServerRequest(servletRequest);
+		// handlerFunction 的 handle 方法
 		ServerResponse serverResponse = handlerFunction.handle(serverRequest);
 
 		return serverResponse.writeTo(servletRequest, servletResponse,
@@ -86,6 +91,13 @@ public class HandlerFunctionAdapter implements HandlerAdapter, Ordered {
 		return serverRequest;
 	}
 
+	/**
+	 * 不缓存
+	 *
+	 * @param request current HTTP request
+	 * @param handler the handler to use
+	 * @return
+	 */
 	@Override
 	public long getLastModified(HttpServletRequest request, Object handler) {
 		return -1L;
@@ -94,6 +106,9 @@ public class HandlerFunctionAdapter implements HandlerAdapter, Ordered {
 
 	private static class ServerRequestContext implements ServerResponse.Context {
 
+		/**
+		 * 一个 Http 请求，在服务端保存的形式
+		 */
 		private final ServerRequest serverRequest;
 
 

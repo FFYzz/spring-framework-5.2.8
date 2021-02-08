@@ -45,12 +45,15 @@ public abstract class WebAsyncUtils {
 	 */
 	public static WebAsyncManager getAsyncManager(ServletRequest servletRequest) {
 		WebAsyncManager asyncManager = null;
+		// 获取当前 请求 关联的 asyncManagerAttr
 		Object asyncManagerAttr = servletRequest.getAttribute(WEB_ASYNC_MANAGER_ATTRIBUTE);
 		if (asyncManagerAttr instanceof WebAsyncManager) {
 			asyncManager = (WebAsyncManager) asyncManagerAttr;
 		}
 		if (asyncManager == null) {
+			// 创建一个
 			asyncManager = new WebAsyncManager();
+			// 设置进去
 			servletRequest.setAttribute(WEB_ASYNC_MANAGER_ATTRIBUTE, asyncManager);
 		}
 		return asyncManager;

@@ -56,8 +56,17 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  * @author Rossen Stoyanchev
  * @since 3.1
  */
+
+/**
+ * 用于维护 Model
+ * 1. 初始化 Model
+ * 2. 处理器执行后将 Model 中相应的参数更新到 SessionAttributes 中
+ */
 public final class ModelFactory {
 
+	/**
+	 * 保存包含 @ModelAttribute 注解方法的 handlerMethod
+	 */
 	private final List<ModelMethod> modelMethods = new ArrayList<>();
 
 	private final WebDataBinderFactory dataBinderFactory;
@@ -76,6 +85,7 @@ public final class ModelFactory {
 
 		if (handlerMethods != null) {
 			for (InvocableHandlerMethod handlerMethod : handlerMethods) {
+				// 封装成 ModelMethod 保存到 modelMethods 中
 				this.modelMethods.add(new ModelMethod(handlerMethod));
 			}
 		}
@@ -85,6 +95,9 @@ public final class ModelFactory {
 
 
 	/**
+	 * 填充 model
+	 * 初始化 Model，在处理器执行之前将数据设置到 Model 中
+	 *
 	 * Populate the model in the following order:
 	 * <ol>
 	 * <li>Retrieve "known" session attributes listed as {@code @SessionAttributes}.
@@ -101,10 +114,14 @@ public final class ModelFactory {
 	public void initModel(NativeWebRequest request, ModelAndViewContainer container, HandlerMethod handlerMethod)
 			throws Exception {
 
+		// 获取已知的属性
 		Map<String, ?> sessionAttributes = this.sessionAttributesHandler.retrieveAttributes(request);
+		// sessionAttributes 属性存入到 container 中
 		container.mergeAttributes(sessionAttributes);
+		// 调用标注了 @ModelAttribute 的方法来填充 Model
 		invokeModelAttributeMethods(request, container);
 
+		//
 		for (String name : findSessionAttributeArguments(handlerMethod)) {
 			if (!container.containsAttribute(name)) {
 				Object value = this.sessionAttributesHandler.retrieveAttribute(request, name);
@@ -117,6 +134,8 @@ public final class ModelFactory {
 	}
 
 	/**
+	 * 调用 标注了 @ModelAttribute 的方法来填充 model
+	 *
 	 * Invoke model attribute methods to populate the model.
 	 * Attributes are added only if not already present in the model.
 	 */
@@ -124,18 +143,24 @@ public final class ModelFactory {
 			throws Exception {
 
 		while (!this.modelMethods.isEmpty()) {
+			// 获取标注了 @ModelAttribute 注解的方法
 			InvocableHandlerMethod modelMethod = getNextModelMethod(container).getHandlerMethod();
 			ModelAttribute ann = modelMethod.getMethodAnnotation(ModelAttribute.class);
 			Assert.state(ann != null, "No ModelAttribute annotation");
+			// 参数名是否已经在 mavc 中注册过
 			if (container.containsAttribute(ann.name())) {
 				if (!ann.binding()) {
 					container.setBindingDisabled(ann.name());
 				}
+				// 已经注册过则跳过
 				continue;
 			}
 
+			// 执行标注了 @ModelAttribute 注解的方法
 			Object returnValue = modelMethod.invokeForRequest(request, container);
+
 			if (!modelMethod.isVoid()){
+				// 获取返回参数名
 				String returnValueName = getNameForReturnValue(returnValue, modelMethod.getReturnType());
 				if (!ann.binding()) {
 					container.setBindingDisabled(returnValueName);
@@ -165,7 +190,9 @@ public final class ModelFactory {
 	private List<String> findSessionAttributeArguments(HandlerMethod handlerMethod) {
 		List<String> result = new ArrayList<>();
 		for (MethodParameter parameter : handlerMethod.getMethodParameters()) {
+			// 标注了 ModelAttribute 注解参数
 			if (parameter.hasParameterAnnotation(ModelAttribute.class)) {
+				// 获取参数名
 				String name = getNameForParameter(parameter);
 				Class<?> paramType = parameter.getParameterType();
 				if (this.sessionAttributesHandler.isHandlerSessionAttribute(name, paramType)) {
@@ -177,6 +204,8 @@ public final class ModelFactory {
 	}
 
 	/**
+	 * 更新 Model
+	 *
 	 * Promote model attributes listed as {@code @SessionAttributes} to the session.
 	 * Add {@link BindingResult} attributes where necessary.
 	 * @param request the current request
@@ -186,12 +215,15 @@ public final class ModelFactory {
 	public void updateModel(NativeWebRequest request, ModelAndViewContainer container) throws Exception {
 		ModelMap defaultModel = container.getDefaultModel();
 		if (container.getSessionStatus().isComplete()){
+			// 清空
 			this.sessionAttributesHandler.cleanupAttributes(request);
 		}
 		else {
+			// 存储
 			this.sessionAttributesHandler.storeAttributes(request, defaultModel);
 		}
 		if (!container.isRequestHandled() && container.getModel() == defaultModel) {
+			// 更新
 			updateBindingResult(request, defaultModel);
 		}
 	}
@@ -257,6 +289,7 @@ public final class ModelFactory {
 	 * @return the derived name (never {@code null} or empty String)
 	 */
 	public static String getNameForReturnValue(@Nullable Object returnValue, MethodParameter returnType) {
+		// 获取 @ModelAttribute 注解
 		ModelAttribute ann = returnType.getMethodAnnotation(ModelAttribute.class);
 		if (ann != null && StringUtils.hasText(ann.value())) {
 			return ann.value();

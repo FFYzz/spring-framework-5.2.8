@@ -93,6 +93,9 @@ public class CookieLocaleResolver extends CookieGenerator implements LocaleConte
 
 	private boolean rejectInvalidCookies = true;
 
+	/**
+	 * 当不携带 Cookie 信息的时候，会使用默认配置的 locale
+	 */
 	@Nullable
 	private Locale defaultLocale;
 

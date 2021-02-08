@@ -55,7 +55,13 @@ import org.springframework.web.util.UrlPathHelper;
  * @author Rossen Stoyanchev
  * @since 3.1
  */
+
+/**
+ * 请求信息的封装
+ */
 public final class RequestMappingInfo implements RequestCondition<RequestMappingInfo> {
+
+	// 下面 7 个 RequestCondition
 
 	private static final PatternsRequestCondition EMPTY_PATTERNS = new PatternsRequestCondition();
 
@@ -72,15 +78,30 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 	private static final RequestConditionHolder EMPTY_CUSTOM = new RequestConditionHolder(null);
 
 
+	/**
+	 * mapping 的 name
+	 */
 	@Nullable
 	private final String name;
 
+	/**
+	 * 一般为请求路径
+	 */
 	private final PatternsRequestCondition patternsCondition;
 
+	/**
+	 * 请求方法
+	 */
 	private final RequestMethodsRequestCondition methodsCondition;
 
+	/**
+	 * 请求参数
+	 */
 	private final ParamsRequestCondition paramsCondition;
 
+	/**
+	 * 请求头
+	 */
 	private final HeadersRequestCondition headersCondition;
 
 	private final ConsumesRequestCondition consumesCondition;
@@ -89,9 +110,25 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 
 	private final RequestConditionHolder customConditionHolder;
 
+	/**
+	 * 包含所有 RequestCondition 的 hashcode
+	 */
 	private final int hashCode;
 
 
+	/**
+	 * 构造函数支持自定义传入 XXXRequestCondition
+	 * 否则使用默认生成的 XXXRequestCondition
+	 *
+	 * @param name
+	 * @param patterns
+	 * @param methods
+	 * @param params
+	 * @param headers
+	 * @param consumes
+	 * @param produces
+	 * @param custom
+	 */
 	public RequestMappingInfo(@Nullable String name, @Nullable PatternsRequestCondition patterns,
 			@Nullable RequestMethodsRequestCondition methods, @Nullable ParamsRequestCondition params,
 			@Nullable HeadersRequestCondition headers, @Nullable ConsumesRequestCondition consumes,
@@ -196,6 +233,8 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 
 
 	/**
+	 * 组合两个 RequestMappingInfo
+	 *
 	 * Combine "this" request mapping info (i.e. the current instance) with another request mapping info instance.
 	 * <p>Example: combine type- and method-level request mappings.
 	 * @return a new request mapping info instance; never {@code null}
@@ -211,10 +250,17 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 		ProducesRequestCondition produces = this.producesCondition.combine(other.producesCondition);
 		RequestConditionHolder custom = this.customConditionHolder.combine(other.customConditionHolder);
 
+		// 返回一个新的 RequestMappingInfo
 		return new RequestMappingInfo(name, patterns,
 				methods, params, headers, consumes, produces, custom.getCondition());
 	}
 
+	/**
+	 * 组合两个 RequestMappingInfo 的 name
+	 *
+	 * @param other
+	 * @return
+	 */
 	@Nullable
 	private String combineNames(RequestMappingInfo other) {
 		if (this.name != null && other.name != null) {
@@ -230,6 +276,8 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 	}
 
 	/**
+	 * 检查当前的请求是否全部满足 condition，如果没有全部满足，则返回 null
+	 *
 	 * Checks if all conditions in this request mapping info match the provided request and returns
 	 * a potentially new request mapping info with conditions tailored to the current request.
 	 * <p>For example the returned instance may contain the subset of URL patterns that match to

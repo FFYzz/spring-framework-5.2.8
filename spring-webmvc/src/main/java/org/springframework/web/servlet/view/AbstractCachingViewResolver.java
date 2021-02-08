@@ -43,6 +43,11 @@ import org.springframework.web.servlet.ViewResolver;
  * @author Juergen Hoeller
  * @see #loadView
  */
+
+/**
+ * 提供统一的缓存功能
+ * 当视图被解析过一次就会被缓存起来
+ */
 public abstract class AbstractCachingViewResolver extends WebApplicationObjectSupport implements ViewResolver {
 
 	/** Default maximum number of entries for the view cache: 1024. */
@@ -61,6 +66,10 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
 	};
 
 	/** Default cache filter that always caches. */
+	/**
+	 * 默认的缓存过滤器
+	 * 无论啥都缓存
+	 */
 	private static final CacheFilter DEFAULT_CACHE_FILTER = (view, viewName, locale) -> true;
 
 
@@ -70,18 +79,29 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
 	/** Whether we should refrain from resolving views again if unresolved once. */
 	private boolean cacheUnresolved = true;
 
+	/**
+	 * 缓存过滤器，判断 view 是否能够缓存
+	 */
 	/** Filter function that determines if view should be cached. */
 	private CacheFilter cacheFilter = DEFAULT_CACHE_FILTER;
 
+	/**
+	 * 保存缓存视图
+	 */
 	/** Fast access cache for Views, returning already cached instances without a global lock. */
 	private final Map<Object, View> viewAccessCache = new ConcurrentHashMap<>(DEFAULT_CACHE_LIMIT);
 
 	/** Map from view key to View instance, synchronized for View creation. */
+	/**
+	 * 一个简易的 LRU 实现
+	 * 用于缓存创建的 view
+	 */
 	@SuppressWarnings("serial")
 	private final Map<Object, View> viewCreationCache =
 			new LinkedHashMap<Object, View>(DEFAULT_CACHE_LIMIT, 0.75f, true) {
 				@Override
 				protected boolean removeEldestEntry(Map.Entry<Object, View> eldest) {
+					// 大于缓存个数的时候，移除 eldest 的元素
 					if (size() > getCacheLimit()) {
 						viewAccessCache.remove(eldest.getKey());
 						return true;
@@ -120,6 +140,8 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
 	}
 
 	/**
+	 * 返回缓存是否开启
+	 *
 	 * Return if caching is enabled.
 	 */
 	public boolean isCache() {
@@ -170,22 +192,33 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
 	@Override
 	@Nullable
 	public View resolveViewName(String viewName, Locale locale) throws Exception {
+		// 如果没有缓存
 		if (!isCache()) {
+			// 创建视图
+			// 模板方法，由子类实现
 			return createView(viewName, locale);
 		}
+		// 开启了缓存
 		else {
+			// 获取缓存的 key
 			Object cacheKey = getCacheKey(viewName, locale);
+			// 从缓存中获取
 			View view = this.viewAccessCache.get(cacheKey);
+			// 缓存中拿不到
 			if (view == null) {
+				// 是一个 LRU 的 cache
 				synchronized (this.viewCreationCache) {
+					// 从 viewCreationCache 缓存中查找
 					view = this.viewCreationCache.get(cacheKey);
 					if (view == null) {
 						// Ask the subclass to create the View object.
+						// 创建 view
 						view = createView(viewName, locale);
 						if (view == null && this.cacheUnresolved) {
 							view = UNRESOLVED_VIEW;
 						}
 						if (view != null && this.cacheFilter.filter(view, viewName, locale)) {
+							// 进行缓存
 							this.viewAccessCache.put(cacheKey, view);
 							this.viewCreationCache.put(cacheKey, view);
 						}
@@ -206,6 +239,8 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
 	}
 
 	/**
+	 * 返回缓存的 key
+	 *
 	 * Return the cache key for the given view name and the given locale.
 	 * <p>Default is a String consisting of view name and locale suffix.
 	 * Can be overridden in subclasses.
@@ -294,6 +329,7 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
 
 	/**
 	 * Filter that determines if view should be cached.
+	 * 缓存 Filter
 	 *
 	 * @author Sergey Galkin
 	 * @author Arjen Poutsma

@@ -27,6 +27,10 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @author Rossen Stoyanchev
  * @since 3.1
  */
+
+/**
+ * 默认的 WebDataBinder 工厂
+ */
 public class DefaultDataBinderFactory implements WebDataBinderFactory {
 
 	@Nullable

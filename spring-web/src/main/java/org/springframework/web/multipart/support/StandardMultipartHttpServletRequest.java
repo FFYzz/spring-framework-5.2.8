@@ -58,6 +58,9 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpServletRequest {
 
+	/**
+	 * 上传文件的 Part 的名字
+	 */
 	@Nullable
 	private Set<String> multipartParameterNames;
 
@@ -84,14 +87,21 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 			throws MultipartException {
 
 		super(request);
+		// 如果不是延迟解析，那么会直接解析
 		if (!lazyParsing) {
 			parseRequest(request);
 		}
 	}
 
 
+	/**
+	 * 解析请求
+	 *
+	 * @param request
+	 */
 	private void parseRequest(HttpServletRequest request) {
 		try {
+			// 获取上传文件的所有 Part
 			Collection<Part> parts = request.getParts();
 			this.multipartParameterNames = new LinkedHashSet<>(parts.size());
 			MultiValueMap<String, MultipartFile> files = new LinkedMultiValueMap<>(parts.size());
@@ -106,6 +116,7 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 					files.add(part.getName(), new StandardMultipartFile(part, filename));
 				}
 				else {
+					// 保存 Part 的名字
 					this.multipartParameterNames.add(part.getName());
 				}
 			}
@@ -202,6 +213,8 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 
 
 	/**
+	 * MultipartFile
+	 *
 	 * Spring MultipartFile adapter, wrapping a Servlet 3.0 Part object.
 	 */
 	@SuppressWarnings("serial")

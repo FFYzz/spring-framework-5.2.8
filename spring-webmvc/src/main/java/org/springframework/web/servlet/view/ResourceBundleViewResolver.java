@@ -60,6 +60,10 @@ import org.springframework.web.servlet.View;
  * @see java.util.PropertyResourceBundle
  * @see UrlBasedViewResolver
  */
+
+/**
+ * 通过 properties 属性文件解析视图
+ */
 public class ResourceBundleViewResolver extends AbstractCachingViewResolver
 		implements Ordered, InitializingBean, DisposableBean {
 

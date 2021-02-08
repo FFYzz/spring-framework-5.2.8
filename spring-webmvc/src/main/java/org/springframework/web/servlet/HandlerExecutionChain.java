@@ -41,14 +41,29 @@ public class HandlerExecutionChain {
 
 	private static final Log logger = LogFactory.getLog(HandlerExecutionChain.class);
 
+	/**
+	 * 保存 handler，如果 handler 不是 HandlerInterceptor 类型
+	 */
 	private final Object handler;
 
+	/**
+	 * 持有一个 HandlerInterceptor 数组
+	 */
 	@Nullable
 	private HandlerInterceptor[] interceptors;
 
+	/**
+	 * List 形式的 HandlerInterceptor
+	 */
 	@Nullable
 	private List<HandlerInterceptor> interceptorList;
 
+	/**
+	 * 记录 interceptor 的执行 index
+	 * 当前执行到了第几个 interceptor
+	 * preHandler 0 -> interceptorIndex
+	 * postHandler interceptorIndex -> 0
+	 */
 	private int interceptorIndex = -1;
 
 
@@ -67,14 +82,17 @@ public class HandlerExecutionChain {
 	 * (in the given order) before the handler itself executes
 	 */
 	public HandlerExecutionChain(Object handler, @Nullable HandlerInterceptor... interceptors) {
+		// 如果 handler 是 HandlerExecutionChain 类型，则加入到 interceptorList 中
 		if (handler instanceof HandlerExecutionChain) {
 			HandlerExecutionChain originalChain = (HandlerExecutionChain) handler;
 			this.handler = originalChain.getHandler();
 			this.interceptorList = new ArrayList<>();
+			// 合并
 			CollectionUtils.mergeArrayIntoCollection(originalChain.getInterceptors(), this.interceptorList);
 			CollectionUtils.mergeArrayIntoCollection(interceptors, this.interceptorList);
 		}
 		else {
+			// 否则存储到成员变量 handler 到
 			this.handler = handler;
 			this.interceptors = interceptors;
 		}
@@ -82,45 +100,75 @@ public class HandlerExecutionChain {
 
 
 	/**
+	 * 返回当前 HandlerExecutionChain 对象的 handler
+	 *
 	 * Return the handler object to execute.
 	 */
 	public Object getHandler() {
 		return this.handler;
 	}
 
+	/**
+	 * 添加到 HandlerInterceptor 到 List 中
+	 *
+	 * @param interceptor
+	 */
 	public void addInterceptor(HandlerInterceptor interceptor) {
 		initInterceptorList().add(interceptor);
 	}
 
+	/**
+	 * 添加 HandlerInterceptor 到 List 的指定位置
+	 * @param index
+	 * @param interceptor
+	 */
 	public void addInterceptor(int index, HandlerInterceptor interceptor) {
 		initInterceptorList().add(index, interceptor);
 	}
 
+	/**
+	 * 将多个 HandlerInterceptor 加入到 List 中
+	 *
+	 * @param interceptors
+	 */
 	public void addInterceptors(HandlerInterceptor... interceptors) {
 		if (!ObjectUtils.isEmpty(interceptors)) {
 			CollectionUtils.mergeArrayIntoCollection(interceptors, initInterceptorList());
 		}
 	}
 
+	/**
+	 * 初始化 InterceptorList
+	 *
+	 * @return
+	 */
 	private List<HandlerInterceptor> initInterceptorList() {
 		if (this.interceptorList == null) {
 			this.interceptorList = new ArrayList<>();
 			if (this.interceptors != null) {
 				// An interceptor array specified through the constructor
+				// 把数组中的 HandlerInterceptor 添加到 List 中
 				CollectionUtils.mergeArrayIntoCollection(this.interceptors, this.interceptorList);
 			}
 		}
+		// 将数组置为 null
 		this.interceptors = null;
+		// 返回 List 形式的 HandlerInterceptor
 		return this.interceptorList;
 	}
 
 	/**
+	 * 返回数组形式的 HandlerInterceptor
+	 *
 	 * Return the array of interceptors to apply (in the given order).
 	 * @return the array of HandlerInterceptors instances (may be {@code null})
 	 */
 	@Nullable
 	public HandlerInterceptor[] getInterceptors() {
+		// 如果数组形式不为 null
+		// 直接返回数组形式的 HandlerInterceptor
 		if (this.interceptors == null && this.interceptorList != null) {
+			// 赋值给 interceptors
 			this.interceptors = this.interceptorList.toArray(new HandlerInterceptor[0]);
 		}
 		return this.interceptors;
@@ -128,6 +176,8 @@ public class HandlerExecutionChain {
 
 
 	/**
+	 * 调用 preHandler
+	 *
 	 * Apply preHandle methods of registered interceptors.
 	 * @return {@code true} if the execution chain should proceed with the
 	 * next interceptor or the handler itself. Else, DispatcherServlet assumes
@@ -136,9 +186,13 @@ public class HandlerExecutionChain {
 	boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HandlerInterceptor[] interceptors = getInterceptors();
 		if (!ObjectUtils.isEmpty(interceptors)) {
+			// 遍历数组
 			for (int i = 0; i < interceptors.length; i++) {
+				// 取出每一个
 				HandlerInterceptor interceptor = interceptors[i];
+				// 调用 preHandle
 				if (!interceptor.preHandle(request, response, this.handler)) {
+					// 触发 AfterCompletion 方法
 					triggerAfterCompletion(request, response, null);
 					return false;
 				}
@@ -149,6 +203,8 @@ public class HandlerExecutionChain {
 	}
 
 	/**
+	 * 调用 postHandler
+	 *
 	 * Apply postHandle methods of registered interceptors.
 	 */
 	void applyPostHandle(HttpServletRequest request, HttpServletResponse response, @Nullable ModelAndView mv)
@@ -164,6 +220,8 @@ public class HandlerExecutionChain {
 	}
 
 	/**
+	 * 调用 AfterCompletion 回调
+	 *
 	 * Trigger afterCompletion callbacks on the mapped HandlerInterceptors.
 	 * Will just invoke afterCompletion for all interceptors whose preHandle invocation
 	 * has successfully completed and returned true.
@@ -173,9 +231,11 @@ public class HandlerExecutionChain {
 
 		HandlerInterceptor[] interceptors = getInterceptors();
 		if (!ObjectUtils.isEmpty(interceptors)) {
+			// 逆序
 			for (int i = this.interceptorIndex; i >= 0; i--) {
 				HandlerInterceptor interceptor = interceptors[i];
 				try {
+					// 调用 afterCompletion 方法
 					interceptor.afterCompletion(request, response, this.handler, ex);
 				}
 				catch (Throwable ex2) {
@@ -186,6 +246,8 @@ public class HandlerExecutionChain {
 	}
 
 	/**
+	 *
+	 * 异步回调
 	 * Apply afterConcurrentHandlerStarted callback on mapped AsyncHandlerInterceptors.
 	 */
 	void applyAfterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response) {
@@ -195,6 +257,7 @@ public class HandlerExecutionChain {
 				if (interceptors[i] instanceof AsyncHandlerInterceptor) {
 					try {
 						AsyncHandlerInterceptor asyncInterceptor = (AsyncHandlerInterceptor) interceptors[i];
+						// 调用
 						asyncInterceptor.afterConcurrentHandlingStarted(request, response, this.handler);
 					}
 					catch (Throwable ex) {

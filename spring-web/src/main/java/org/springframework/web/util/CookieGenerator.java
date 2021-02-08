@@ -171,6 +171,8 @@ public class CookieGenerator {
 
 
 	/**
+	 * 在 response 中添加 Cookie
+	 *
 	 * Add a cookie with the given value to the response,
 	 * using the cookie descriptor settings of this generator.
 	 * <p>Delegates to {@link #createCookie} for cookie creation.
@@ -201,6 +203,8 @@ public class CookieGenerator {
 	}
 
 	/**
+	 * 移除 response 中的 cookie，然后加入一个空值的 Cookie
+	 *
 	 * Remove the cookie that this generator describes from the response.
 	 * Will generate a cookie with empty value and max age 0.
 	 * <p>Delegates to {@link #createCookie} for cookie creation.
@@ -226,6 +230,8 @@ public class CookieGenerator {
 	}
 
 	/**
+	 * 创建一个 Cookie
+	 *
 	 * Create a cookie with the given value, using the cookie descriptor
 	 * settings of this generator (except for "cookieMaxAge").
 	 * @param cookieValue the value of the cookie to crate

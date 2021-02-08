@@ -42,16 +42,33 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Brian Clozel
  * @since 3.0
  */
+
+/**
+ * 实现了 HandlerInterceptor 接口
+ *
+ */
 public final class MappedInterceptor implements HandlerInterceptor {
 
+	/**
+	 * 包含在内的匹配模式
+	 */
 	@Nullable
 	private final String[] includePatterns;
 
+	/**
+	 * 排除在外的匹配模式
+	 */
 	@Nullable
 	private final String[] excludePatterns;
 
+	/**
+	 * 拦截器
+	 */
 	private final HandlerInterceptor interceptor;
 
+	/**
+	 * 路径匹配
+	 */
 	@Nullable
 	private PathMatcher pathMatcher;
 
@@ -138,13 +155,17 @@ public final class MappedInterceptor implements HandlerInterceptor {
 
 
 	/**
+	 * 匹配方法
+	 *
 	 * Determine a match for the given lookup path.
 	 * @param lookupPath the current request path
 	 * @param pathMatcher a path matcher for path pattern matching
 	 * @return {@code true} if the interceptor applies to the given request path
 	 */
 	public boolean matches(String lookupPath, PathMatcher pathMatcher) {
+		// 优先使用当前 MappedInterceptor 对象内部持有的 PathMatcher
 		PathMatcher pathMatcherToUse = (this.pathMatcher != null ? this.pathMatcher : pathMatcher);
+		// 先检查 excludePatterns，如果匹配，直接返回 false
 		if (!ObjectUtils.isEmpty(this.excludePatterns)) {
 			for (String pattern : this.excludePatterns) {
 				if (pathMatcherToUse.match(pattern, lookupPath)) {
@@ -152,9 +173,11 @@ public final class MappedInterceptor implements HandlerInterceptor {
 				}
 			}
 		}
+		// 未配置 includePatterns，则一律放行
 		if (ObjectUtils.isEmpty(this.includePatterns)) {
 			return true;
 		}
+		// 配置了 includePatterns，则需要判断是否匹配
 		for (String pattern : this.includePatterns) {
 			if (pathMatcherToUse.match(pattern, lookupPath)) {
 				return true;

@@ -46,14 +46,31 @@ import org.springframework.web.context.request.WebRequest;
  * @author Juergen Hoeller
  * @since 3.1
  */
+
+/**
+ * 处理 @SessionAttributes 注解的参数
+ */
 public class SessionAttributesHandler {
 
+	/**
+	 * 存储 @SessionAttributes 中的 value 的值
+	 */
 	private final Set<String> attributeNames = new HashSet<>();
 
+	/**
+	 * 存储 @SessionAttributes 中的 types 的值
+	 */
 	private final Set<Class<?>> attributeTypes = new HashSet<>();
 
+	/**
+	 * 存储所有已知的可被当前处理器处理的属性名
+	 */
 	private final Set<String> knownAttributeNames = Collections.newSetFromMap(new ConcurrentHashMap<>(4));
 
+	/**
+	 * 具体执行 Attribute 的存储工作
+	 * SessionAttributeStore 是一个接口
+	 */
 	private final SessionAttributeStore sessionAttributeStore;
 
 
@@ -129,11 +146,14 @@ public class SessionAttributesHandler {
 	public Map<String, Object> retrieveAttributes(WebRequest request) {
 		Map<String, Object> attributes = new HashMap<>();
 		for (String name : this.knownAttributeNames) {
+			// 根据属性名获取 属性
 			Object value = this.sessionAttributeStore.retrieveAttribute(request, name);
 			if (value != null) {
+				// 放到 map 中
 				attributes.put(name, value);
 			}
 		}
+		// 返回 map
 		return attributes;
 	}
 
@@ -144,6 +164,7 @@ public class SessionAttributesHandler {
 	 * @param request the current request
 	 */
 	public void cleanupAttributes(WebRequest request) {
+		// 只需要遍历 knownAttributeNames 即可
 		for (String attributeName : this.knownAttributeNames) {
 			this.sessionAttributeStore.cleanupAttribute(request, attributeName);
 		}

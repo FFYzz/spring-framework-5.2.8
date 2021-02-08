@@ -29,14 +29,29 @@ package org.springframework.web.servlet.view;
  */
 public abstract class AbstractTemplateViewResolver extends UrlBasedViewResolver {
 
+	/**
+	 * 是否将所有的 RequestAttributes 暴露给 view 使用
+	 */
 	private boolean exposeRequestAttributes = false;
 
+	/**
+	 * 当 RequestAttributes 中存在 Model 中同名的参数时，是否允许使用 RequestAttributes 中的值将 Model 中的值覆盖
+	 */
 	private boolean allowRequestOverride = false;
 
+	/**
+	 * 是否将所有的 SessionAttributes 暴露给 view 使用
+	 */
 	private boolean exposeSessionAttributes = false;
 
+	/**
+	 * 当 SessionAttributes 中存在 Model 中同名的参数时，是否允许使用 SessionAttributes 中的值将 Model 中的值覆盖
+	 */
 	private boolean allowSessionOverride = false;
 
+	/**
+	 * 是否允许将 RequestContext 暴露给 view 为 spring 的宏使用
+	 */
 	private boolean exposeSpringMacroHelpers = true;
 
 

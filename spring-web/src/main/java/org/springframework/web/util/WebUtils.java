@@ -371,7 +371,9 @@ public abstract class WebUtils {
 	@Nullable
 	public static Object getSessionAttribute(HttpServletRequest request, String name) {
 		Assert.notNull(request, "Request must not be null");
+		// 从 request 中获取 session
 		HttpSession session = request.getSession(false);
+		// session 中根据 name 获取属性
 		return (session != null ? session.getAttribute(name) : null);
 	}
 
@@ -395,6 +397,8 @@ public abstract class WebUtils {
 	}
 
 	/**
+	 * 设置 session 属性
+	 *
 	 * Set the session attribute with the given name to the given value.
 	 * Removes the session attribute if value is null, if a session existed at all.
 	 * Does not create a new session if not necessary!
@@ -575,10 +579,14 @@ public abstract class WebUtils {
 	@Nullable
 	public static Cookie getCookie(HttpServletRequest request, String name) {
 		Assert.notNull(request, "Request must not be null");
+		// 获取 request 中的 Cookies
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
+			// 遍历
 			for (Cookie cookie : cookies) {
+				// 有找到名字相同的
 				if (name.equals(cookie.getName())) {
+					// 返回该 cookie
 					return cookie;
 				}
 			}

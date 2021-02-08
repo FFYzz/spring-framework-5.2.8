@@ -52,8 +52,18 @@ import org.springframework.web.servlet.ModelAndView;
  * @see SimpleServletPostProcessor
  * @see org.springframework.web.servlet.mvc.ServletWrappingController
  */
+
+/**
+ *
+ */
 public class SimpleServletHandlerAdapter implements HandlerAdapter {
 
+	/**
+	 * handler 是 Servlet 类型的
+	 *
+	 * @param handler the handler object to check
+	 * @return
+	 */
 	@Override
 	public boolean supports(Object handler) {
 		return (handler instanceof Servlet);
@@ -63,11 +73,18 @@ public class SimpleServletHandlerAdapter implements HandlerAdapter {
 	@Nullable
 	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-
+		// 直接调用 servlet.service 执行
 		((Servlet) handler).service(request, response);
 		return null;
 	}
 
+	/**
+	 * 不缓存
+	 *
+	 * @param request current HTTP request
+	 * @param handler the handler to use
+	 * @return
+	 */
 	@Override
 	public long getLastModified(HttpServletRequest request, Object handler) {
 		return -1;

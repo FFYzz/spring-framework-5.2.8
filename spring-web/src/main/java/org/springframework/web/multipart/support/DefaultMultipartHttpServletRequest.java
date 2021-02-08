@@ -43,13 +43,23 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 29.09.2003
  * @see org.springframework.web.multipart.MultipartResolver
  */
+
+/**
+ * 默认的处理上传文件的 Request
+ */
 public class DefaultMultipartHttpServletRequest extends AbstractMultipartHttpServletRequest {
 
 	private static final String CONTENT_TYPE = "Content-Type";
 
+	/**
+	 * key: 参数名
+	 */
 	@Nullable
 	private Map<String, String[]> multipartParameters;
 
+	/**
+	 * key: 参数名
+	 */
 	@Nullable
 	private Map<String, String> multipartParameterContentTypes;
 

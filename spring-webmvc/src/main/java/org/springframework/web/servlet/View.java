@@ -72,6 +72,8 @@ public interface View {
 
 
 	/**
+	 * 返回 view 的 content type
+	 *
 	 * Return the content type of the view, if predetermined.
 	 * <p>Can be used to check the view's content type upfront,
 	 * i.e. before an actual rendering attempt.

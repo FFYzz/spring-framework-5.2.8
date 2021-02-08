@@ -30,9 +30,18 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @since 3.1
  * @see HandlerMethodReturnValueHandler
  */
+
+/**
+ * 方法参数解析成变量值的策略接口
+ * 具体实现类有两种命名方式
+ * 1. XXXMethodArgumentResolver 参数解析器
+ * 2. XXXMethodProcessor 参数解析 + 处理响应类型的返回值
+ */
 public interface HandlerMethodArgumentResolver {
 
 	/**
+	 * 给定的 MethodParameter 是否支持解析
+	 *
 	 * Whether the given {@linkplain MethodParameter method parameter} is
 	 * supported by this resolver.
 	 * @param parameter the method parameter to check
@@ -42,6 +51,8 @@ public interface HandlerMethodArgumentResolver {
 	boolean supportsParameter(MethodParameter parameter);
 
 	/**
+	 * 解析动作
+	 *
 	 * Resolves a method parameter into an argument value from a given request.
 	 * A {@link ModelAndViewContainer} provides access to the model for the
 	 * request. A {@link WebDataBinderFactory} provides a way to create

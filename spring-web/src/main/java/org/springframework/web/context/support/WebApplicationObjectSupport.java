@@ -70,15 +70,19 @@ public abstract class WebApplicationObjectSupport extends ApplicationObjectSuppo
 	}
 
 	/**
+	 * 初始化 ApplicationContext
+	 *
 	 * Calls {@link #initServletContext(javax.servlet.ServletContext)} if the
 	 * given ApplicationContext is a {@link WebApplicationContext}.
 	 */
 	@Override
 	protected void initApplicationContext(ApplicationContext context) {
+		// 该方法会初始化 AbstractHandlerMapping
 		super.initApplicationContext(context);
 		if (this.servletContext == null && context instanceof WebApplicationContext) {
 			this.servletContext = ((WebApplicationContext) context).getServletContext();
 			if (this.servletContext != null) {
+				// 如果 ServketContext 未初始化，则初始化一个 ServletContext
 				initServletContext(this.servletContext);
 			}
 		}

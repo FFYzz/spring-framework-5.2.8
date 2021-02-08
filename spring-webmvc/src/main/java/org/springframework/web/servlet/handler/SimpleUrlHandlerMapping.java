@@ -56,8 +56,15 @@ import org.springframework.util.CollectionUtils;
  * @see #setUrlMap
  * @see BeanNameUrlHandlerMapping
  */
+
+/**
+ * 继承自抽象类 AbstractUrlHandlerMapping
+ */
 public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
+	/**
+	 * 保存 url 与 handler 的对应关系，与 mappings 的功能类似
+	 */
 	private final Map<String, Object> urlMap = new LinkedHashMap<>();
 
 
@@ -94,6 +101,8 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
 
 	/**
+	 * 合并 urlMap 与 mapping 两个 map 中保存的对应关系
+	 *
 	 * Map URL paths to handler bean names.
 	 * This is the typical way of configuring this HandlerMapping.
 	 * <p>Supports direct URL matches and Ant-style pattern matches. For syntax
@@ -136,10 +145,13 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	@Override
 	public void initApplicationContext() throws BeansException {
 		super.initApplicationContext();
+		// 注册 handler
 		registerHandlers(this.urlMap);
 	}
 
 	/**
+	 * 将 urlMap 中持有的数据对存储到父类的 handlerMap 中
+	 *
 	 * Register all handlers specified in the URL map for the corresponding paths.
 	 * @param urlMap a Map with URL paths as keys and handler beans or bean names as values
 	 * @throws BeansException if a handler couldn't be registered
@@ -150,15 +162,19 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 			logger.trace("No patterns in " + formatMappingName());
 		}
 		else {
+			// 遍历
 			urlMap.forEach((url, handler) -> {
 				// Prepend with slash if not already present.
+				// 给 url 加上 /
 				if (!url.startsWith("/")) {
 					url = "/" + url;
 				}
 				// Remove whitespace from handler bean name.
+				// 如果 handler 是 String 类型
 				if (handler instanceof String) {
 					handler = ((String) handler).trim();
 				}
+				// 调用父类的 registerHandler 去注册
 				registerHandler(url, handler);
 			});
 			if (logger.isDebugEnabled()) {

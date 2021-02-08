@@ -54,6 +54,12 @@ import org.springframework.http.HttpStatus;
  * @see org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver
  * @see javax.servlet.http.HttpServletResponse#sendError(int, String)
  */
+
+/**
+ * 作用在 Method 或者 TYPE 类型上
+ * 对返回 Response 的 Status 进行设置
+ * 用的不多
+ */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

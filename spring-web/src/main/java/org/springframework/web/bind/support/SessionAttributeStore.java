@@ -26,9 +26,15 @@ import org.springframework.web.context.request.WebRequest;
  * @since 2.5
  * @see org.springframework.web.bind.annotation.SessionAttributes
  */
+
+/**
+ * 定义操作 Attribute 的方法
+ */
 public interface SessionAttributeStore {
 
 	/**
+	 * 存储
+	 *
 	 * Store the supplied attribute in the backend session.
 	 * <p>Can be called for new attributes as well as for existing attributes.
 	 * In the latter case, this signals that the attribute value may have been modified.
@@ -39,6 +45,8 @@ public interface SessionAttributeStore {
 	void storeAttribute(WebRequest request, String attributeName, Object attributeValue);
 
 	/**
+	 * 获取
+	 *
 	 * Retrieve the specified attribute from the backend session.
 	 * <p>This will typically be called with the expectation that the
 	 * attribute is already present, with an exception to be thrown
@@ -51,6 +59,8 @@ public interface SessionAttributeStore {
 	Object retrieveAttribute(WebRequest request, String attributeName);
 
 	/**
+	 * 清理
+	 *
 	 * Clean up the specified attribute in the backend session.
 	 * <p>Indicates that the attribute name will not be used anymore.
 	 * @param request the current request

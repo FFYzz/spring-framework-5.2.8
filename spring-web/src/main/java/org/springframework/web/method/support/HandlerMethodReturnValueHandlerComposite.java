@@ -34,6 +34,12 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @author Rossen Stoyanchev
  * @since 3.1
  */
+
+/**
+ * HandlerMethodReturnValueHandler 的组合器，里面组合了不同的 HandlerMethodReturnValueHandler
+ * 链式处理
+ * 责任链模式
+ */
 public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodReturnValueHandler {
 
 	protected final Log logger = LogFactory.getLog(getClass());

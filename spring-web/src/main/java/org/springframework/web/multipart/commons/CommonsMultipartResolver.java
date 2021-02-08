@@ -60,6 +60,10 @@ import org.springframework.web.util.WebUtils;
  * @see org.apache.commons.fileupload.servlet.ServletFileUpload
  * @see org.apache.commons.fileupload.disk.DiskFileItemFactory
  */
+
+/**
+ * 使用 apache 的 commons-fileupload 方式
+ */
 public class CommonsMultipartResolver extends CommonsFileUploadSupport
 		implements MultipartResolver, ServletContextAware {
 
@@ -122,14 +126,26 @@ public class CommonsMultipartResolver extends CommonsFileUploadSupport
 
 	@Override
 	public boolean isMultipart(HttpServletRequest request) {
+		// 先判断上传方法是不是 POST
+		// 再判断 contentType 是否为 multipart/
 		return ServletFileUpload.isMultipartContent(request);
 	}
 
+	/**
+	 * 解析动作
+	 *
+	 * @param request the servlet request to wrap (must be of a multipart content type)
+	 * @return
+	 * @throws MultipartException
+	 */
 	@Override
 	public MultipartHttpServletRequest resolveMultipart(final HttpServletRequest request) throws MultipartException {
 		Assert.notNull(request, "Request must not be null");
+		// 延迟解析
 		if (this.resolveLazily) {
 			return new DefaultMultipartHttpServletRequest(request) {
+				// initializeMultipart 只有在调用 getXXX 方法的时候才会调用到
+				// 因此被称为延迟解析
 				@Override
 				protected void initializeMultipart() {
 					MultipartParsingResult parsingResult = parseRequest(request);
@@ -139,6 +155,7 @@ public class CommonsMultipartResolver extends CommonsFileUploadSupport
 				}
 			};
 		}
+		// 立马解析
 		else {
 			MultipartParsingResult parsingResult = parseRequest(request);
 			return new DefaultMultipartHttpServletRequest(request, parsingResult.getMultipartFiles(),
@@ -147,15 +164,20 @@ public class CommonsMultipartResolver extends CommonsFileUploadSupport
 	}
 
 	/**
+	 * 解析 Request
+	 *
 	 * Parse the given servlet request, resolving its multipart elements.
 	 * @param request the request to parse
 	 * @return the parsing result
 	 * @throws MultipartException if multipart resolution failed.
 	 */
 	protected MultipartParsingResult parseRequest(HttpServletRequest request) throws MultipartException {
+		// 返回编码
 		String encoding = determineEncoding(request);
+		// 获取 FileUpload 用于操作文件
 		FileUpload fileUpload = prepareFileUpload(encoding);
 		try {
+			// 解析出 FileItem，一个文件对应一个 FileItem
 			List<FileItem> fileItems = ((ServletFileUpload) fileUpload).parseRequest(request);
 			return parseFileItems(fileItems, encoding);
 		}
@@ -171,6 +193,8 @@ public class CommonsMultipartResolver extends CommonsFileUploadSupport
 	}
 
 	/**
+	 * 返回 请求的编码
+	 *
 	 * Determine the encoding for the given request.
 	 * Can be overridden in subclasses.
 	 * <p>The default implementation checks the request encoding,
@@ -193,6 +217,7 @@ public class CommonsMultipartResolver extends CommonsFileUploadSupport
 		if (!(request instanceof AbstractMultipartHttpServletRequest) ||
 				((AbstractMultipartHttpServletRequest) request).isResolved()) {
 			try {
+				// 清理临时创建的资源，主要指临时文件
 				cleanupFileItems(request.getMultiFileMap());
 			}
 			catch (Throwable ex) {

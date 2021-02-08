@@ -42,6 +42,10 @@ import org.springframework.web.util.UrlPathHelper;
  * @author Rossen Stoyanchev
  * @since 3.1
  */
+
+/**
+ * url 匹配 Condition
+ */
 public class PatternsRequestCondition extends AbstractRequestCondition<PatternsRequestCondition> {
 
 	private final static Set<String> EMPTY_PATH_PATTERN = Collections.singleton("");

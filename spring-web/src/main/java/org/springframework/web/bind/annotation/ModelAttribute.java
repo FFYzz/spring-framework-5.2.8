@@ -53,6 +53,10 @@ import org.springframework.ui.Model;
  * @author Rossen Stoyanchev
  * @since 2.5
  */
+
+/**
+ * 可标注在 PARAMETER 和 METHOD 上
+ */
 @Target({ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

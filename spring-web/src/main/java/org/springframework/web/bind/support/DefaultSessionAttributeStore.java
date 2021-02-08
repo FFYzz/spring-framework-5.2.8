@@ -33,10 +33,15 @@ import org.springframework.web.context.request.WebRequest;
  */
 public class DefaultSessionAttributeStore implements SessionAttributeStore {
 
+	/**
+	 * 属性名字的前缀
+	 */
 	private String attributeNamePrefix = "";
 
 
 	/**
+	 * 设置属性名的前缀
+	 *
 	 * Specify a prefix to use for the attribute names in the backend session.
 	 * <p>Default is to use no prefix, storing the session attributes with the
 	 * same name as in the model.
@@ -46,12 +51,21 @@ public class DefaultSessionAttributeStore implements SessionAttributeStore {
 	}
 
 
+	/**
+	 * 存储属性
+	 *
+	 * @param request the current request
+	 * @param attributeName the name of the attribute
+	 * @param attributeValue the attribute value to store
+	 */
 	@Override
 	public void storeAttribute(WebRequest request, String attributeName, Object attributeValue) {
 		Assert.notNull(request, "WebRequest must not be null");
 		Assert.notNull(attributeName, "Attribute name must not be null");
 		Assert.notNull(attributeValue, "Attribute value must not be null");
+		// 获取属性名
 		String storeAttributeName = getAttributeNameInSession(request, attributeName);
+		// 设置到 request 中
 		request.setAttribute(storeAttributeName, attributeValue, WebRequest.SCOPE_SESSION);
 	}
 
@@ -60,7 +74,9 @@ public class DefaultSessionAttributeStore implements SessionAttributeStore {
 	public Object retrieveAttribute(WebRequest request, String attributeName) {
 		Assert.notNull(request, "WebRequest must not be null");
 		Assert.notNull(attributeName, "Attribute name must not be null");
+		// 获取存储的属性名
 		String storeAttributeName = getAttributeNameInSession(request, attributeName);
+		// 从 request 中获取属性
 		return request.getAttribute(storeAttributeName, WebRequest.SCOPE_SESSION);
 	}
 
@@ -68,12 +84,16 @@ public class DefaultSessionAttributeStore implements SessionAttributeStore {
 	public void cleanupAttribute(WebRequest request, String attributeName) {
 		Assert.notNull(request, "WebRequest must not be null");
 		Assert.notNull(attributeName, "Attribute name must not be null");
+		// 获取存储的属性名
 		String storeAttributeName = getAttributeNameInSession(request, attributeName);
+		// 从 request 中移除属性
 		request.removeAttribute(storeAttributeName, WebRequest.SCOPE_SESSION);
 	}
 
 
 	/**
+	 * 拼接当前的属性名
+	 *
 	 * Calculate the attribute name in the backend session.
 	 * <p>The default implementation simply prepends the configured
 	 * {@link #setAttributeNamePrefix "attributeNamePrefix"}, if any.

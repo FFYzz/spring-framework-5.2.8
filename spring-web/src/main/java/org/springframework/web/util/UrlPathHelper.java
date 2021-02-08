@@ -47,6 +47,10 @@ import org.springframework.util.StringUtils;
  * @see #getLookupPathForRequest
  * @see javax.servlet.RequestDispatcher
  */
+
+/**
+ * URLPath 处理器
+ */
 public class UrlPathHelper {
 
 	/**
@@ -64,8 +68,14 @@ public class UrlPathHelper {
 
 	private boolean alwaysUseFullPath = false;
 
+	/**
+	 * 是否支持 Url 解码
+	 */
 	private boolean urlDecode = true;
 
+	/**
+	 * 是否移除 ;
+	 */
 	private boolean removeSemicolonContent = true;
 
 	private String defaultEncoding = WebUtils.DEFAULT_CHARACTER_ENCODING;
@@ -311,6 +321,8 @@ public class UrlPathHelper {
 	}
 
 	/**
+	 * 替换所有的 // 为 /
+	 *
 	 * Sanitize the given path. Uses the following rules:
 	 * <ul>
 	 * <li>replace all "//" by "/"</li>
@@ -320,10 +332,12 @@ public class UrlPathHelper {
 		String sanitized = path;
 		while (true) {
 			int index = sanitized.indexOf("//");
+			// 找不到，直接返回
 			if (index < 0) {
 				break;
 			}
 			else {
+				// 删去一个 /
 				sanitized = sanitized.substring(0, index) + sanitized.substring(index + 1);
 			}
 		}
@@ -342,6 +356,7 @@ public class UrlPathHelper {
 	 * @return the request URI
 	 */
 	public String getRequestUri(HttpServletRequest request) {
+		// 获取 request_uri
 		String uri = (String) request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE);
 		if (uri == null) {
 			uri = request.getRequestURI();
@@ -458,7 +473,9 @@ public class UrlPathHelper {
 	 */
 	private String decodeAndCleanUriString(HttpServletRequest request, String uri) {
 		uri = removeSemicolonContent(uri);
+		// 解码 uri
 		uri = decodeRequestString(request, uri);
+		//
 		uri = getSanitizedPath(uri);
 		return uri;
 	}
@@ -484,8 +501,10 @@ public class UrlPathHelper {
 
 	@SuppressWarnings("deprecation")
 	private String decodeInternal(HttpServletRequest request, String source) {
+		// 确定 request 的编码格式
 		String enc = determineEncoding(request);
 		try {
+			// 将 source 进行指定格式解码
 			return UriUtils.decode(source, enc);
 		}
 		catch (UnsupportedCharsetException ex) {
@@ -508,6 +527,7 @@ public class UrlPathHelper {
 	 * @see #setDefaultEncoding
 	 */
 	protected String determineEncoding(HttpServletRequest request) {
+		// 获取编码方式
 		String enc = request.getCharacterEncoding();
 		if (enc == null) {
 			enc = getDefaultEncoding();
@@ -527,19 +547,33 @@ public class UrlPathHelper {
 				removeSemicolonContentInternal(requestUri) : removeJsessionid(requestUri));
 	}
 
+	/**
+	 * 移除 ; 号
+	 *
+	 * @param requestUri
+	 * @return
+	 */
 	private String removeSemicolonContentInternal(String requestUri) {
+		// 找 ;
 		int semicolonIndex = requestUri.indexOf(';');
 		while (semicolonIndex != -1) {
 			int slashIndex = requestUri.indexOf('/', semicolonIndex);
 			String start = requestUri.substring(0, semicolonIndex);
+			// 如果有找到 / 号
 			requestUri = (slashIndex != -1) ? start + requestUri.substring(slashIndex) : start;
 			semicolonIndex = requestUri.indexOf(';', semicolonIndex);
 		}
 		return requestUri;
 	}
 
+	/**
+	 * 移除 jsessionid
+	 * @param requestUri
+	 * @return
+	 */
 	private String removeJsessionid(String requestUri) {
 		int startIndex = requestUri.toLowerCase().indexOf(";jsessionid=");
+		// 找到了
 		if (startIndex != -1) {
 			int endIndex = requestUri.indexOf(';', startIndex + 12);
 			String start = requestUri.substring(0, startIndex);
@@ -563,6 +597,7 @@ public class UrlPathHelper {
 		}
 		else {
 			Map<String, String> decodedVars = new LinkedHashMap<>(vars.size());
+			// 对 var 中的 value 进行处理
 			vars.forEach((key, value) -> decodedVars.put(key, decodeInternal(request, value)));
 			return decodedVars;
 		}

@@ -40,6 +40,12 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class HttpRequestHandlerAdapter implements HandlerAdapter {
 
+	/**
+	 * handler 需要实现 HttpRequestHandler 接口
+	 *
+	 * @param handler the handler object to check
+	 * @return
+	 */
 	@Override
 	public boolean supports(Object handler) {
 		return (handler instanceof HttpRequestHandler);
@@ -49,11 +55,18 @@ public class HttpRequestHandlerAdapter implements HandlerAdapter {
 	@Nullable
 	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-
+		// 直接调用 handler 的 handleRequest 方法
 		((HttpRequestHandler) handler).handleRequest(request, response);
 		return null;
 	}
 
+	/**
+	 * 不进行缓存
+	 *
+	 * @param request current HTTP request
+	 * @param handler the handler to use
+	 * @return
+	 */
 	@Override
 	public long getLastModified(HttpServletRequest request, Object handler) {
 		if (handler instanceof LastModified) {

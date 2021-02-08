@@ -58,8 +58,20 @@ import org.springframework.web.servlet.FlashMap;
  * @author Rossen Stoyanchev
  * @since 3.1
  */
+
+/**
+ * redirect 时的参数转发
+ */
 public interface RedirectAttributes extends Model {
 
+	/**
+	 * 设置属性到 RedirectAttributes 中
+	 * 会拼接到 URL 中
+	 *
+	 * @param attributeName the name of the model attribute (never {@code null})
+	 * @param attributeValue the model attribute value (can be {@code null})
+	 * @return
+	 */
 	@Override
 	RedirectAttributes addAttribute(String attributeName, @Nullable Object attributeValue);
 
@@ -80,6 +92,9 @@ public interface RedirectAttributes extends Model {
 	RedirectAttributes addFlashAttribute(String attributeName, @Nullable Object attributeValue);
 
 	/**
+	 * redirect 的参数转发
+	 * 会设置到 flashmap 中
+	 *
 	 * Add the given flash storage using a
 	 * {@link org.springframework.core.Conventions#getVariableName generated name}.
 	 * @param attributeValue the flash attribute value; never {@code null}

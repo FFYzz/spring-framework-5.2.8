@@ -26,9 +26,15 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @author Arjen Poutsma
  * @since 3.1
  */
+
+/**
+ * 创建 WebDataBinder 的工厂
+ */
 public interface WebDataBinderFactory {
 
 	/**
+	 * 根据给定的对象创建一个 WebDataBinder
+	 *
 	 * Create a {@link WebDataBinder} for the given object.
 	 * @param webRequest the current request
 	 * @param target the object to create a data binder for,

@@ -45,6 +45,9 @@ import org.springframework.lang.Nullable;
 public interface WebApplicationContext extends ApplicationContext {
 
 	/**
+	 * 根 Spring WebApplicationContext 确定的名称
+	 * org.springframework.web.context.WebApplicationContext.ROOT
+	 *
 	 * Context attribute to bind root WebApplicationContext to on successful startup.
 	 * <p>Note: If the startup of the root context fails, this attribute can contain
 	 * an exception or error as value. Use WebApplicationContextUtils for convenient

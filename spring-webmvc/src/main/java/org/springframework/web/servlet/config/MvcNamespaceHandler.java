@@ -29,6 +29,10 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  */
 public class MvcNamespaceHandler extends NamespaceHandlerSupport {
 
+	/**
+	 * <mvc:annotation-driven>
+	 * <mvc:xxx> 标签解析
+	 */
 	@Override
 	public void init() {
 		registerBeanDefinitionParser("annotation-driven", new AnnotationDrivenBeanDefinitionParser());

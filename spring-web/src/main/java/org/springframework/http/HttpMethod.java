@@ -30,6 +30,10 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @since 3.0
  */
+
+/**
+ * HTTP 请求类型
+ */
 public enum HttpMethod {
 
 	GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;

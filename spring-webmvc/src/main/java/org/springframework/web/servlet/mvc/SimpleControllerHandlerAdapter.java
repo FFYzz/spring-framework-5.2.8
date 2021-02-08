@@ -37,10 +37,15 @@ import org.springframework.web.servlet.ModelAndView;
  * @see LastModified
  * @see HttpRequestHandlerAdapter
  */
+
+/**
+ * 使用实现了 Controller 接口的 handler 来处理请求
+ */
 public class SimpleControllerHandlerAdapter implements HandlerAdapter {
 
 	@Override
 	public boolean supports(Object handler) {
+		//  handler 是否实现了 org.springframework.web.servlet.mvc.Controller 接口
 		return (handler instanceof Controller);
 	}
 
@@ -48,15 +53,18 @@ public class SimpleControllerHandlerAdapter implements HandlerAdapter {
 	@Nullable
 	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-
+		// 直接调用 handler 的 handleRequest 方法
 		return ((Controller) handler).handleRequest(request, response);
 	}
 
 	@Override
 	public long getLastModified(HttpServletRequest request, Object handler) {
+		// 是否是 LastModified 类型
 		if (handler instanceof LastModified) {
+			// 如果是的话，则判断一下资源是否过期
 			return ((LastModified) handler).getLastModified(request);
 		}
+		// 返回 -1 表示需要获取最新的资源
 		return -1L;
 	}
 

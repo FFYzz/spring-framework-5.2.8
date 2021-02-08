@@ -59,22 +59,41 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Sam Brannen
  * @since 3.1
  */
+
+/**
+ * 方法 Handler
+ */
 public class HandlerMethod {
 
 	/** Logger that is available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	/**
+	 * 当前 HandlerMethod 所在的 Handler
+	 */
 	private final Object bean;
 
+	/**
+	 * 处理 Handler 是 String 类型的情况，用于依赖查找
+	 */
 	@Nullable
 	private final BeanFactory beanFactory;
 
+	/**
+	 * bean 的 class 类型
+	 */
 	private final Class<?> beanType;
 
+	/**
+	 * 具体处理请求的 Method
+	 */
 	private final Method method;
 
 	private final Method bridgedMethod;
 
+	/**
+	 * 处理请求的参数
+	 */
 	private final MethodParameter[] parameters;
 
 	@Nullable
@@ -325,6 +344,8 @@ public class HandlerMethod {
 	}
 
 	/**
+	 * Handler Bean 是 String 类型，则进行依赖查找
+	 *
 	 * If the provided instance contains a bean name rather than an object instance,
 	 * the bean name is resolved before a {@link HandlerMethod} is created and returned.
 	 */
@@ -333,8 +354,10 @@ public class HandlerMethod {
 		if (this.bean instanceof String) {
 			Assert.state(this.beanFactory != null, "Cannot resolve bean name without BeanFactory");
 			String beanName = (String) this.bean;
+			// 依赖查找
 			handler = this.beanFactory.getBean(beanName);
 		}
+		// 创建一个新的 HandlerMethod
 		return new HandlerMethod(this, handler);
 	}
 
@@ -458,6 +481,8 @@ public class HandlerMethod {
 
 
 	/**
+	 * 处理方法参数
+	 *
 	 * A MethodParameter with HandlerMethod-specific behavior.
 	 */
 	protected class HandlerMethodParameter extends SynthesizingMethodParameter {
@@ -531,6 +556,8 @@ public class HandlerMethod {
 
 
 	/**
+	 * 方法返回参数处理
+	 *
 	 * A MethodParameter for a HandlerMethod return type based on an actual return value.
 	 */
 	private class ReturnValueMethodParameter extends HandlerMethodParameter {

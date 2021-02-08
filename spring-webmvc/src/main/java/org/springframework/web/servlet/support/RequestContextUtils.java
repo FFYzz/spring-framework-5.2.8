@@ -231,6 +231,7 @@ public abstract class RequestContextUtils {
 	@SuppressWarnings("unchecked")
 	@Nullable
 	public static Map<String, ?> getInputFlashMap(HttpServletRequest request) {
+		// 获取 request 的 input_flash_map
 		return (Map<String, ?>) request.getAttribute(DispatcherServlet.INPUT_FLASH_MAP_ATTRIBUTE);
 	}
 

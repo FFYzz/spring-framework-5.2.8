@@ -151,10 +151,22 @@ import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolv
  * @author Agim Emruli
  * @since 3.0
  */
+
+/**
+ * springMVC 中的 mvc:annotation-driven 标签处理
+ * 不会全部加载 DispatcherServlet.properties 中配置的 Bean
+ * 因为该类中指定了一些 Bean
+ */
 class AnnotationDrivenBeanDefinitionParser implements BeanDefinitionParser {
 
+	/**
+	 * 设置了 HandlerMapping
+	 */
 	public static final String HANDLER_MAPPING_BEAN_NAME = RequestMappingHandlerMapping.class.getName();
 
+	/**
+	 * 设置了 HandlerAdapter
+	 */
 	public static final String HANDLER_ADAPTER_BEAN_NAME = RequestMappingHandlerAdapter.class.getName();
 
 	public static final String CONTENT_NEGOTIATION_MANAGER_BEAN_NAME = "mvcContentNegotiationManager";

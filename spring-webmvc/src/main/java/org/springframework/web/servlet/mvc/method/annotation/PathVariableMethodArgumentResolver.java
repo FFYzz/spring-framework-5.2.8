@@ -62,6 +62,11 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @author Juergen Hoeller
  * @since 3.1
  */
+
+/**
+ * 解析 @PathVariable 注解
+ * 解析 URL 路径中的值
+ */
 public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethodArgumentResolver
 		implements UriComponentsContributor {
 
@@ -70,10 +75,13 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
+		// parameter 得是 PathVariable 类型
 		if (!parameter.hasParameterAnnotation(PathVariable.class)) {
 			return false;
 		}
+		// 如果内部嵌套的参数是 Map 类型，则看看
 		if (Map.class.isAssignableFrom(parameter.nestedIfOptional().getNestedParameterType())) {
+			// 获取内部的 PathVariable
 			PathVariable pathVariable = parameter.getParameterAnnotation(PathVariable.class);
 			return (pathVariable != null && StringUtils.hasText(pathVariable.value()));
 		}
@@ -91,6 +99,7 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
 	@SuppressWarnings("unchecked")
 	@Nullable
 	protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
+		// 获取 request 中的 uriTemplateVariables 属性
 		Map<String, String> uriTemplateVars = (Map<String, String>) request.getAttribute(
 				HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
 		return (uriTemplateVars != null ? uriTemplateVars.get(name) : null);
@@ -111,6 +120,7 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
 		Map<String, Object> pathVars = (Map<String, Object>) request.getAttribute(key, scope);
 		if (pathVars == null) {
 			pathVars = new HashMap<>();
+			// 设置到 request 中
 			request.setAttribute(key, pathVars, scope);
 		}
 		pathVars.put(name, arg);

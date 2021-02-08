@@ -72,6 +72,10 @@ import org.springframework.web.util.UrlPathHelper;
  * @author Juergen Hoeller
  * @since 3.1
  */
+
+/**
+ * 定义相关工具，不直接解析参数
+ */
 public abstract class AbstractMessageConverterMethodProcessor extends AbstractMessageConverterMethodArgumentResolver
 		implements HandlerMethodReturnValueHandler {
 

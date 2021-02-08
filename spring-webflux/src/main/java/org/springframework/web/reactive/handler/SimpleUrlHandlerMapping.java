@@ -53,6 +53,9 @@ import org.springframework.util.CollectionUtils;
  */
 public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
+	/**
+	 * 保存路径与 handler 的对应关系
+	 */
 	private final Map<String, Object> urlMap = new LinkedHashMap<>();
 
 
@@ -89,6 +92,8 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
 
 	/**
+	 * 将 urlMap 与 mappings 中定义的对应关系合并到一起
+	 *
 	 * Map URL paths to handler bean names.
 	 * This is the typical way of configuring this HandlerMapping.
 	 * <p>Supports direct URL matches and Ant-style pattern matches. For syntax details,

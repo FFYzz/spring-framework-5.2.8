@@ -54,12 +54,19 @@ import org.springframework.web.util.WebUtils;
  * @see CommonsMultipartFile
  * @see CommonsMultipartResolver
  */
+
+/**
+ * 组合了 FileUpload
+ */
 public abstract class CommonsFileUploadSupport {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	private final DiskFileItemFactory fileItemFactory;
 
+	/**
+	 * 默认返回 ServletFileUpload
+	 */
 	private final FileUpload fileUpload;
 
 	private boolean uploadTempDirSpecified = false;
@@ -148,6 +155,8 @@ public abstract class CommonsFileUploadSupport {
 	}
 
 	/**
+	 * 默认为 ISO-8859-1
+	 *
 	 * Determine the default encoding to use for parsing requests.
 	 * @see #setDefaultEncoding
 	 */
@@ -223,11 +232,13 @@ public abstract class CommonsFileUploadSupport {
 	 * @return an appropriate FileUpload instance.
 	 */
 	protected FileUpload prepareFileUpload(@Nullable String encoding) {
+		// 返回一个 ServletFileUpload
 		FileUpload fileUpload = getFileUpload();
 		FileUpload actualFileUpload = fileUpload;
 
 		// Use new temporary FileUpload instance if the request specifies
 		// its own encoding that does not match the default encoding.
+		// 编码不同，需要返回一个新的 actualFileUpload
 		if (encoding != null && !encoding.equals(fileUpload.getHeaderEncoding())) {
 			actualFileUpload = newFileUpload(getFileItemFactory());
 			actualFileUpload.setSizeMax(fileUpload.getSizeMax());
@@ -247,12 +258,17 @@ public abstract class CommonsFileUploadSupport {
 	 * @see CommonsMultipartFile#CommonsMultipartFile(org.apache.commons.fileupload.FileItem)
 	 */
 	protected MultipartParsingResult parseFileItems(List<FileItem> fileItems, String encoding) {
+		// 上传的文件<文件名，文件>
 		MultiValueMap<String, MultipartFile> multipartFiles = new LinkedMultiValueMap<>();
+		// 保存参数的 contentType
 		Map<String, String[]> multipartParameters = new HashMap<>();
+		// ContentTypes
 		Map<String, String> multipartParameterContentTypes = new HashMap<>();
 
 		// Extract multipart files and multipart parameters.
+		// 遍历所有的 FileItem，对应一个文件
 		for (FileItem fileItem : fileItems) {
+			// 如果是 文本表单字段
 			if (fileItem.isFormField()) {
 				String value;
 				String partEncoding = determineEncoding(fileItem.getContentType(), encoding);
@@ -269,18 +285,24 @@ public abstract class CommonsFileUploadSupport {
 				String[] curParam = multipartParameters.get(fileItem.getFieldName());
 				if (curParam == null) {
 					// simple form field
+					// 单个参数
 					multipartParameters.put(fileItem.getFieldName(), new String[] {value});
 				}
 				else {
 					// array of simple form fields
+					// 数组参数
 					String[] newParam = StringUtils.addStringToArray(curParam, value);
+					// 参数放入 multipartParameters 中
 					multipartParameters.put(fileItem.getFieldName(), newParam);
 				}
 				multipartParameterContentTypes.put(fileItem.getFieldName(), fileItem.getContentType());
 			}
+			// 如果是 文件类型
 			else {
 				// multipart file field
+				// 把  FileItem 封装成 CommonsMultipartFile
 				CommonsMultipartFile file = createMultipartFile(fileItem);
+				// 添加文件以及文件名
 				multipartFiles.add(file.getName(), file);
 				LogFormatUtils.traceDebug(logger, traceOn ->
 						"Part '" + file.getName() + "', size " + file.getSize() +
@@ -293,6 +315,8 @@ public abstract class CommonsFileUploadSupport {
 	}
 
 	/**
+	 * 把 FileItem 封装成 CommonsMultipartFile
+	 *
 	 * Create a {@link CommonsMultipartFile} wrapper for the given Commons {@link FileItem}.
 	 * @param fileItem the Commons FileItem to wrap
 	 * @return the corresponding CommonsMultipartFile (potentially a custom subclass)
@@ -307,6 +331,8 @@ public abstract class CommonsFileUploadSupport {
 	}
 
 	/**
+	 * 这里没有关注文件的 name
+	 *
 	 * Cleanup the Spring MultipartFiles created during multipart parsing,
 	 * potentially holding temporary data on disk.
 	 * <p>Deletes the underlying Commons FileItem instances.
@@ -318,6 +344,7 @@ public abstract class CommonsFileUploadSupport {
 			for (MultipartFile file : files) {
 				if (file instanceof CommonsMultipartFile) {
 					CommonsMultipartFile cmf = (CommonsMultipartFile) file;
+					// 删除所有的 file
 					cmf.getFileItem().delete();
 					LogFormatUtils.traceDebug(logger, traceOn ->
 							"Cleaning up part '" + cmf.getName() +
@@ -328,6 +355,14 @@ public abstract class CommonsFileUploadSupport {
 		}
 	}
 
+	/**
+	 * 确定编码格式
+	 * defaultEncoding 是兜底编码格式
+	 *
+	 * @param contentTypeHeader
+	 * @param defaultEncoding
+	 * @return
+	 */
 	private String determineEncoding(String contentTypeHeader, String defaultEncoding) {
 		if (!StringUtils.hasText(contentTypeHeader)) {
 			return defaultEncoding;
@@ -339,11 +374,16 @@ public abstract class CommonsFileUploadSupport {
 
 
 	/**
+	 * MultipartFile holder
+	 *
 	 * Holder for a Map of Spring MultipartFiles and a Map of
 	 * multipart parameters.
 	 */
 	protected static class MultipartParsingResult {
 
+		/**
+		 * 文件名 -> MultipartFile
+		 */
 		private final MultiValueMap<String, MultipartFile> multipartFiles;
 
 		private final Map<String, String[]> multipartParameters;

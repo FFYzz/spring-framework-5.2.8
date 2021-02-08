@@ -28,9 +28,19 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @since 3.1
  * @see HandlerMethodArgumentResolver
  */
+
+/**
+ * 方法返回值处理器
+ * 1. 将相应参数添加到 Model
+ * 2. 设置 View
+ * 3. 如果请求已经执行完了，那么设置 MpdelAndViewContainer 的 requestHandlerd 为 true
+ * 4. 比如处理 redirect:xxxx forward:// 之类的请求与转发
+ */
 public interface HandlerMethodReturnValueHandler {
 
 	/**
+	 * 是否支持处理给定的返回值类型
+	 *
 	 * Whether the given {@linkplain MethodParameter method return type} is
 	 * supported by this handler.
 	 * @param returnType the method return type to check
@@ -40,6 +50,8 @@ public interface HandlerMethodReturnValueHandler {
 	boolean supportsReturnType(MethodParameter returnType);
 
 	/**
+	 * 处理
+	 *
 	 * Handle the given return value by adding attributes to the model and
 	 * setting a view or setting the
 	 * {@link ModelAndViewContainer#setRequestHandled} flag to {@code true}

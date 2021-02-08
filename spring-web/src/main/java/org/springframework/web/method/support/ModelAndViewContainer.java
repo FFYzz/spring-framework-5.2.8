@@ -47,29 +47,64 @@ import org.springframework.web.bind.support.SimpleSessionStatus;
  * @author Juergen Hoeller
  * @since 3.1
  */
+
+/**
+ * 承担着整个请求数据传递的工作
+ * 主要操作持有的 modelMap
+ */
 public class ModelAndViewContainer {
 
+	/**
+	 * 处理返回 redirect 属兔时不使用默认的 model
+	 */
 	private boolean ignoreDefaultModelOnRedirect = false;
 
+	/**
+	 * 可以是逻辑视图 String 类型
+	 * 可以是实际视图
+	 */
 	@Nullable
 	private Object view;
 
+	/**
+	 * 默认的 ModelMap
+	 * 会丢弃存在 RedirectAttributes 中的属性
+	 * @SessionAttribute 的属性只会保存在 defaultModel 中
+	 */
 	private final ModelMap defaultModel = new BindingAwareModelMap();
 
+	/**
+	 * 转发类型的 ModelMap
+	 */
 	@Nullable
 	private ModelMap redirectModel;
 
+	/**
+	 * 处理器返回 redirect 视图的标志
+	 */
 	private boolean redirectModelScenario = false;
 
+	/**
+	 * Http 状态
+	 */
 	@Nullable
 	private HttpStatus status;
 
 	private final Set<String> noBinding = new HashSet<>(4);
 
+	/**
+	 * 保存不绑定的属性
+	 */
 	private final Set<String> bindingDisabled = new HashSet<>(4);
 
+	/**
+	 * 用于设置 SessionAttribute 使用完的标志
+	 */
 	private final SessionStatus sessionStatus = new SimpleSessionStatus();
 
+	/**
+	 * 请求是否已经处理完成的标志位
+	 */
 	private boolean requestHandled = false;
 
 
@@ -90,6 +125,8 @@ public class ModelAndViewContainer {
 	}
 
 	/**
+	 * 设置 view 的逻辑视图
+	 *
 	 * Set a view name to be resolved by the DispatcherServlet via a ViewResolver.
 	 * Will override any pre-existing view name or View.
 	 */
@@ -107,6 +144,8 @@ public class ModelAndViewContainer {
 	}
 
 	/**
+	 * 设置 view 的实际视图
+	 *
 	 * Set a View object to be used by the DispatcherServlet.
 	 * Will override any pre-existing view name or View.
 	 */
@@ -124,6 +163,8 @@ public class ModelAndViewContainer {
 	}
 
 	/**
+	 * 返回当前 view 是否为逻辑视图
+	 *
 	 * Whether the view is a view reference specified via a name to be
 	 * resolved by the DispatcherServlet via a ViewResolver.
 	 */
@@ -132,6 +173,9 @@ public class ModelAndViewContainer {
 	}
 
 	/**
+	 * 返回当前使用的 modelMap
+	 * 要么是 default 要么是 redirect
+	 *
 	 * Return the model to use -- either the "default" or the "redirect" model.
 	 * The default model is used if {@code redirectModelScenario=false} or
 	 * there is no redirect model (i.e. RedirectAttributes was not declared as
@@ -150,6 +194,8 @@ public class ModelAndViewContainer {
 	}
 
 	/**
+	 * 返回是否使用 default modelMap
+	 *
 	 * Whether to use the default model or the redirect model.
 	 */
 	private boolean useDefaultModel() {
@@ -290,6 +336,7 @@ public class ModelAndViewContainer {
 	 * A shortcut for {@code getModel().addAllAttributes(Map)}.
 	 */
 	public ModelAndViewContainer addAllAttributes(@Nullable Map<String, ?> attributes) {
+		// 将 attributes 中的属性放入当前 ModelAndViewContainer 维护的 ModelMap 中
 		getModel().addAllAttributes(attributes);
 		return this;
 	}

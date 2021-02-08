@@ -42,15 +42,28 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 29.09.2003
  * @see CommonsMultipartResolver
  */
+
+/**
+ * 继承自 MultipartFile
+ */
 @SuppressWarnings("serial")
 public class CommonsMultipartFile implements MultipartFile, Serializable {
 
 	protected static final Log logger = LogFactory.getLog(CommonsMultipartFile.class);
 
+	/**
+	 * 持有的 FileItem，对应一个文件
+	 */
 	private final FileItem fileItem;
 
+	/**
+	 * 文件的大小
+	 */
 	private final long size;
 
+	/**
+	 * 是否保存文件名的标识
+	 */
 	private boolean preserveFilename = false;
 
 
@@ -94,16 +107,19 @@ public class CommonsMultipartFile implements MultipartFile, Serializable {
 
 	@Override
 	public String getOriginalFilename() {
+		// 上传文件的名字
 		String filename = this.fileItem.getName();
 		if (filename == null) {
 			// Should never happen.
 			return "";
 		}
+		//
 		if (this.preserveFilename) {
 			// Do not try to strip off a path...
+			// 不需要处理分隔符，直接返回
 			return filename;
 		}
-
+		// 处理分隔符
 		// Check for Unix-style path
 		int unixSep = filename.lastIndexOf('/');
 		// Check for Windows-style path
@@ -112,6 +128,7 @@ public class CommonsMultipartFile implements MultipartFile, Serializable {
 		int pos = Math.max(winSep, unixSep);
 		if (pos != -1)  {
 			// Any sort of path separator found...
+			// 取出最后一个分隔符后面的文件名
 			return filename.substring(pos + 1);
 		}
 		else {

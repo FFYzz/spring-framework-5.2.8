@@ -41,6 +41,13 @@ import org.springframework.util.FileCopyUtils;
  * @see org.springframework.web.multipart.MultipartHttpServletRequest
  * @see org.springframework.web.multipart.MultipartResolver
  */
+
+/**
+ *  multipart 请求上传的文件，对应一个文件。
+ *  有两个具体的实现，分别对应不同的两个 Resolver
+ *  一个是 StandardMultipartFile
+ *  另一个是 CommonsMultipartFile
+ */
 public interface MultipartFile extends InputStreamSource {
 
 	/**

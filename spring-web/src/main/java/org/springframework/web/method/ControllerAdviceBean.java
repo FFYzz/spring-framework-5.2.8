@@ -49,6 +49,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 public class ControllerAdviceBean implements Ordered {
 
 	/**
+	 * 指向一个 bean 实例或者 bean 的 name(String 类型)
+	 *
 	 * Reference to the actual bean instance or a {@code String} representing
 	 * the bean name.
 	 */
@@ -189,6 +191,8 @@ public class ControllerAdviceBean implements Ordered {
 	}
 
 	/**
+	 * 返回当前 ControllerAdvice Bean 的实例对象
+	 *
 	 * Get the bean instance for this {@code ControllerAdviceBean}, if necessary
 	 * resolving the bean name through the {@link BeanFactory}.
 	 * <p>As of Spring Framework 5.2, once the bean instance has been resolved it
@@ -215,6 +219,8 @@ public class ControllerAdviceBean implements Ordered {
 	}
 
 	/**
+	 * 检查当前 ControllerAdvice 是否可以应用于 beanType 中
+	 *
 	 * Check whether the given bean type should be advised by this
 	 * {@code ControllerAdviceBean}.
 	 * @param beanType the type of the bean to check
@@ -250,6 +256,8 @@ public class ControllerAdviceBean implements Ordered {
 
 
 	/**
+	 * 在给定的上下中查找注解了 ControllerAdvice 的类
+	 *
 	 * Find beans annotated with {@link ControllerAdvice @ControllerAdvice} in the
 	 * given {@link ApplicationContext} and wrap them as {@code ControllerAdviceBean}
 	 * instances.
@@ -261,17 +269,23 @@ public class ControllerAdviceBean implements Ordered {
 	 */
 	public static List<ControllerAdviceBean> findAnnotatedBeans(ApplicationContext context) {
 		List<ControllerAdviceBean> adviceBeans = new ArrayList<>();
+		// 查找所有的 Bean Name，包括父容器
 		for (String name : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context, Object.class)) {
+			// 如果 beanName 以 scopedTarget. 开头，那么跳过
 			if (!ScopedProxyUtils.isScopedTarget(name)) {
+				// 找到 ControllerAdvice Bean
 				ControllerAdvice controllerAdvice = context.findAnnotationOnBean(name, ControllerAdvice.class);
 				if (controllerAdvice != null) {
 					// Use the @ControllerAdvice annotation found by findAnnotationOnBean()
 					// in order to avoid a subsequent lookup of the same annotation.
+					// 封装成 ControllerAdviceBean，放入到 adviceBeans 中
 					adviceBeans.add(new ControllerAdviceBean(name, context, controllerAdvice));
 				}
 			}
 		}
+		// 排个序
 		OrderComparator.sort(adviceBeans);
+		// 返回找到的所有的排好序的 ControllerAdvice Bean
 		return adviceBeans;
 	}
 

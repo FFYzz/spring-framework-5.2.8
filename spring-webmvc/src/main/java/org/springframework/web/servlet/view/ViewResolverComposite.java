@@ -41,11 +41,23 @@ import org.springframework.web.servlet.ViewResolver;
  * @author Rossen Stoyanchev
  * @since 4.1
  */
+
+/**
+ * 是 ViewResolver 的组合
+ * 实现了 InitializingBean 接口
+ */
 public class ViewResolverComposite implements ViewResolver, Ordered, InitializingBean,
 		ApplicationContextAware, ServletContextAware {
 
+	/**
+	 * 保存持有的 ViewResolver
+	 */
 	private final List<ViewResolver> viewResolvers = new ArrayList<>();
 
+	/**
+	 * 实现了 Order 接口
+	 * 默认 Order 为最低的 Order
+	 */
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
 
@@ -60,6 +72,8 @@ public class ViewResolverComposite implements ViewResolver, Ordered, Initializin
 	}
 
 	/**
+	 * 返回持有的所有 ViewResolver
+	 *
 	 * Return the list of view viewResolvers to delegate to.
 	 */
 	public List<ViewResolver> getViewResolvers() {
@@ -95,13 +109,24 @@ public class ViewResolverComposite implements ViewResolver, Ordered, Initializin
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		// 遍历持有的 ViewResolver
 		for (ViewResolver viewResolver : this.viewResolvers) {
+			// 如果实现了 InitializingBean 接口
 			if (viewResolver instanceof InitializingBean) {
+				// 调用其 afterPropertiesSet 方法
 				((InitializingBean) viewResolver).afterPropertiesSet();
 			}
 		}
 	}
 
+	/**
+	 * 重点就是该方法
+	 * @param viewName name of the view to resolve
+	 * @param locale the Locale in which to resolve the view.
+	 * ViewResolvers that support internationalization should respect this.
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	@Nullable
 	public View resolveViewName(String viewName, Locale locale) throws Exception {

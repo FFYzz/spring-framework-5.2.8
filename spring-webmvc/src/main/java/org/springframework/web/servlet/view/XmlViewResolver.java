@@ -55,9 +55,18 @@ import org.springframework.web.servlet.View;
  * @see ResourceBundleViewResolver
  * @see UrlBasedViewResolver
  */
+
+/**
+ * 通过 xml 属性文件解析视图
+ * 与 ResourceBundleViewResolver 比较类似
+ */
 public class XmlViewResolver extends AbstractCachingViewResolver
 		implements Ordered, InitializingBean, DisposableBean {
 
+	/**
+	 * 默认的资源路径为 /WEB-INF/views.xml 文件
+	 * 是一个 Spring 配置文件，文件中配置了 View 类型的 Bean
+	 */
 	/** Default if no other location is supplied. */
 	public static final String DEFAULT_LOCATION = "/WEB-INF/views.xml";
 
@@ -65,6 +74,9 @@ public class XmlViewResolver extends AbstractCachingViewResolver
 	@Nullable
 	private Resource location;
 
+	/**
+	 * 缓存子 ApplicationContext
+	 */
 	@Nullable
 	private ConfigurableApplicationContext cachedFactory;
 
@@ -115,10 +127,20 @@ public class XmlViewResolver extends AbstractCachingViewResolver
 		return viewName;
 	}
 
+	/**
+	 * 返回 View，从 xml 配置文件读取
+	 *
+	 * @param viewName the name of the view to retrieve
+	 * @param locale the Locale to retrieve the view for
+	 * @return
+	 * @throws BeansException
+	 */
 	@Override
 	protected View loadView(String viewName, Locale locale) throws BeansException {
+		// 返回一个 Spring 容器
 		BeanFactory factory = initFactory();
 		try {
+			// 在子 Spring 容器中查找 View
 			return factory.getBean(viewName, View.class);
 		}
 		catch (NoSuchBeanDefinitionException ex) {
@@ -128,6 +150,9 @@ public class XmlViewResolver extends AbstractCachingViewResolver
 	}
 
 	/**
+	 * synchronized 同步方法
+	 * 返回一个 ApplicationContext 容器
+	 *
 	 * Initialize the view bean factory from the XML file.
 	 * Synchronized because of access by parallel threads.
 	 * @throws BeansException in case of initialization errors
@@ -137,16 +162,21 @@ public class XmlViewResolver extends AbstractCachingViewResolver
 			return this.cachedFactory;
 		}
 
+		// 获取当前的 Spring 应用上下文
 		ApplicationContext applicationContext = obtainApplicationContext();
 
+		// 资源
 		Resource actualLocation = this.location;
+		// 读取默认配置 /WEB-INF/views.xml
 		if (actualLocation == null) {
 			actualLocation = applicationContext.getResource(DEFAULT_LOCATION);
 		}
 
 		// Create child ApplicationContext for views.
+		// 创建一个子 Application
 		GenericWebApplicationContext factory = new GenericWebApplicationContext();
 		factory.setParent(applicationContext);
+		// 使用同一个 servletContext
 		factory.setServletContext(getServletContext());
 
 		// Load XML resource with context-aware entity resolver.
@@ -155,6 +185,7 @@ public class XmlViewResolver extends AbstractCachingViewResolver
 		reader.setEntityResolver(new ResourceEntityResolver(applicationContext));
 		reader.loadBeanDefinitions(actualLocation);
 
+		// 启动容器
 		factory.refresh();
 
 		if (isCache()) {

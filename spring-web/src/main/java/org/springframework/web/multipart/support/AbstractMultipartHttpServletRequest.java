@@ -44,6 +44,9 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 public abstract class AbstractMultipartHttpServletRequest extends HttpServletRequestWrapper
 		implements MultipartHttpServletRequest {
 
+	/**
+	 * 保存所有的 Part 文件
+	 */
 	@Nullable
 	private MultiValueMap<String, MultipartFile> multipartFiles;
 

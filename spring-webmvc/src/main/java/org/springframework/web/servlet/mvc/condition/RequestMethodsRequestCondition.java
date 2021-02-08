@@ -42,6 +42,11 @@ import org.springframework.web.cors.CorsUtils;
  * @author Rossen Stoyanchev
  * @since 3.1
  */
+
+/**
+ * 请求方法匹配 Condition
+ * GET POST DELETE
+ */
 public final class RequestMethodsRequestCondition extends AbstractRequestCondition<RequestMethodsRequestCondition> {
 
 	/** Per HTTP method cache to return ready instances from getMatchingCondition. */

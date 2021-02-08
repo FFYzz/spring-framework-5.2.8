@@ -46,11 +46,18 @@ import org.springframework.util.ClassUtils;
  * @see InternalResourceView
  * @see JstlView
  */
+
+/**
+ * 处理 JSP 视图
+ */
 public class InternalResourceViewResolver extends UrlBasedViewResolver {
 
 	private static final boolean jstlPresent = ClassUtils.isPresent(
 			"javax.servlet.jsp.jstl.core.Config", InternalResourceViewResolver.class.getClassLoader());
 
+	/**
+	 * 表示是否在可以使用 forward 的情况下也强制使用 include
+	 */
 	@Nullable
 	private Boolean alwaysInclude;
 
@@ -77,6 +84,7 @@ public class InternalResourceViewResolver extends UrlBasedViewResolver {
 	 */
 	public InternalResourceViewResolver(String prefix, String suffix) {
 		this();
+		// 设置前后缀
 		setPrefix(prefix);
 		setSuffix(suffix);
 	}

@@ -67,6 +67,10 @@ public class InternalResourceView extends AbstractUrlBasedView {
 
 	private boolean alwaysInclude = false;
 
+	/**
+	 * 用于阻止循环
+	 * 请求处理完之后又转发会原来使用的处理器的情况
+	 */
 	private boolean preventDispatchLoop = false;
 
 
@@ -138,7 +142,7 @@ public class InternalResourceView extends AbstractUrlBasedView {
 	protected void renderMergedOutputModel(
 			Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		// Expose the model object as request attributes.
+		// Expose the model object as request attributes.		// 将 model 中的属性设置进去
 		exposeModelAsRequestAttributes(model, request);
 
 		// Expose helpers as request attributes, if any.

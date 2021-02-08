@@ -82,18 +82,34 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 	protected static final String HEADER_CACHE_CONTROL = "Cache-Control";
 
 
+	/**
+	 * 支持的 HTTP 方法
+	 */
 	/** Set of supported HTTP methods. */
 	@Nullable
 	private Set<String> supportedMethods;
 
+	/**
+	 * 支持访问的 HTTP 方法，基于 supportedMethods 属性
+	 */
 	@Nullable
 	private String allowHeader;
 
+	/**
+	 * 当前请求是否需要携带 session
+	 */
 	private boolean requireSession = false;
 
+	/**
+	 * Http response header 的 Cache-Control
+	 */
 	@Nullable
 	private CacheControl cacheControl;
 
+	/**
+	 * 缓存的时间
+	 * 与 cacheControl 是二选一的情况
+	 */
 	private int cacheSeconds = -1;
 
 	@Nullable
@@ -170,21 +186,30 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 		return (this.supportedMethods != null ? StringUtils.toStringArray(this.supportedMethods) : null);
 	}
 
+	/**
+	 * 初始化 allowHeader
+	 * 总而言之， OPTIONS 方法是一定支持的
+	 */
 	private void initAllowHeader() {
 		Collection<String> allowedMethods;
+		// 如果没有指定 supportedMethods
 		if (this.supportedMethods == null) {
 			allowedMethods = new ArrayList<>(HttpMethod.values().length - 1);
 			for (HttpMethod method : HttpMethod.values()) {
+				// 除了 TRACE 之外的所有方法都加入到 allowedMethods 中
 				if (method != HttpMethod.TRACE) {
 					allowedMethods.add(method.name());
 				}
 			}
 		}
+		// 如果 supportedMethods 中包含 OPTIONS 方法，那么直接将 supportedMethods 中的所有方法赋给 allowHeader
 		else if (this.supportedMethods.contains(HttpMethod.OPTIONS.name())) {
 			allowedMethods = this.supportedMethods;
 		}
 		else {
+			// 先将 supportedMethods 中的方法都加入到 allowedMethods
 			allowedMethods = new ArrayList<>(this.supportedMethods);
+			// 额外将 OPTIONS 也添加 进去
 			allowedMethods.add(HttpMethod.OPTIONS.name());
 
 		}
@@ -369,6 +394,8 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 
 
 	/**
+	 * 检查请求方法以及是否携带 session
+	 *
 	 * Check the given request for supported methods and a required session, if any.
 	 * @param request current HTTP request
 	 * @throws ServletException if the request cannot be handled because a check failed
@@ -376,7 +403,10 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 	 */
 	protected final void checkRequest(HttpServletRequest request) throws ServletException {
 		// Check whether we should support the request method.
+		// 获取请求方法
 		String method = request.getMethod();
+		// 是否支持该请求方法
+		// 不支持抛出异常
 		if (this.supportedMethods != null && !this.supportedMethods.contains(method)) {
 			throw new HttpRequestMethodNotSupportedException(method, this.supportedMethods);
 		}
@@ -394,9 +424,11 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 	 * @since 4.2
 	 */
 	protected final void prepareResponse(HttpServletResponse response) {
+		// 如果使用了 Cache-Control，那么按照 Cache-Control 来
 		if (this.cacheControl != null) {
 			applyCacheControl(response, this.cacheControl);
 		}
+		// 否则按照定义的 cacheSeconds 时间来
 		else {
 			applyCacheSeconds(response, this.cacheSeconds);
 		}
@@ -408,15 +440,20 @@ public abstract class WebContentGenerator extends WebApplicationObjectSupport {
 	}
 
 	/**
+	 * 应用 Cache-Control
+	 * 主要就是给 Response Header 中的 Cache-Control 属性赋值
+	 *
 	 * Set the HTTP Cache-Control header according to the given settings.
 	 * @param response current HTTP response
 	 * @param cacheControl the pre-configured cache control settings
 	 * @since 4.2
 	 */
 	protected final void applyCacheControl(HttpServletResponse response, CacheControl cacheControl) {
+		// 获取 Cache-Control 的值
 		String ccValue = cacheControl.getHeaderValue();
 		if (ccValue != null) {
 			// Set computed HTTP 1.1 Cache-Control header
+			// 设置 Header
 			response.setHeader(HEADER_CACHE_CONTROL, ccValue);
 
 			if (response.containsHeader(HEADER_PRAGMA)) {

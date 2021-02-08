@@ -40,6 +40,11 @@ import org.springframework.util.ObjectUtils;
  * @author Rossen Stoyanchev
  * @since 3.2
  */
+
+/**
+ * 组合条件匹配
+ * 责任链模式
+ */
 public class CompositeRequestCondition extends AbstractRequestCondition<CompositeRequestCondition> {
 
 	private final RequestConditionHolder[] requestConditions;

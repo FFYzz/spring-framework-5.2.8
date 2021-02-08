@@ -57,6 +57,10 @@ import org.springframework.web.method.HandlerMethod;
  * @see org.springframework.web.context.request.async.CallableProcessingInterceptor
  * @see org.springframework.web.context.request.async.DeferredResultProcessingInterceptor
  */
+
+/**
+ * 异步的 HandlerInterceptor
+ */
 public interface AsyncHandlerInterceptor extends HandlerInterceptor {
 
 	/**

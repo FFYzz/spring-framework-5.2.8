@@ -92,6 +92,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	}
 
 	/**
+	 * 设置方法的参数解析器
+	 *
 	 * Set {@link HandlerMethodArgumentResolver HandlerMethodArgumentResolvers} to use to use for resolving method argument values.
 	 */
 	public void setHandlerMethodArgumentResolvers(HandlerMethodArgumentResolverComposite argumentResolvers) {
@@ -131,14 +133,18 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 			Object... providedArgs) throws Exception {
 
+		// 获取参数值
 		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Arguments: " + Arrays.toString(args));
 		}
+		// 调用
 		return doInvoke(args);
 	}
 
 	/**
+	 * 获取方法参数值
+	 *
 	 * Get the method argument values for the current request, checking the provided
 	 * argument values and falling back to the configured argument resolvers.
 	 * <p>The resulting array will be passed into {@link #doInvoke}.
@@ -147,6 +153,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 			Object... providedArgs) throws Exception {
 
+		// 获得方法参数
 		MethodParameter[] parameters = getMethodParameters();
 		if (ObjectUtils.isEmpty(parameters)) {
 			return EMPTY_ARGS;
@@ -155,7 +162,9 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		Object[] args = new Object[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
 			MethodParameter parameter = parameters[i];
+			// 设置参数名发现器
 			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
+			// 获取参数
 			args[i] = findProvidedArgument(parameter, providedArgs);
 			if (args[i] != null) {
 				continue;
@@ -164,6 +173,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 				throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
 			}
 			try {
+				// 解析得到参数值(HandlerMethodArgumentResolver) 将参数赋上值，比如 demo 中上传的文件 file
 				args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
 			}
 			catch (Exception ex) {
@@ -177,16 +187,21 @@ public class InvocableHandlerMethod extends HandlerMethod {
 				throw ex;
 			}
 		}
+		// 返回解析后的参数结果
 		return args;
 	}
 
 	/**
+	 * 调用方法
+	 *
 	 * Invoke the handler method with the given argument values.
 	 */
 	@Nullable
 	protected Object doInvoke(Object... args) throws Exception {
+		// 获取访问 bridgedMethod 的能力
 		ReflectionUtils.makeAccessible(getBridgedMethod());
 		try {
+			// 返回调用结果
 			return getBridgedMethod().invoke(getBean(), args);
 		}
 		catch (IllegalArgumentException ex) {

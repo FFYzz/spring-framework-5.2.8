@@ -38,6 +38,10 @@ import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
  * @see #setExposeSpringMacroHelpers
  * @see FreeMarkerView
  */
+
+/**
+ * 处理 freemaker
+ */
 public class FreeMarkerViewResolver extends AbstractTemplateViewResolver {
 
 	/**
@@ -57,12 +61,15 @@ public class FreeMarkerViewResolver extends AbstractTemplateViewResolver {
 	 */
 	public FreeMarkerViewResolver(String prefix, String suffix) {
 		this();
+		// 设置前后缀
 		setPrefix(prefix);
 		setSuffix(suffix);
 	}
 
 
 	/**
+	 * 支持的 ViewClass
+	 *
 	 * Requires {@link FreeMarkerView}.
 	 */
 	@Override

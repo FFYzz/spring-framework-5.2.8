@@ -44,6 +44,13 @@ import org.springframework.core.annotation.AliasFor;
  * @see SessionAttributes
  * @see RequestAttribute
  */
+
+/**
+ * 作用在处理器类上
+ * 用于在多个请求之间传递参数
+ * 与 session#setAttribute 方法不同
+ * @SessionAttribute 适合短期存储
+ */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

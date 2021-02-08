@@ -93,8 +93,15 @@ import org.springframework.web.util.WebUtils;
  * @author Rossen Stoyanchev
  * @see WebContentInterceptor
  */
+
+/**
+ * 实现了 org.springframework.web.servlet.mvc.Controller 接口
+ */
 public abstract class AbstractController extends WebContentGenerator implements Controller {
 
+	/**
+	 * 控制 Controller 在一个 session 中执行时是否需要同步
+	 */
 	private boolean synchronizeOnSession = false;
 
 
@@ -154,6 +161,8 @@ public abstract class AbstractController extends WebContentGenerator implements 
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 
+		// OPTIONS 请求
+		// 返回制定资源支持的方法
 		if (HttpMethod.OPTIONS.matches(request.getMethod())) {
 			response.setHeader("Allow", getAllowHeader());
 			return null;
@@ -161,23 +170,29 @@ public abstract class AbstractController extends WebContentGenerator implements 
 
 		// Delegate to WebContentGenerator for checking and preparing.
 		checkRequest(request);
+		// 设置 response header 的值
 		prepareResponse(response);
 
 		// Execute handleRequestInternal in synchronized block if required.
+		// 检查同一 session 是否需要同步控制
 		if (this.synchronizeOnSession) {
 			HttpSession session = request.getSession(false);
 			if (session != null) {
 				Object mutex = WebUtils.getSessionMutex(session);
 				synchronized (mutex) {
+					// 由子类实现
 					return handleRequestInternal(request, response);
 				}
 			}
 		}
-
+		// 不需要同步控制则直接调用
+		// 由子类实现
 		return handleRequestInternal(request, response);
 	}
 
 	/**
+	 * 抽象方法 / 模板方法
+	 *
 	 * Template method. Subclasses must implement this.
 	 * The contract is the same as for {@code handleRequest}.
 	 * @see #handleRequest

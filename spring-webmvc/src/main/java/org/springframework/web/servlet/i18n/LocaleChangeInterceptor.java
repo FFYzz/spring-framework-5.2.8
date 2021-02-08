@@ -41,9 +41,15 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * @since 20.06.2003
  * @see org.springframework.web.servlet.LocaleResolver
  */
+
+/**
+ * Locale 变化拦截器
+ */
 public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
 
 	/**
+	 * 默认监听请求中的参数名
+	 *
 	 * Default name of the locale specification parameter: "locale".
 	 */
 	public static final String DEFAULT_PARAM_NAME = "locale";
@@ -51,15 +57,28 @@ public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	/**
+	 * 监听的 request 中的参数名
+	 */
 	private String paramName = DEFAULT_PARAM_NAME;
 
+
+	/**
+	 * 拦截的 Http 方法类型
+	 * 为空表示所有的都拦截
+	 */
 	@Nullable
 	private String[] httpMethods;
 
+	/**
+	 * 是否忽略无效的 Locale 值
+	 */
 	private boolean ignoreInvalidLocale = false;
 
 
 	/**
+	 * 设置监听的参数名
+	 *
 	 * Set the name of the parameter that contains a locale specification
 	 * in a locale change request. Default is "locale".
 	 */
@@ -76,6 +95,8 @@ public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
 	}
 
 	/**
+	 * 设置要拦截的 Http 方法
+	 *
 	 * Configure the HTTP method(s) over which the locale can be changed.
 	 * @param httpMethods the methods
 	 * @since 4.2
@@ -94,6 +115,8 @@ public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
 	}
 
 	/**
+	 * 设置受忽略无效的 locale 值
+	 *
 	 * Set whether to ignore an invalid value for the locale parameter.
 	 * @since 4.2.2
 	 */
@@ -138,19 +161,31 @@ public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
 	}
 
 
+	/**
+	 * 前置拦截
+	 * @param request
+	 * @param response
+	 * @param handler
+	 * @return
+	 * @throws ServletException
+	 */
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws ServletException {
-
+		// 获取 request 的参数值
 		String newLocale = request.getParameter(getParamName());
 		if (newLocale != null) {
 			if (checkHttpMethod(request.getMethod())) {
+				// 获取 LocaleResolver
 				LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
 				if (localeResolver == null) {
+					// DispatcherServlet 中一定有定义 LocaleResolver
+					// 没有的话就抛异常
 					throw new IllegalStateException(
 							"No LocaleResolver found: not in a DispatcherServlet request?");
 				}
 				try {
+					// 将 Locale 设置为参数中解析出来的 Locale
 					localeResolver.setLocale(request, response, parseLocaleValue(newLocale));
 				}
 				catch (IllegalArgumentException ex) {
@@ -166,9 +201,16 @@ public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
 			}
 		}
 		// Proceed in any case.
+		// 直接放过
 		return true;
 	}
 
+	/**
+	 * 检查 http 方法是否满足要求
+	 *
+	 * @param currentMethod
+	 * @return
+	 */
 	private boolean checkHttpMethod(String currentMethod) {
 		String[] configuredMethods = getHttpMethods();
 		if (ObjectUtils.isEmpty(configuredMethods)) {

@@ -114,6 +114,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 	@Nullable
 	protected final HttpSession getSession(boolean allowCreate) {
 		if (isRequestActive()) {
+			// 不存在则创建一个 session
 			HttpSession session = this.request.getSession(allowCreate);
 			this.session = session;
 			return session;
@@ -127,6 +128,7 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 							"No session found and request already completed - cannot create new session!");
 				}
 				else {
+					// 传入 false，表示不新建 session
 					session = this.request.getSession(false);
 					this.session = session;
 				}
@@ -171,15 +173,21 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
 
 	@Override
 	public void setAttribute(String name, Object value, int scope) {
+		// 先判断 scope
+		// 针对不同的 scope 进行不同的设置
+		// request 级别
 		if (scope == SCOPE_REQUEST) {
 			if (!isRequestActive()) {
 				throw new IllegalStateException(
 						"Cannot set request attribute - request is not active anymore!");
 			}
+			// 直接对 request 进行设置
 			this.request.setAttribute(name, value);
 		}
+		// session 级别
 		else {
 			HttpSession session = obtainSession();
+			// 直接对 session 进行设置
 			this.sessionAttributesToUpdate.remove(name);
 			session.setAttribute(name, value);
 		}

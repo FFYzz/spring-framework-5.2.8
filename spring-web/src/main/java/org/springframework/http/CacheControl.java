@@ -49,7 +49,13 @@ import org.springframework.util.StringUtils;
  * HTTP caching - Google developers reference</a>
  * @see <a href="https://www.mnot.net/cache_docs/">Mark Nottingham's cache documentation</a>
  */
+
+/**
+ * HTTP header 的 Cache-Control 响应头
+ */
 public class CacheControl {
+
+	// Cache-Controle 中的一些属性
 
 	@Nullable
 	private Duration maxAge;
@@ -326,11 +332,15 @@ public class CacheControl {
 	 */
 	@Nullable
 	public String getHeaderValue() {
+		// 获取 Cache-Control 的值
 		String headerValue = toHeaderValue();
+		// 返回该值
 		return (StringUtils.hasText(headerValue) ? headerValue : null);
 	}
 
 	/**
+	 * 拼接 Cache-Control 的值
+	 *
 	 * Return the "Cache-Control" header value.
 	 * @return the header value (potentially empty)
 	 */

@@ -53,6 +53,12 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping
  * @see org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
  */
+
+
+/**
+ * HandlerMapping 的作用是根据 request 查找 Mapper 和 interceptor
+ * 定义了许多属性名以及一个方法
+ */
 public interface HandlerMapping {
 
 	/**
@@ -130,6 +136,8 @@ public interface HandlerMapping {
 	String PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE = HandlerMapping.class.getName() + ".producibleMediaTypes";
 
 	/**
+	 * 获取 handler
+	 *
 	 * Return a handler and any interceptors for this request. The choice may be made
 	 * on request URL, session state, or any factor the implementing class chooses.
 	 * <p>The returned HandlerExecutionChain contains a handler Object, rather than

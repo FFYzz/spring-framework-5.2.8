@@ -88,6 +88,8 @@ public abstract class WebApplicationContextUtils {
 	}
 
 	/**
+	 * 获取 ServletContext 中保存的 WebApplicationContext
+	 *
 	 * Find the root {@code WebApplicationContext} for this web app, typically
 	 * loaded via {@link org.springframework.web.context.ContextLoaderListener}.
 	 * <p>Will rethrow an exception that happened on root context startup,
@@ -102,6 +104,9 @@ public abstract class WebApplicationContextUtils {
 	}
 
 	/**
+	 * 获取 ServletContext 中保存的 WebApplicationContext，指定 属性名
+	 * 因为 Spring 的 WebApplicationContext 是以 属性的方式保存到 Servlet Context 中的
+	 *
 	 * Find a custom {@code WebApplicationContext} for this web app.
 	 * @param sc the ServletContext to find the web application context for
 	 * @param attrName the name of the ServletContext attribute to look for

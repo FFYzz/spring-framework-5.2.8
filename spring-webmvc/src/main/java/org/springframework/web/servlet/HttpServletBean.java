@@ -79,6 +79,10 @@ import org.springframework.web.context.support.StandardServletEnvironment;
  * @see #doGet
  * @see #doPost
  */
+
+/**
+ * 参与了创建工作，没有涉及请求的处理
+ */
 @SuppressWarnings("serial")
 public abstract class HttpServletBean extends HttpServlet implements EnvironmentCapable, EnvironmentAware {
 
@@ -140,6 +144,8 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 	}
 
 	/**
+	 * Servlet 创建时会调用无参的 init 方法
+	 *
 	 * Map config parameters onto bean properties of this servlet, and
 	 * invoke subclass initialization.
 	 * @throws ServletException if bean properties are invalid (or required
@@ -149,13 +155,18 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 	public final void init() throws ServletException {
 
 		// Set bean properties from init parameters.
+		// 将 servlet 中配置的参数封装进 PropertyValues
 		PropertyValues pvs = new ServletConfigPropertyValues(getServletConfig(), this.requiredProperties);
 		if (!pvs.isEmpty()) {
 			try {
+				// 将当前对象 servlet 封装成 BeanWrapper
 				BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(this);
+				// 创建 ResourceLoader
 				ResourceLoader resourceLoader = new ServletContextResourceLoader(getServletContext());
+				// 注册自定义的 PropertyEditor
 				bw.registerCustomEditor(Resource.class, new ResourceEditor(resourceLoader, getEnvironment()));
 				initBeanWrapper(bw);
+				// 属性设置进去
 				bw.setPropertyValues(pvs, true);
 			}
 			catch (BeansException ex) {
@@ -167,6 +178,8 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 		}
 
 		// Let subclasses do whatever initialization they like.
+		// 初始化 Servlet Bean
+		// 模板方法
 		initServletBean();
 	}
 
@@ -204,6 +217,9 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 
 
 	/**
+	 * 内部类，继承自 MutablePropertyValues
+	 * 用于保存 Servlet 相关的属性配置
+	 *
 	 * PropertyValues implementation created from ServletConfig init parameters.
 	 */
 	private static class ServletConfigPropertyValues extends MutablePropertyValues {
@@ -226,12 +242,14 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 				String property = paramNames.nextElement();
 				Object value = config.getInitParameter(property);
 				addPropertyValue(new PropertyValue(property, value));
+				// 同步更新 必须的属性
 				if (missingProps != null) {
 					missingProps.remove(property);
 				}
 			}
 
 			// Fail if we are still missing properties.
+			// 如果必须的属性未设置，则抛出异常
 			if (!CollectionUtils.isEmpty(missingProps)) {
 				throw new ServletException(
 						"Initialization from ServletConfig for servlet '" + config.getServletName() +

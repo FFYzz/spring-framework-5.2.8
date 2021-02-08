@@ -35,9 +35,16 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.web.servlet.view.ResourceBundleViewResolver
  * @see org.springframework.web.servlet.view.XmlViewResolver
  */
+
+/**
+ * 将 String 类型的视图名和 Locale 解析成为 View
+ * 解析出使用的模板和视图的类型
+ */
 public interface ViewResolver {
 
 	/**
+	 * 根据 视图名 和 Locale 解析成 View
+	 *
 	 * Resolve the given view by name.
 	 * <p>Note: To allow for ViewResolver chaining, a ViewResolver should
 	 * return {@code null} if a view with the given name is not defined in it.
@@ -50,7 +57,7 @@ public interface ViewResolver {
 	 * @return the View object, or {@code null} if not found
 	 * (optional, to allow for ViewResolver chaining)
 	 * @throws Exception if the view cannot be resolved
-	 * (typically in case of problems creating an actual View object)
+	 * (typically in case of problems creating an actual View object )
 	 */
 	@Nullable
 	View resolveViewName(String viewName, Locale locale) throws Exception;

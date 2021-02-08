@@ -72,6 +72,11 @@ import org.springframework.stereotype.Component;
  * @see org.springframework.stereotype.Controller
  * @see RestControllerAdvice
  */
+
+/**
+ * 把 @ControllerAdvice 注解的类中的 注解了 @ExceptionHandler @InitBinder @ModelAttribute 的方法
+ * 应用到所有的 @RequestMapping 注解的方法
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

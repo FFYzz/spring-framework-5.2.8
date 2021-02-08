@@ -74,10 +74,16 @@ import javax.servlet.http.HttpServletResponse;
  * @see org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter
  * @see org.springframework.remoting.caucho.HessianServiceExporter
  */
+
+/**
+ * 函数式接口
+ */
 @FunctionalInterface
 public interface HttpRequestHandler {
 
 	/**
+	 * 处理请求
+	 *
 	 * Process the given request, generating a response.
 	 * @param request current HTTP request
 	 * @param response current HTTP response
