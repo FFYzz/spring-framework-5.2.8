@@ -25,9 +25,19 @@ import org.springframework.lang.Nullable;
  * @author Rod Johnson
  * @author Juergen Hoeller
  */
+
+/**
+ * 层次性的 MessageSource 接口
+ * 增加了对 parent 的读写
+ * 类似于双亲委派的实现
+ * 层次性的优点:
+ * 1. 搜索路径和搜索范围变大了
+ */
 public interface HierarchicalMessageSource extends MessageSource {
 
 	/**
+	 * 设置父类的 MessageSource
+	 *
 	 * Set the parent that will be used to try to resolve messages
 	 * that this object can't resolve.
 	 * @param parent the parent MessageSource that will be used to
@@ -37,6 +47,8 @@ public interface HierarchicalMessageSource extends MessageSource {
 	void setParentMessageSource(@Nullable MessageSource parent);
 
 	/**
+	 * 返回父类的 MessageSource
+	 *
 	 * Return the parent of this MessageSource, or {@code null} if none.
 	 */
 	@Nullable

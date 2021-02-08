@@ -107,6 +107,10 @@ import org.springframework.util.StringUtils;
  * @see DefaultBindingErrorProcessor
  * @see org.springframework.context.MessageSource
  */
+
+/**
+ * 数据绑定
+ */
 public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 
 	/** Default object name used for binding: "target". */

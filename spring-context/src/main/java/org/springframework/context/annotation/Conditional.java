@@ -55,13 +55,19 @@ import java.lang.annotation.Target;
  * @author Sam Brannen
  * @since 4.0
  * @see Condition
+ *
+ * 编程条件装配
  */
+
+
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Conditional {
 
 	/**
+	 * value 提供多个 Condition 的实现，并且所有的 Condition 都得满足
+	 *
 	 * All {@link Condition Conditions} that must {@linkplain Condition#matches match}
 	 * in order for the component to be registered.
 	 */

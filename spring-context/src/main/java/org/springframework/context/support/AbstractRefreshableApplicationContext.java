@@ -71,6 +71,10 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	private Boolean allowCircularReferences;
 
 	/** Bean factory for this context. */
+	/**
+	 * 组合的方式，持有一个  beanFactory
+	 * 并不是直接实现/继承 BeanFactory，虽然事实上也有实现/继承
+	 */
 	@Nullable
 	private volatile DefaultListableBeanFactory beanFactory;
 
@@ -119,15 +123,23 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
+		// 如果已经关联或者存在了 BeanFactory，则进行销毁并关闭
 		if (hasBeanFactory()) {
 			destroyBeans();
 			closeBeanFactory();
 		}
 		try {
+			// 创建一个 beanFactory
+			// BeanFactory 的唯一实现是 DefaultListableBeanFactory
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
+			// 自定义化 BeanFactory
+			// 包括定义 BeanDefinition 的重新定义
+			// 循环依赖的支持
 			customizeBeanFactory(beanFactory);
+			// 加载 BeanDefinition
 			loadBeanDefinitions(beanFactory);
+			// 进行关联
 			this.beanFactory = beanFactory;
 		}
 		catch (IOException ex) {
@@ -163,6 +175,8 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
 	@Override
 	public final ConfigurableListableBeanFactory getBeanFactory() {
+		// 返回 DefaultListableBeanFactory 的 beanFactory
+		// 此时应用上下文必须没有关闭，且 beanFactory 已经初始化
 		DefaultListableBeanFactory beanFactory = this.beanFactory;
 		if (beanFactory == null) {
 			throw new IllegalStateException("BeanFactory not initialized or already closed - " +
@@ -212,9 +226,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see DefaultListableBeanFactory#setAllowEagerClassLoading
 	 */
 	protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
+		// 是否允许重新定义 BeanDefinition
 		if (this.allowBeanDefinitionOverriding != null) {
 			beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
 		}
+		// 是否支持循环依赖
 		if (this.allowCircularReferences != null) {
 			beanFactory.setAllowCircularReferences(this.allowCircularReferences);
 		}

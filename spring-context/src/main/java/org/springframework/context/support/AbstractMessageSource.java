@@ -64,9 +64,15 @@ import org.springframework.util.ObjectUtils;
  */
 public abstract class AbstractMessageSource extends MessageSourceSupport implements HierarchicalMessageSource {
 
+	/**
+	 * 父 MessageSource
+	 */
 	@Nullable
 	private MessageSource parentMessageSource;
 
+	/**
+	 * Properties 类型的 message
+	 */
 	@Nullable
 	private Properties commonMessages;
 
@@ -138,6 +144,7 @@ public abstract class AbstractMessageSource extends MessageSourceSupport impleme
 
 	@Override
 	public final String getMessage(String code, @Nullable Object[] args, @Nullable String defaultMessage, Locale locale) {
+		// 得到消息文本
 		String msg = getMessageInternal(code, args, locale);
 		if (msg != null) {
 			return msg;
@@ -213,9 +220,7 @@ public abstract class AbstractMessageSource extends MessageSourceSupport impleme
 			if (message != null) {
 				return message;
 			}
-		}
-
-		else {
+		} else {
 			// Resolve arguments eagerly, for the case where the message
 			// is defined in a parent MessageSource but resolvable arguments
 			// are defined in the child MessageSource.
@@ -365,6 +370,7 @@ public abstract class AbstractMessageSource extends MessageSourceSupport impleme
 	 */
 	@Nullable
 	protected String resolveCodeWithoutArguments(String code, Locale locale) {
+		// 解析出一个 MessageFormat
 		MessageFormat messageFormat = resolveCode(code, locale);
 		if (messageFormat != null) {
 			synchronized (messageFormat) {

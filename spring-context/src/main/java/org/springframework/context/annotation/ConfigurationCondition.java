@@ -27,6 +27,10 @@ package org.springframework.context.annotation;
  * @since 4.0
  * @see Configuration
  */
+
+/**
+ * 配置阶段
+ */
 public interface ConfigurationCondition extends Condition {
 
 	/**

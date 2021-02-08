@@ -37,16 +37,26 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.context.support.ResourceBundleMessageSource
  * @see org.springframework.context.support.ReloadableResourceBundleMessageSource
  */
+
+/**
+ * 主要有两种实现
+ * ResourceBundleMessageSource
+ * ReloadableResourceBundleMessageSource
+ */
 public interface MessageSource {
 
 	/**
+	 * 如果没有找到 message 则返回 defaultMessage
+	 *
 	 * Try to resolve the message. Return default message if no message was found.
 	 * @param code the message code to look up, e.g. 'calculator.noRateSet'.
 	 * MessageSource users are encouraged to base message names on qualified class
 	 * or package names, avoiding potential conflicts and ensuring maximum clarity.
+	 *             文案的模板编码
 	 * @param args an array of arguments that will be filled in for params within
 	 * the message (params look like "{0}", "{1,date}", "{2,time}" within a message),
 	 * or {@code null} if none
+	 *             文案的模板参数
 	 * @param defaultMessage a default message to return if the lookup fails
 	 * @param locale the locale in which to do the lookup
 	 * @return the resolved message if the lookup was successful, otherwise
@@ -58,6 +68,8 @@ public interface MessageSource {
 	String getMessage(String code, @Nullable Object[] args, @Nullable String defaultMessage, Locale locale);
 
 	/**
+	 * 找不到 message 则当做是 error，抛出 NoSuchMessageException
+	 *
 	 * Try to resolve the message. Treat as an error if the message can't be found.
 	 * @param code the message code to look up, e.g. 'calculator.noRateSet'.
 	 * MessageSource users are encouraged to base message names on qualified class

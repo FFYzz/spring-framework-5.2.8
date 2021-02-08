@@ -25,6 +25,11 @@ import org.springframework.context.ApplicationEvent;
  * @author Juergen Hoeller
  * @since 2.5
  */
+
+/**
+ * 继承自 ApplicationEvent， Spring 应用上下文事件
+ * 有四个监听实现类
+ */
 @SuppressWarnings("serial")
 public abstract class ApplicationContextEvent extends ApplicationEvent {
 

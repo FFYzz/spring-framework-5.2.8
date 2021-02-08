@@ -170,6 +170,8 @@ import org.springframework.core.io.support.PropertySourceFactory;
 public @interface PropertySource {
 
 	/**
+	 * 属性的名字
+	 *
 	 * Indicate the name of this property source. If omitted, the {@link #factory()}
 	 * will generate a name based on the underlying resource (in the case of
 	 * {@link org.springframework.core.io.support.DefaultPropertySourceFactory}:
@@ -181,6 +183,8 @@ public @interface PropertySource {
 	String name() default "";
 
 	/**
+	 * properties 文件，但是来源不限于文件，可以是网络流之类的
+	 *
 	 * Indicate the resource location(s) of the properties file to be loaded.
 	 * <p>Both traditional and XML-based properties file formats are supported
 	 * &mdash; for example, {@code "classpath:/com/myco/app.properties"}
@@ -205,12 +209,17 @@ public @interface PropertySource {
 	boolean ignoreResourceNotFound() default false;
 
 	/**
+	 * 读取的资源的编码
+	 * 4.3 引入，之前的 propertySource 只支持 ISO-8859-1
+	 *
 	 * A specific character encoding for the given resources, e.g. "UTF-8".
 	 * @since 4.3
 	 */
 	String encoding() default "";
 
 	/**
+	 * 扩展除 properties 类型之外的属性源，比如 yaml
+	 *
 	 * Specify a custom {@link PropertySourceFactory}, if any.
 	 * <p>By default, a default factory for standard resource files will be used.
 	 * @since 4.3

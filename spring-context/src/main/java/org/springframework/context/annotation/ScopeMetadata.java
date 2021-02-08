@@ -32,6 +32,10 @@ import org.springframework.util.Assert;
  * @see ScopeMetadataResolver
  * @see ScopedProxyMode
  */
+
+/**
+ * Scope 元信息
+ */
 public class ScopeMetadata {
 
 	private String scopeName = BeanDefinition.SCOPE_SINGLETON;

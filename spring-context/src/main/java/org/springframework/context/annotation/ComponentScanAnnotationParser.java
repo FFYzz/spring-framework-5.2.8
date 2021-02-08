@@ -52,6 +52,10 @@ import org.springframework.util.StringUtils;
  * @see ClassPathBeanDefinitionScanner#scan(String...)
  * @see ComponentScanBeanDefinitionParser
  */
+
+/**
+ * 解析 ComponentScan 注解上的属性
+ */
 class ComponentScanAnnotationParser {
 
 	private final Environment environment;
@@ -73,6 +77,13 @@ class ComponentScanAnnotationParser {
 	}
 
 
+	/**
+	 * 返回 BeanDefinitionHolder
+	 *
+	 * @param componentScan
+	 * @param declaringClass
+	 * @return
+	 */
 	public Set<BeanDefinitionHolder> parse(AnnotationAttributes componentScan, final String declaringClass) {
 		ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(this.registry,
 				componentScan.getBoolean("useDefaultFilters"), this.environment, this.resourceLoader);
@@ -129,6 +140,7 @@ class ComponentScanAnnotationParser {
 				return declaringClass.equals(className);
 			}
 		});
+		// 去 basePackages 中进行扫描
 		return scanner.doScan(StringUtils.toStringArray(basePackages));
 	}
 

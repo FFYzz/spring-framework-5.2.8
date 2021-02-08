@@ -38,6 +38,10 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * @see Conditional
  * @see ConditionContext
  */
+
+/**
+ * 条件
+ */
 @FunctionalInterface
 public interface Condition {
 

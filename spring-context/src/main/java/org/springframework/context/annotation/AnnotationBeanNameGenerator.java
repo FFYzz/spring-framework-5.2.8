@@ -68,6 +68,9 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 	 * as used for component scanning purposes.
 	 * @since 5.2
 	 */
+	/**
+	 * 同样也是推荐单例访问
+	 */
 	public static final AnnotationBeanNameGenerator INSTANCE = new AnnotationBeanNameGenerator();
 
 	private static final String COMPONENT_ANNOTATION_CLASSNAME = "org.springframework.stereotype.Component";
@@ -77,7 +80,10 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 
 	@Override
 	public String generateBeanName(BeanDefinition definition, BeanDefinitionRegistry registry) {
+		// 如果当前 bean 是一个 AnnotatedBeanDefinition
 		if (definition instanceof AnnotatedBeanDefinition) {
+			// 获取注解上的 bean name
+			// 如果没有设置 value 属性，则使用下面的兜底策略
 			String beanName = determineBeanNameFromAnnotation((AnnotatedBeanDefinition) definition);
 			if (StringUtils.hasText(beanName)) {
 				// Explicit bean name found.
@@ -85,20 +91,26 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 			}
 		}
 		// Fallback: generate a unique default bean name.
+		// 兜底策略
 		return buildDefaultBeanName(definition, registry);
 	}
 
 	/**
+	 * 根据注解上的信息来确定 bean name
+	 * value 值
+	 *
 	 * Derive a bean name from one of the annotations on the class.
 	 * @param annotatedDef the annotation-aware bean definition
 	 * @return the bean name, or {@code null} if none is found
 	 */
 	@Nullable
 	protected String determineBeanNameFromAnnotation(AnnotatedBeanDefinition annotatedDef) {
+		// 注解信息
 		AnnotationMetadata amd = annotatedDef.getMetadata();
 		Set<String> types = amd.getAnnotationTypes();
 		String beanName = null;
 		for (String type : types) {
+			// 获取属性
 			AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(amd, type);
 			if (attributes != null) {
 				Set<String> metaTypes = this.metaAnnotationTypesCache.computeIfAbsent(type, key -> {
@@ -106,6 +118,7 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 					return (result.isEmpty() ? Collections.emptySet() : result);
 				});
 				if (isStereotypeWithNameValue(type, metaTypes, attributes)) {
+					// 获取 value 对应的值
 					Object value = attributes.get("value");
 					if (value instanceof String) {
 						String strVal = (String) value;
@@ -164,9 +177,13 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 	 * @return the default bean name (never {@code null})
 	 */
 	protected String buildDefaultBeanName(BeanDefinition definition) {
+		// 获取 class name
 		String beanClassName = definition.getBeanClassName();
 		Assert.state(beanClassName != null, "No bean class name set");
+		// 获取 shortClassname
 		String shortClassName = ClassUtils.getShortName(beanClassName);
+		// java beans 里的 API
+		// 首字母小写
 		return Introspector.decapitalize(shortClassName);
 	}
 

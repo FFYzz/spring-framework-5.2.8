@@ -37,6 +37,10 @@ import org.springframework.util.Assert;
  * @see Conventions#getVariableName
  * @see org.springframework.web.servlet.ModelAndView
  */
+
+/**
+ * 是一个 LinkedHashMap
+ */
 @SuppressWarnings("serial")
 public class ModelMap extends LinkedHashMap<String, Object> {
 
@@ -88,6 +92,7 @@ public class ModelMap extends LinkedHashMap<String, Object> {
 	 */
 	public ModelMap addAttribute(Object attributeValue) {
 		Assert.notNull(attributeValue, "Model object must not be null");
+		// 属性是集合类型且元素个数为 0 ，则直接返回
 		if (attributeValue instanceof Collection && ((Collection<?>) attributeValue).isEmpty()) {
 			return this;
 		}
@@ -120,6 +125,8 @@ public class ModelMap extends LinkedHashMap<String, Object> {
 	}
 
 	/**
+	 * 合并属性
+	 *
 	 * Copy all attributes in the supplied {@code Map} into this {@code Map},
 	 * with existing objects of the same name taking precedence (i.e. not getting
 	 * replaced).

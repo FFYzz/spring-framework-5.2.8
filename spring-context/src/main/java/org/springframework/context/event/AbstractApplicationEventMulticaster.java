@@ -417,6 +417,9 @@ public abstract class AbstractApplicationEventMulticaster
 	 */
 	private class ListenerRetriever {
 
+		/**
+		 * 对应多个 ApplicationListener，可用于类型过滤
+		 */
 		public final Set<ApplicationListener<?>> applicationListeners = new LinkedHashSet<>();
 
 		public final Set<String> applicationListenerBeans = new LinkedHashSet<>();

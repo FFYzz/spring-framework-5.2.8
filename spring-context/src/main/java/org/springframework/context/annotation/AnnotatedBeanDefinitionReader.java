@@ -52,8 +52,14 @@ public class AnnotatedBeanDefinitionReader {
 
 	private BeanNameGenerator beanNameGenerator = AnnotationBeanNameGenerator.INSTANCE;
 
+	/**
+	 * 处理 单例 / prototype
+	 */
 	private ScopeMetadataResolver scopeMetadataResolver = new AnnotationScopeMetadataResolver();
 
+	/**
+	 * 评估，处理是否满足 Condition，是否需要初始化
+	 */
 	private ConditionEvaluator conditionEvaluator;
 
 
@@ -85,6 +91,7 @@ public class AnnotatedBeanDefinitionReader {
 		Assert.notNull(environment, "Environment must not be null");
 		this.registry = registry;
 		this.conditionEvaluator = new ConditionEvaluator(registry, environment, null);
+		// 这里会注册 AnnotationConfigProcessors
 		AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
 	}
 
@@ -126,6 +133,8 @@ public class AnnotatedBeanDefinitionReader {
 
 
 	/**
+	 * 注册 bean
+	 *
 	 * Register one or more component classes to be processed.
 	 * <p>Calls to {@code register} are idempotent; adding the same
 	 * component class more than once has no additional effect.
@@ -234,6 +243,8 @@ public class AnnotatedBeanDefinitionReader {
 	}
 
 	/**
+	 * 最终都调用到该方法
+	 *
 	 * Register a bean from the given bean class, deriving its metadata from
 	 * class-declared annotations.
 	 * @param beanClass the class of the bean
@@ -251,16 +262,21 @@ public class AnnotatedBeanDefinitionReader {
 			@Nullable BeanDefinitionCustomizer[] customizers) {
 
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
+		// 如果评估不过，直接返回
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;
 		}
 
 		abd.setInstanceSupplier(supplier);
+		// 获取 scope 数据
 		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
+		// 获取之后设置 beanDefinition 的 scope
 		abd.setScope(scopeMetadata.getScopeName());
+		// bean 的名称如果没有指定，则通过 BeanNameGenerator 生成
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
-
+		// 常用的属性处理
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
+		// 处理 qualifiers
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {
 				if (Primary.class == qualifier) {
@@ -274,19 +290,25 @@ public class AnnotatedBeanDefinitionReader {
 				}
 			}
 		}
+		// 处理自定义
 		if (customizers != null) {
 			for (BeanDefinitionCustomizer customizer : customizers) {
 				customizer.customize(abd);
 			}
 		}
 
+		// 构造成一个 BeanDefinitionHolder
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
+		// 对 definitionHolder 进行装饰
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+		// 进行注册
 		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
 	}
 
 
 	/**
+	 * 如果当前的 registry 具有 Environment 能力，则直接使用，否则创建一个
+	 *
 	 * Get the Environment from the given registry if possible, otherwise return a new
 	 * StandardEnvironment.
 	 */

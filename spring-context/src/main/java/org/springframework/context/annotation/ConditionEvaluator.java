@@ -61,6 +61,8 @@ class ConditionEvaluator {
 
 
 	/**
+	 * 根据注解上的信息判断是否需要加载 BeanDefinition
+	 *
 	 * Determine if an item should be skipped based on {@code @Conditional} annotations.
 	 * The {@link ConfigurationPhase} will be deduced from the type of item (i.e. a
 	 * {@code @Configuration} class will be {@link ConfigurationPhase#PARSE_CONFIGURATION})
@@ -78,6 +80,7 @@ class ConditionEvaluator {
 	 * @return if the item should be skipped
 	 */
 	public boolean shouldSkip(@Nullable AnnotatedTypeMetadata metadata, @Nullable ConfigurationPhase phase) {
+		// 没有 Conditional 注解
 		if (metadata == null || !metadata.isAnnotated(Conditional.class.getName())) {
 			return false;
 		}
@@ -90,6 +93,7 @@ class ConditionEvaluator {
 			return shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN);
 		}
 
+		// 获取条件，添加到 conditions 中
 		List<Condition> conditions = new ArrayList<>();
 		for (String[] conditionClasses : getConditionClasses(metadata)) {
 			for (String conditionClass : conditionClasses) {
@@ -98,8 +102,10 @@ class ConditionEvaluator {
 			}
 		}
 
+		// 排序
 		AnnotationAwareOrderComparator.sort(conditions);
 
+		// 如果有一个 Condition 不满足，就需要 skip
 		for (Condition condition : conditions) {
 			ConfigurationPhase requiredPhase = null;
 			if (condition instanceof ConfigurationCondition) {

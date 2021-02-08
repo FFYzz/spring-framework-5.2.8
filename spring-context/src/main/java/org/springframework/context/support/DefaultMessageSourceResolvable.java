@@ -80,6 +80,8 @@ public class DefaultMessageSourceResolvable implements MessageSourceResolvable, 
 	}
 
 	/**
+	 * 构造方法
+	 *
 	 * Create a new DefaultMessageSourceResolvable.
 	 * @param codes the codes to be used to resolve this message
 	 * @param arguments the array of arguments to be used to resolve this message
@@ -88,6 +90,7 @@ public class DefaultMessageSourceResolvable implements MessageSourceResolvable, 
 	public DefaultMessageSourceResolvable(
 			@Nullable String[] codes, @Nullable Object[] arguments, @Nullable String defaultMessage) {
 
+		// 对属性进行赋值
 		this.codes = codes;
 		this.arguments = arguments;
 		this.defaultMessage = defaultMessage;
@@ -103,6 +106,8 @@ public class DefaultMessageSourceResolvable implements MessageSourceResolvable, 
 
 
 	/**
+	 * 返回 codes 中的最后一个
+	 *
 	 * Return the default code of this resolvable, that is,
 	 * the last one in the codes array.
 	 */

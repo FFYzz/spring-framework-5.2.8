@@ -25,6 +25,10 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * @since 2.5
  * @see org.springframework.context.annotation.Scope
  */
+
+/**
+ * Scope 元信息解析
+ */
 @FunctionalInterface
 public interface ScopeMetadataResolver {
 

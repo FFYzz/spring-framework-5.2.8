@@ -27,6 +27,10 @@ package org.springframework.context.annotation;
  * @since 2.5
  * @see ScopeMetadata
  */
+
+/**
+ * Scope 代理模式
+ */
 public enum ScopedProxyMode {
 
 	/**
@@ -45,12 +49,16 @@ public enum ScopedProxyMode {
 	NO,
 
 	/**
+	 * JDK 动态代理
+	 *
 	 * Create a JDK dynamic proxy implementing <i>all</i> interfaces exposed by
 	 * the class of the target object.
 	 */
 	INTERFACES,
 
 	/**
+	 * CGLIB 动态代理
+	 *
 	 * Create a class-based proxy (uses CGLIB).
 	 */
 	TARGET_CLASS

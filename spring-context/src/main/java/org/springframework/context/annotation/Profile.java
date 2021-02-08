@@ -96,6 +96,11 @@ import org.springframework.core.env.Profiles;
  * @see Conditional
  * @see org.springframework.test.context.ActiveProfiles
  */
+
+/**
+ * 基于 Conditional 注解实现的
+ * 只要 ProfileCondition 返回 true 即可
+ */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -103,6 +108,8 @@ import org.springframework.core.env.Profiles;
 public @interface Profile {
 
 	/**
+	 * 接受一个数组类型的 value，可以是多值
+	 *
 	 * The set of profiles for which the annotated component should be registered.
 	 */
 	String[] value();

@@ -29,13 +29,20 @@ import org.springframework.util.MultiValueMap;
  * @author Juergen Hoeller
  * @since 4.0
  */
+
+/**
+ * 实现了 Condition 接口并重写了 matches 方法，用于设置 Profile
+ */
 class ProfileCondition implements Condition {
 
 	@Override
 	public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+		// 获取注解上的属性
 		MultiValueMap<String, Object> attrs = metadata.getAllAnnotationAttributes(Profile.class.getName());
 		if (attrs != null) {
+			// 获取注解属性上的 value 的属性
 			for (Object value : attrs.get("value")) {
+				// 是否有接受的，如果有，则返回 true
 				if (context.getEnvironment().acceptsProfiles(Profiles.of((String[]) value))) {
 					return true;
 				}
