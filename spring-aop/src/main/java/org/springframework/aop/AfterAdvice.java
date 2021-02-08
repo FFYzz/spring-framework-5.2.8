@@ -26,6 +26,11 @@ import org.aopalliance.aop.Advice;
  * @since 2.0.3
  * @see BeforeAdvice
  */
+
+/**
+ * 后置通知
+ * 空实现
+ */
 public interface AfterAdvice extends Advice {
 
 }

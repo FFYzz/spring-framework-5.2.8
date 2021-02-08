@@ -46,6 +46,8 @@ import org.springframework.util.Assert;
 public abstract class AopConfigUtils {
 
 	/**
+	 * AnnotationAwareAspectJAutoProxyCreator Bean 的默认名字为 internalAutoProxyCreator
+	 *
 	 * The bean name of the internally managed auto-proxy creator.
 	 */
 	public static final String AUTO_PROXY_CREATOR_BEAN_NAME =
@@ -100,9 +102,14 @@ public abstract class AopConfigUtils {
 		return registerOrEscalateApcAsRequired(AnnotationAwareAspectJAutoProxyCreator.class, registry, source);
 	}
 
+	/**
+	 *
+	 * @param registry
+	 */
 	public static void forceAutoProxyCreatorToUseClassProxying(BeanDefinitionRegistry registry) {
 		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
 			BeanDefinition definition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+			// 将属性设置到 BeanDefinition 中
 			definition.getPropertyValues().add("proxyTargetClass", Boolean.TRUE);
 		}
 	}
@@ -110,6 +117,7 @@ public abstract class AopConfigUtils {
 	public static void forceAutoProxyCreatorToExposeProxy(BeanDefinitionRegistry registry) {
 		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
 			BeanDefinition definition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+			// 将属性设置到 BeanDefinition 中
 			definition.getPropertyValues().add("exposeProxy", Boolean.TRUE);
 		}
 	}
@@ -120,22 +128,29 @@ public abstract class AopConfigUtils {
 
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 
+		// 如果已经注册了 key 为 internalAutoProxyCreator 的 BeanDefinition
 		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
 			BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+			// 比较两个 BeanDefinition 代表类的名字
 			if (!cls.getName().equals(apcDefinition.getBeanClassName())) {
 				int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());
 				int requiredPriority = findPriorityForClass(cls);
 				if (currentPriority < requiredPriority) {
+					// 设置优先级高的为新的 className
 					apcDefinition.setBeanClassName(cls.getName());
 				}
 			}
+			// 返回 null，只是更新了属性
 			return null;
 		}
 
+		// 创建 RootBeanDefinition
 		RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
 		beanDefinition.setSource(source);
+		// 设置 order 为最高级
 		beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);
 		beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+		// 注册的最终动作就是放到 map 中去
 		registry.registerBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME, beanDefinition);
 		return beanDefinition;
 	}

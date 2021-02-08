@@ -39,9 +39,17 @@ class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable {
 		return (advice instanceof MethodBeforeAdvice);
 	}
 
+	/**
+	 * 适配器，将 Advisor 转为 MethodInterceptor
+	 *
+	 * @param advisor the Advisor. The supportsAdvice() method must have
+	 * returned true on this object
+	 * @return
+	 */
 	@Override
 	public MethodInterceptor getInterceptor(Advisor advisor) {
 		MethodBeforeAdvice advice = (MethodBeforeAdvice) advisor.getAdvice();
+		// 封装成 MethodBeforeAdviceInterceptor
 		return new MethodBeforeAdviceInterceptor(advice);
 	}
 

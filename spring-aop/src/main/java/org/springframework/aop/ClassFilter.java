@@ -32,10 +32,16 @@ package org.springframework.aop;
  * @see Pointcut
  * @see MethodMatcher
  */
+
+/**
+ * 函数式接口，适用于 lambda 表达式来描述 match 方法
+ */
 @FunctionalInterface
 public interface ClassFilter {
 
 	/**
+	 * 匹配 pointcut 是否应该应用于给定接口或者目标类上
+	 *
 	 * Should the pointcut apply to the given interface or target class?
 	 * @param clazz the candidate target class
 	 * @return whether the advice should apply to the given target class

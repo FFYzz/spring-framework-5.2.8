@@ -33,6 +33,10 @@ import org.aopalliance.aop.Advice;
  * @author Rod Johnson
  * @author Juergen Hoeller
  */
+
+/**
+ * 切面，整合 pointcut 与 Advice
+ */
 public interface Advisor {
 
 	/**
@@ -44,6 +48,8 @@ public interface Advisor {
 
 
 	/**
+	 * 获取通知
+	 *
 	 * Return the advice part of this aspect. An advice may be an
 	 * interceptor, a before advice, a throws advice, etc.
 	 * @return the advice that should apply if the pointcut matches

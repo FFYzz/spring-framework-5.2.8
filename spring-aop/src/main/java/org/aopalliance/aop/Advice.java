@@ -23,6 +23,18 @@ package org.aopalliance.aop;
  * @author Rod Johnson
  * @version $Id: Advice.java,v 1.1 2004/03/19 17:02:16 johnsonr Exp $
  */
+
+/**
+ * WHEN
+ * 通知
+ * 定义横切逻辑，是一个空实现接口
+ * spring 中常用的有以下五类通知，
+ * Before Advice
+ * After Advice
+ * Around Advice
+ * after returning advice
+ * after throwing advice
+ */
 public interface Advice {
 
 }

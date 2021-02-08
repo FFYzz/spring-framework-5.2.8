@@ -34,6 +34,10 @@ import org.springframework.util.TypeUtils;
  * @author Ramnivas Laddad
  * @since 2.0
  */
+
+/**
+ * AfterReturn 增强
+ */
 @SuppressWarnings("serial")
 public class AspectJAfterReturningAdvice extends AbstractAspectJAdvice
 		implements AfterReturningAdvice, AfterAdvice, Serializable {

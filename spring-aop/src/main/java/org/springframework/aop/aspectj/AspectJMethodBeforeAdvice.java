@@ -29,6 +29,10 @@ import org.springframework.lang.Nullable;
  * @author Adrian Colyer
  * @since 2.0
  */
+
+/**
+ * AspectJ 的 方法前置增强
+ */
 @SuppressWarnings("serial")
 public class AspectJMethodBeforeAdvice extends AbstractAspectJAdvice implements MethodBeforeAdvice, Serializable {
 
@@ -41,6 +45,7 @@ public class AspectJMethodBeforeAdvice extends AbstractAspectJAdvice implements 
 
 	@Override
 	public void before(Method method, Object[] args, @Nullable Object target) throws Throwable {
+		// 调用通知方法
 		invokeAdviceMethod(getJoinPointMatch(), null, null);
 	}
 

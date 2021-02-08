@@ -37,9 +37,18 @@ import java.lang.reflect.AccessibleObject;
  * @author Rod Johnson
  * @see Interceptor
  */
+
+/**
+ * 静态的
+ * 连接点定义的顶层接口
+ * 在 Spring 中仅支持 方法 作为连接点
+ */
 public interface Joinpoint {
 
 	/**
+	 * 执行拦截器链中的下一个拦截逻辑
+	 * 具体的实现和语义由子接口决定
+	 *
 	 * Proceed to the next interceptor in the chain.
 	 * <p>The implementation and the semantics of this method depends
 	 * on the actual joinpoint type (see the children interfaces).

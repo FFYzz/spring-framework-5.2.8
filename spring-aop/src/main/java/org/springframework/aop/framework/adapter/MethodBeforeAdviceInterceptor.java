@@ -34,9 +34,16 @@ import org.springframework.util.Assert;
  * @see AfterReturningAdviceInterceptor
  * @see ThrowsAdviceInterceptor
  */
+
+/**
+ * 拦截器
+ */
 @SuppressWarnings("serial")
 public class MethodBeforeAdviceInterceptor implements MethodInterceptor, BeforeAdvice, Serializable {
 
+	/**
+	 * 前置增强的 AspectJMethodBeforeAdvice
+	 */
 	private final MethodBeforeAdvice advice;
 
 
@@ -52,7 +59,9 @@ public class MethodBeforeAdviceInterceptor implements MethodInterceptor, BeforeA
 
 	@Override
 	public Object invoke(MethodInvocation mi) throws Throwable {
+		// 执行前置逻辑
 		this.advice.before(mi.getMethod(), mi.getArguments(), mi.getThis());
+		// 继续调用下一个拦截器
 		return mi.proceed();
 	}
 

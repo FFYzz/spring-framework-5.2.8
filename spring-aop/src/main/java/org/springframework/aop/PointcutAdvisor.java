@@ -23,9 +23,18 @@ package org.springframework.aop;
  *
  * @author Rod Johnson
  */
+
+/**
+ * 切点通知器
+ * 可以获取切点，也可以获取通知
+ * 与切面的功能很像，但并不完全一致
+ * 一个 PointcutAdvisor 对象维护的是一个 一对一的 Advice 和 Pointcut 关系
+ */
 public interface PointcutAdvisor extends Advisor {
 
 	/**
+	 * 获取切点
+	 *
 	 * Get the Pointcut that drives this advisor.
 	 */
 	Pointcut getPointcut();

@@ -28,6 +28,11 @@ import java.lang.reflect.Constructor;
  * @author Rod Johnson
  * @see ConstructorInterceptor
  */
+
+/**
+ * 构造方法的调用
+ * 说明构造方法也是可以作为连接点的
+ */
 public interface ConstructorInvocation extends Invocation {
 
 	/**

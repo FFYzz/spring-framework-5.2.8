@@ -30,6 +30,10 @@ import org.springframework.aop.AfterAdvice;
  * @author Rod Johnson
  * @since 2.0
  */
+
+/**
+ * After 增强
+ */
 @SuppressWarnings("serial")
 public class AspectJAfterAdvice extends AbstractAspectJAdvice
 		implements MethodInterceptor, AfterAdvice, Serializable {
@@ -44,9 +48,11 @@ public class AspectJAfterAdvice extends AbstractAspectJAdvice
 	@Override
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		try {
+			// 调用下一个拦截方法
 			return mi.proceed();
 		}
 		finally {
+			// 直接在此激活增强方法
 			invokeAdviceMethod(getJoinPointMatch(), null, null);
 		}
 	}

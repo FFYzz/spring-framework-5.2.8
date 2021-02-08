@@ -124,6 +124,8 @@ public abstract class ScopedProxyUtils {
 	}
 
 	/**
+	 * 返回 beanName 是不是以 scopedTarget. 开头
+	 *
 	 * Determine if the {@code beanName} is the name of a bean that references
 	 * the target bean within a scoped proxy.
 	 * @since 4.1.4

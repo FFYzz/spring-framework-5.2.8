@@ -30,6 +30,10 @@ import org.springframework.aop.AfterAdvice;
  * @author Rod Johnson
  * @since 2.0
  */
+
+/**
+ * AfterThrowing 增强
+ */
 @SuppressWarnings("serial")
 public class AspectJAfterThrowingAdvice extends AbstractAspectJAdvice
 		implements MethodInterceptor, AfterAdvice, Serializable {

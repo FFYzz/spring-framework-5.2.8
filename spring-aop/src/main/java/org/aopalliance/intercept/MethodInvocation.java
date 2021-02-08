@@ -28,9 +28,15 @@ import java.lang.reflect.Method;
  * @author Rod Johnson
  * @see MethodInterceptor
  */
+
+/**
+ * 继承自 Invocation 接口，描述方法调用
+ */
 public interface MethodInvocation extends Invocation {
 
 	/**
+	 * 返回调用的方法
+	 *
 	 * Get the method being called.
 	 * <p>This method is a friendly implementation of the
 	 * {@link Joinpoint#getStaticPart()} method (same result).

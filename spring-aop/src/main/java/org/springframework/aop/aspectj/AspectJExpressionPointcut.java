@@ -81,6 +81,11 @@ import org.springframework.util.StringUtils;
  * @author Dave Syer
  * @since 2.0
  */
+
+/**
+ * AspectJExpressionPointcut 的形式
+ * execution(* *.find*(..))
+ */
 @SuppressWarnings("serial")
 public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 		implements ClassFilter, IntroductionAwareMethodMatcher, BeanFactoryAware {

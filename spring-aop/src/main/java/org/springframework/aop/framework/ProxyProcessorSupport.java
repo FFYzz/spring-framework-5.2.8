@@ -111,6 +111,7 @@ public class ProxyProcessorSupport extends ProxyConfig implements Ordered, BeanC
 				break;
 			}
 		}
+		// 如果实现了接口
 		if (hasReasonableProxyInterface) {
 			// Must allow for introductions; can't just set interfaces to the target's interfaces only.
 			for (Class<?> ifc : targetInterfaces) {
@@ -118,6 +119,8 @@ public class ProxyProcessorSupport extends ProxyConfig implements Ordered, BeanC
 			}
 		}
 		else {
+			// 没有实现接口，将 proxy target class 属性设置为 true
+			// 表示使用 CGLIB 代理
 			proxyFactory.setProxyTargetClass(true);
 		}
 	}

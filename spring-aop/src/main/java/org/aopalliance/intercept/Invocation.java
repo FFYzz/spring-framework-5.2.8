@@ -24,9 +24,15 @@ package org.aopalliance.intercept;
  *
  * @author Rod Johnson
  */
+
+/**
+ * 继承自 JoinPoint 接口
+ */
 public interface Invocation extends Joinpoint {
 
 	/**
+	 * 返回调用的参数列表
+	 *
 	 * Get the arguments as an array object.
 	 * It is possible to change element values within this
 	 * array to change the arguments.

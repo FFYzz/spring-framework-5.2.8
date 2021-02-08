@@ -32,6 +32,10 @@ import org.springframework.util.ClassUtils;
  * @author Rob Harrop
  * @since 14.03.2003
  */
+
+/**
+ * 用于生成代理对象的代理工厂
+ */
 @SuppressWarnings("serial")
 public class ProxyFactory extends ProxyCreatorSupport {
 
@@ -107,6 +111,7 @@ public class ProxyFactory extends ProxyCreatorSupport {
 	 * @return the proxy object
 	 */
 	public Object getProxy(@Nullable ClassLoader classLoader) {
+		// 创建代理后获取代理对象
 		return createAopProxy().getProxy(classLoader);
 	}
 

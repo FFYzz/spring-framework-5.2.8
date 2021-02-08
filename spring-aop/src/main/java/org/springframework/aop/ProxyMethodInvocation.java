@@ -33,15 +33,24 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.aop.framework.ReflectiveMethodInvocation
  * @see org.springframework.aop.support.DelegatingIntroductionInterceptor
  */
+
+/**
+ * 代理方法代用接口
+ * 实现了方法调用接口
+ */
 public interface ProxyMethodInvocation extends MethodInvocation {
 
 	/**
+	 * 返回原始的代理对象
+	 *
 	 * Return the proxy that this method invocation was made through.
 	 * @return the original proxy object
 	 */
 	Object getProxy();
 
 	/**
+	 * 返回一个当前对象的 clone
+	 *
 	 * Create a clone of this object. If cloning is done before {@code proceed()}
 	 * is invoked on this object, {@code proceed()} can be invoked once per clone
 	 * to invoke the joinpoint (and the rest of the advice chain) more than once.

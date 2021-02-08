@@ -50,6 +50,11 @@ import java.lang.reflect.Method;
  * @see Pointcut
  * @see ClassFilter
  */
+
+/**
+ * 方法匹配器
+ * 返回方法是否适合用于增强
+ */
 public interface MethodMatcher {
 
 	/**

@@ -30,15 +30,24 @@ package org.springframework.aop;
  * @see org.springframework.aop.support.ClassFilters
  * @see org.springframework.aop.support.MethodMatchers
  */
+
+/**
+ * 切入点，连接点的子集
+ */
 public interface Pointcut {
 
 	/**
+	 * 返回一个类型过滤器
+	 * 用于匹配作用的接口与类是否可以作为 pointcut
+	 *
 	 * Return the ClassFilter for this pointcut.
 	 * @return the ClassFilter (never {@code null})
 	 */
 	ClassFilter getClassFilter();
 
 	/**
+	 * 返回一个方法匹配器
+	 *
 	 * Return the MethodMatcher for this pointcut.
 	 * @return the MethodMatcher (never {@code null})
 	 */

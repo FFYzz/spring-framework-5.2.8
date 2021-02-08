@@ -34,8 +34,17 @@ public class ProxyConfig implements Serializable {
 	private static final long serialVersionUID = -8409359707199703185L;
 
 
+	/**
+	 * 为 true 是目标类本身被代理而不是目标类接口被代理
+	 * 且为 true 时，将使用 CGLIB 代理
+	 * 设置方式为 <aop:aspectj-autoproxy-proxy-target-class = true/>
+	 */
 	private boolean proxyTargetClass = false;
 
+	/**
+	 * 用来控制通过 CGLIB 创建的代理是否使用激进的优化策略
+	 * 仅对于 CGLIB 代理有效
+	 */
 	private boolean optimize = false;
 
 	boolean opaque = false;

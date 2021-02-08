@@ -28,6 +28,11 @@ import org.springframework.lang.Nullable;
  * @see MethodBeforeAdvice
  * @see ThrowsAdvice
  */
+
+/**
+ * 返回之后通知
+ * 空实现
+ */
 public interface AfterReturningAdvice extends AfterAdvice {
 
 	/**
