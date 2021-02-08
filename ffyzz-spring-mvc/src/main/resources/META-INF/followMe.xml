@@ -1,31 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context
-       https://www.springframework.org/schema/context/spring-context.xsd
+
+
        http://www.springframework.org/schema/mvc
        https://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-<!--    <context:component-scan base-package="cn.ffyzz"/>-->
-    <mvc:annotation-driven/>
-    <mvc:view-resolvers>
-        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<!--    <context:component-scan base-package="cn.ffyzz"/>-->
+	<mvc:annotation-driven/>
+	<mvc:view-resolvers>
+		<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 			<property name="prefix" value="/views/jsp/"/>
 			<property name="suffix" value=".jsp"/>
 		</bean>
-    </mvc:view-resolvers>
+	</mvc:view-resolvers>
 	<bean id="followMeController" class="cn.ffyzz.FollowMeController"/>
 	<bean id="simpleUrlHandlerMappingController" class="cn.ffyzz.SimpleUrlHandlerMappingController"/>
 	<bean id="/beanNameUrlHandlerMappingController" class="cn.ffyzz.BeanNameUrlHandlerMappingHandlerController"/>
+	<bean id="themeController" class="cn.ffyzz.ThemeController"/>
+
+	<!--	测试 ControllerAdviceBean -->
+	<bean id="controllerAdviceBean" class="cn.ffyzz.advice.ControllerAdviceBeanTest"/>
 	<!--	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->
-<!--		<property name="defaultEncoding" value="UTF-8"/>-->
-<!--		<property name="maxUploadSize" value="#{1024*1024}"/>-->
-<!--	</bean>-->
+	<!--		<property name="defaultEncoding" value="UTF-8"/>-->
+	<!--		<property name="maxUploadSize" value="#{1024*1024}"/>-->
+	<!--	</bean>-->
 	<bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
+	<!--	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver">-->
+	<!--		<property name="defaultLocale" value="zh_CN"/>-->
+	<!--		<property name="defaultTimeZone" value="GMT+08:00"/>-->
+	<!--	</bean>-->
+
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+	</bean>
+
+	<bean id="themeResolver" class="org.springframework.web.servlet.theme.SessionThemeResolver">
+		<property name="defaultThemeName" value="myTheme"/>
+	</bean>
+
+	<bean id="themeSource" class="org.springframework.ui.context.support.ResourceBundleThemeSource">
+		<property name="basenamePrefix" value="theme."/>
+	</bean>
+
+	<mvc:interceptors>
+		<bean class="org.springframework.web.servlet.theme.ThemeChangeInterceptor">
+			<property name="paramName" value="theme"/>
+		</bean>
+	</mvc:interceptors>
+
 
 	<bean id="beanNameUrlHandlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
 	<bean id="simpleUrlHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">

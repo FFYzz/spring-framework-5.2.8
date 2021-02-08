@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -21,6 +22,10 @@ public class FollowMeController {
 
 	private final Log logger = LogFactory.getLog(FollowMeController.class);
 	private final String[] sensitiveWords = new String[]{"k1", "s2"};
+
+	@InitBinder
+	public void testDataBinder() {
+	}
 
 	@ModelAttribute("comment")
 	public String replaceSensitiveWords(String comment) {
@@ -41,7 +46,7 @@ public class FollowMeController {
 		return "redirect:/showArticle";
 	}
 
-	@RequestMapping(value = "showArticle", method = RequestMethod.GET)
+	@RequestMapping(value = "/showArticle", method = RequestMethod.GET)
 	public String showArticle(Model model, SessionStatus sessionStatus) {
 		String articleId = (String) model.asMap().get("articleId");
 		model.addAttribute("articleTitle", articleId + "号文章标题");
@@ -80,6 +85,14 @@ public class FollowMeController {
 	@RequestMapping(value = "/hello", method = RequestMethod.GET)
 	public String helloWorld() {
 		return "hello";
+	}
+
+	@GetMapping(value = "pages")
+	public String pages() {
+		ModelAndView modelAndView = new ModelAndView();
+//		modelAndView.setViewName("pages");
+		modelAndView.addObject("pageNumber", 101);
+		return "pages";
 	}
 
 
