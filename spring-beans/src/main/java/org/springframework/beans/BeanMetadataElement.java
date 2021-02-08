@@ -25,9 +25,15 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @since 2.0
  */
+
+/**
+ * 辅助类，用于记录保存 bean 的来源，可以是 XML 或者 注解 或者某个 Configuration 类型的 bean
+ */
 public interface BeanMetadataElement {
 
 	/**
+	 * 返回当前元数据元素的配置源对象
+	 *
 	 * Return the configuration source {@code Object} for this metadata element
 	 * (may be {@code null}).
 	 */

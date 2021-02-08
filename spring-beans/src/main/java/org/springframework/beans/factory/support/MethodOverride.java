@@ -56,6 +56,8 @@ public abstract class MethodOverride implements BeanMetadataElement {
 
 
 	/**
+	 * 返回方法名
+	 *
 	 * Return the name of the method to be overridden.
 	 */
 	public String getMethodName() {
@@ -63,6 +65,8 @@ public abstract class MethodOverride implements BeanMetadataElement {
 	}
 
 	/**
+	 * 设置重写方法是否为重载方法
+	 *
 	 * Set whether the overridden method is <em>overloaded</em> (i.e., whether argument
 	 * type matching needs to occur to disambiguate methods of the same name).
 	 * <p>Default is {@code true}; can be switched to {@code false} to optimize

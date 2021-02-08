@@ -49,24 +49,50 @@ import org.springframework.util.ObjectUtils;
  * @author Juergen Hoeller
  * @since 2.5
  */
+
+/**
+ * 包含注入相关的一些信息
+ */
 @SuppressWarnings("serial")
 public class DependencyDescriptor extends InjectionPoint implements Serializable {
 
+	/**
+	 * 要注入的容器的 Class
+	 */
 	private final Class<?> declaringClass;
 
+	/**
+	 * 方法参数注入时的方法名
+	 */
 	@Nullable
 	private String methodName;
 
+	/**
+	 * 构造器注入或者方法注入时的参数类型数组
+	 */
 	@Nullable
 	private Class<?>[] parameterTypes;
 
+	/**
+	 * 参数索引
+	 */
 	private int parameterIndex;
 
+	/**
+	 * 字段注入的字段名
+	 */
 	@Nullable
 	private String fieldName;
 
+	/**
+	 * @Autowored 字段注入中有一个 required
+	 * 表示是否必须
+	 */
 	private final boolean required;
 
+	/**
+	 * 是否 lazy 加载
+	 */
 	private final boolean eager;
 
 	private int nestingLevel = 1;

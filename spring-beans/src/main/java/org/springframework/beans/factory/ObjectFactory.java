@@ -36,6 +36,13 @@ import org.springframework.beans.BeansException;
  * @param <T> the object type
  * @see FactoryBean
  */
+
+/**
+ * 函数式接口，能够返回一个对象实例
+ * 该接口与 FactoryBean 类似，FactoryBean 的实现
+ *
+ * @param <T>
+ */
 @FunctionalInterface
 public interface ObjectFactory<T> {
 

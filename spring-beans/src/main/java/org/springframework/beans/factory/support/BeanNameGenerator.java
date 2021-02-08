@@ -24,6 +24,12 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * @author Juergen Hoeller
  * @since 2.0.3
  */
+
+/**
+ * bean name 生成的接口，主要有两个实现类
+ * AnnotationBeanNameGenerator 以及 DefaultBeanNameGenerator
+ * 当 bean 没有指定 id 或者 name 的时候 spring 会帮忙生成 bean name
+ */
 public interface BeanNameGenerator {
 
 	/**

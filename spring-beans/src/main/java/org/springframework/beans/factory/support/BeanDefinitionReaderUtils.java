@@ -104,12 +104,15 @@ public abstract class BeanDefinitionReaderUtils {
 			BeanDefinition definition, BeanDefinitionRegistry registry, boolean isInnerBean)
 			throws BeanDefinitionStoreException {
 
+		// 取到 bean 的 class name
 		String generatedBeanName = definition.getBeanClassName();
 		if (generatedBeanName == null) {
 			if (definition.getParentName() != null) {
+				// 拼接 $child
 				generatedBeanName = definition.getParentName() + "$child";
 			}
 			else if (definition.getFactoryBeanName() != null) {
+				// 拼接 $created
 				generatedBeanName = definition.getFactoryBeanName() + "$created";
 			}
 		}
@@ -118,12 +121,15 @@ public abstract class BeanDefinitionReaderUtils {
 					"'class' nor 'parent' nor 'factory-bean' - can't generate bean name");
 		}
 
+		// 如果是嵌套 bean
 		if (isInnerBean) {
 			// Inner bean: generate identity hashcode suffix.
+			// 加上 hashcode 后缀
 			return generatedBeanName + GENERATED_BEAN_NAME_SEPARATOR + ObjectUtils.getIdentityHexString(definition);
 		}
 
 		// Top-level bean: use plain class name with unique suffix if necessary.
+		// unique bean，如果重名则加上 count
 		return uniqueBeanName(generatedBeanName, registry);
 	}
 
@@ -142,10 +148,13 @@ public abstract class BeanDefinitionReaderUtils {
 
 		// Increase counter until the id is unique.
 		String prefix = beanName + GENERATED_BEAN_NAME_SEPARATOR;
+		// 如果当前 registry 中已经有该名字，则加上 #count
 		while (counter == -1 || registry.containsBeanDefinition(id)) {
 			counter++;
+			// 实际使用时从 0 开始
 			id = prefix + counter;
 		}
+		// 返回 id
 		return id;
 	}
 
@@ -155,15 +164,18 @@ public abstract class BeanDefinitionReaderUtils {
 	 * @param registry the bean factory to register with
 	 * @throws BeanDefinitionStoreException if registration failed
 	 */
-	public static void registerBeanDefinition(
+	public static void  registerBeanDefinition(
 			BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
 			throws BeanDefinitionStoreException {
 
 		// Register bean definition under primary name.
 		String beanName = definitionHolder.getBeanName();
+		// 通过 Registry 进行注册，注册到 Registry 中
+		// 整个注册过程是对 map 的操作
 		registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
 
 		// Register aliases for bean name, if any.
+		// 如果有 alias，则对 alias 进行注册
 		String[] aliases = definitionHolder.getAliases();
 		if (aliases != null) {
 			for (String alias : aliases) {

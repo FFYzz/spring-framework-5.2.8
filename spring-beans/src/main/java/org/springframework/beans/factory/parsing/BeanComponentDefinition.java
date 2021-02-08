@@ -34,6 +34,10 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @since 2.0
  */
+
+/**
+ * BeanDefinition 的封装类
+ */
 public class BeanComponentDefinition extends BeanDefinitionHolder implements ComponentDefinition {
 
 	private BeanDefinition[] innerBeanDefinitions;

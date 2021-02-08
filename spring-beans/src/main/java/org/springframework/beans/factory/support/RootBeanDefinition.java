@@ -51,65 +51,128 @@ import org.springframework.util.Assert;
  * @see GenericBeanDefinition
  * @see ChildBeanDefinition
  */
+
+/**
+ * 继承自 AbstractBeanDefinition
+ * 1. 工厂方法是什么？
+ * 2. isFactoryMethodUnique 是干嘛用的？
+ * 3.
+ */
 @SuppressWarnings("serial")
 public class RootBeanDefinition extends AbstractBeanDefinition {
 
+	/**
+	 * bd holder
+	 */
 	@Nullable
 	private BeanDefinitionHolder decoratedDefinition;
 
+	/**
+	 * 注解元素
+	 */
 	@Nullable
 	private AnnotatedElement qualifiedElement;
 
+	/**
+	 * 当前 bean 是否会再次合并
+	 */
 	/** Determines if the definition needs to be re-merged. */
 	volatile boolean stale;
 
+	/**
+	 * 是否允许缓存
+	 */
 	boolean allowCaching = true;
 
+	/**
+	 * 工厂方法是否唯一
+	 */
 	boolean isFactoryMethodUnique = false;
 
+	/**
+	 * BeanDefinition 的目标 Type
+	 * 对 Type 类型的封装
+	 */
 	@Nullable
 	volatile ResolvableType targetType;
 
+	/**
+	 * 该 RootBeanDefinition 保存的实例的 Class 类型
+	 */
 	/** Package-visible field for caching the determined Class of a given bean definition. */
 	@Nullable
 	volatile Class<?> resolvedTargetType;
 
+	/**
+	 * 是否为工厂 Bean
+	 */
 	/** Package-visible field for caching if the bean is a factory bean. */
 	@Nullable
 	volatile Boolean isFactoryBean;
 
+	/**
+	 * 工厂方法的返回类型
+	 */
 	/** Package-visible field for caching the return type of a generically typed factory method. */
 	@Nullable
 	volatile ResolvableType factoryMethodReturnType;
 
+	/**
+	 * 候选的工厂方法
+	 */
 	/** Package-visible field for caching a unique factory method candidate for introspection. */
 	@Nullable
 	volatile Method factoryMethodToIntrospect;
 
+	/**
+	 * 锁，对一下四个构造方法参数操作时使用的锁
+	 */
 	/** Common lock for the four constructor fields below. */
 	final Object constructorArgumentLock = new Object();
 
+	/**
+	 * 缓存 Constructor / Method
+	 * Executable 是 Constructor 和 Method 的抽象父类
+	 */
 	/** Package-visible field for caching the resolved constructor or factory method. */
 	@Nullable
 	Executable resolvedConstructorOrFactoryMethod;
 
+	/**
+	 * 构造参数是否已经解析完毕
+	 */
 	/** Package-visible field that marks the constructor arguments as resolved. */
 	boolean constructorArgumentsResolved = false;
 
+	/**
+	 * 缓存解析出来的构造方法参数
+	 */
 	/** Package-visible field for caching fully resolved constructor arguments. */
 	@Nullable
 	Object[] resolvedConstructorArguments;
 
+	/**
+	 * 缓存部分已经解析好的构造方法参数
+	 */
 	/** Package-visible field for caching partly prepared constructor arguments. */
 	@Nullable
 	Object[] preparedConstructorArguments;
 
+	/**
+	 * 对一下两个后置处理参数处理时用到的锁
+	 */
 	/** Common lock for the two post-processing fields below. */
 	final Object postProcessingLock = new Object();
 
+	/**
+	 * 标识 MergedBeanDefinitionPostProcessor 是否被使用
+	 */
 	/** Package-visible field that indicates MergedBeanDefinitionPostProcessor having been applied. */
 	boolean postProcessed = false;
 
+	/**
+	 * 标识 BeanPostProcessorsBeforeInstantiation 中是否已经进行实例化
+	 */
 	/** Package-visible field that indicates a before-instantiation post-processor having kicked in. */
 	@Nullable
 	volatile Boolean beforeInstantiationResolved;
@@ -137,6 +200,8 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	}
 
 	/**
+	 * 创建一个 beanClass 类型的 bean
+	 *
 	 * Create a new RootBeanDefinition for a singleton.
 	 * @param beanClass the class of the bean to instantiate
 	 * @see #setBeanClass

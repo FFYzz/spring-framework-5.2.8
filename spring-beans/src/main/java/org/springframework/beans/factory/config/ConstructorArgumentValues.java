@@ -430,6 +430,8 @@ public class ConstructorArgumentValues {
 
 
 	/**
+	 * 内部类，用于存储构造方法的值
+	 *
 	 * Holder for a constructor argument value, with an optional type
 	 * attribute indicating the target type of the actual constructor argument.
 	 */

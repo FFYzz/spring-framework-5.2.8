@@ -36,6 +36,9 @@ import org.springframework.lang.Nullable;
  */
 public class MethodOverrides {
 
+	/**
+	 * 内部通过一个 Set 进行维护
+	 */
 	private final Set<MethodOverride> overrides = new CopyOnWriteArraySet<>();
 
 

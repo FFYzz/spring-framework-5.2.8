@@ -27,6 +27,10 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @since 2.5
  */
+
+/**
+ * 针对 bean 的元数据属性访问约定
+ */
 @SuppressWarnings("serial")
 public class BeanMetadataAttributeAccessor extends AttributeAccessorSupport implements BeanMetadataElement {
 

@@ -54,6 +54,13 @@ import org.springframework.util.StringUtils;
  * @author Sam Brannen
  * @since 4.1
  */
+
+/**
+ * 处理 yaml 文件格式的外部化配置文件
+ * 有两个实现类
+ * YamlMapFactoryBean
+ * YamlPropertiesFactoryBean
+ */
 public abstract class YamlProcessor {
 
 	private final Log logger = LogFactory.getLog(getClass());

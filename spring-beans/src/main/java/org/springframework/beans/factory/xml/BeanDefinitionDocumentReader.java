@@ -34,9 +34,16 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
  * @since 18.12.2003
  * @see XmlBeanDefinitionReader#setDocumentReaderClass
  */
+
+/**
+ * 是一个 SPI 可以自己实现读取的规则
+ * 但是 Spring 也提供了默认的实现 DefaultBeanDefinitionDocumentReader
+ */
 public interface BeanDefinitionDocumentReader {
 
 	/**
+	 * 将 doc 中的 BeanDefinition 注册到 readerContext 上下文中的 Registry
+	 *
 	 * Read bean definitions from the given DOM document and
 	 * register them with the registry in the given reader context.
 	 * @param doc the DOM document

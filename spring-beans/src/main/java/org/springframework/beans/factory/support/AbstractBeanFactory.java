@@ -247,6 +247,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
+		// 先去 singleton 中查找
+		// 找到的话直接返回该 Object
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isTraceEnabled()) {
@@ -295,6 +297,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 
 			try {
+				// 获取 merged bean
 				RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 				checkMergedBeanDefinition(mbd, beanName, args);
 
@@ -318,9 +321,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 
 				// Create bean instance.
+				// 默认为 singleton
 				if (mbd.isSingleton()) {
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
+							// 内部 ObjectFactory 调用 getObject 方法的时候会调用 createBean
 							return createBean(beanName, mbd, args);
 						}
 						catch (BeansException ex) {
@@ -1066,9 +1071,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 */
 	@Override
 	public BeanDefinition getMergedBeanDefinition(String name) throws BeansException {
+		// 格式化一下 beanName
 		String beanName = transformedBeanName(name);
 		// Efficiently check whether bean definition exists in this factory.
+		// 如果当前容器不包含 beanName，则从 parent 中找
 		if (!containsBeanDefinition(beanName) && getParentBeanFactory() instanceof ConfigurableBeanFactory) {
+			// 递归查找
 			return ((ConfigurableBeanFactory) getParentBeanFactory()).getMergedBeanDefinition(beanName);
 		}
 		// Resolve merged bean definition locally.
@@ -1281,6 +1289,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 */
 	protected RootBeanDefinition getMergedLocalBeanDefinition(String beanName) throws BeansException {
 		// Quick check on the concurrent map first, with minimal locking.
+		// 每一层都会缓存 bean
 		RootBeanDefinition mbd = this.mergedBeanDefinitions.get(beanName);
 		if (mbd != null && !mbd.stale) {
 			return mbd;
@@ -1309,6 +1318,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @param bd the original bean definition (Root/ChildBeanDefinition)
 	 * @param containingBd the containing bean definition in case of inner bean,
 	 * or {@code null} in case of a top-level bean
+	 *                     嵌套 bean
 	 * @return a (potentially merged) RootBeanDefinition for the given bean
 	 * @throws BeanDefinitionStoreException in case of an invalid bean definition
 	 */
@@ -1322,13 +1332,18 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 			// Check with full lock now in order to enforce the same merged instance.
 			if (containingBd == null) {
+				// 再去 get 一次，确保获取到最新的值
 				mbd = this.mergedBeanDefinitions.get(beanName);
 			}
 
 			if (mbd == null || mbd.stale) {
 				previous = mbd;
+				// 没有 parent，不需要 merge
 				if (bd.getParentName() == null) {
 					// Use copy of given root bean definition.
+					// 如果已经是 RootBeanDefinition
+					// 不需要再进行 merge
+					// 返回一个 RootBeanDefinition
 					if (bd instanceof RootBeanDefinition) {
 						mbd = ((RootBeanDefinition) bd).cloneBeanDefinition();
 					}
@@ -1336,12 +1351,14 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 						mbd = new RootBeanDefinition(bd);
 					}
 				}
+				// 有 parent 需要 merge
 				else {
 					// Child bean definition: needs to be merged with parent.
 					BeanDefinition pbd;
 					try {
 						String parentBeanName = transformedBeanName(bd.getParentName());
 						if (!beanName.equals(parentBeanName)) {
+							// 继续层次性查找
 							pbd = getMergedBeanDefinition(parentBeanName);
 						}
 						else {
@@ -1361,7 +1378,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 								"Could not resolve parent bean definition '" + bd.getParentName() + "'", ex);
 					}
 					// Deep copy with overridden values.
+					// mbd 是父类 BeanDefinition
 					mbd = new RootBeanDefinition(pbd);
+					// bd 是当前子类的 BeanDefinition
+					// 传入对属性进行设置，或者进行覆盖
 					mbd.overrideFrom(bd);
 				}
 
@@ -1467,14 +1487,19 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			throws CannotLoadBeanClassException {
 
 		try {
+			// 是否定义了 beanClass
 			if (mbd.hasBeanClass()) {
+				// 返回 beanClass
 				return mbd.getBeanClass();
 			}
+			// Java Security API 的实践
+			// 需要申请安全权限
 			if (System.getSecurityManager() != null) {
 				return AccessController.doPrivileged((PrivilegedExceptionAction<Class<?>>)
 						() -> doResolveBeanClass(mbd, typesToMatch), getAccessControlContext());
 			}
 			else {
+				// 不需要申请安全权限
 				return doResolveBeanClass(mbd, typesToMatch);
 			}
 		}
@@ -1490,10 +1515,20 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		}
 	}
 
+	/**
+	 * 根据 RootBeanDefinition 解析 Class
+	 *
+	 * @param mbd
+	 * @param typesToMatch
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
 	@Nullable
 	private Class<?> doResolveBeanClass(RootBeanDefinition mbd, Class<?>... typesToMatch)
 			throws ClassNotFoundException {
 
+		// 两个 ClassLoader
+		// beanFactory 里面的 ClassLoader
 		ClassLoader beanClassLoader = getBeanClassLoader();
 		ClassLoader dynamicLoader = beanClassLoader;
 		boolean freshResolve = false;
@@ -1514,6 +1549,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 		}
 
+		// 获取 className，String 类型
 		String className = mbd.getBeanClassName();
 		if (className != null) {
 			Object evaluated = evaluateBeanDefinitionString(className, mbd);
@@ -1548,6 +1584,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		}
 
 		// Resolve regularly, caching the result in the BeanDefinition...
+		// 正常的解析流程
 		return mbd.resolveBeanClass(beanClassLoader);
 	}
 
@@ -1767,6 +1804,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	/**
+	 * 检查该 bean 是都已经开始创建
+	 *
 	 * Check whether this factory's bean creation phase already started,
 	 * i.e. whether any bean has been marked as created in the meantime.
 	 * @since 4.2.2

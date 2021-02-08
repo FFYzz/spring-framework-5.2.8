@@ -369,6 +369,7 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	 * Resolve the specified dependency against the beans defined in this factory.
 	 * @param descriptor the descriptor for the dependency (field/method/constructor)
 	 * @param requestingBeanName the name of the bean which declares the given dependency
+	 *                           当前需要注入的 bean 的名字
 	 * @return the resolved object, or {@code null} if none found
 	 * @throws NoSuchBeanDefinitionException if no matching bean was found
 	 * @throws NoUniqueBeanDefinitionException if more than one matching bean was found

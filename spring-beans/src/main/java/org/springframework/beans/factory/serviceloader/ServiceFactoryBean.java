@@ -33,6 +33,13 @@ import org.springframework.lang.Nullable;
  */
 public class ServiceFactoryBean extends AbstractServiceLoaderBasedFactoryBean implements BeanClassLoaderAware {
 
+	/**
+	 * 仅返回迭代器中的第一个
+	 * 这里的 Object 类型为 接口类型，而不是 ServiceLoader 类型
+	 *
+	 * @param serviceLoader the ServiceLoader for the configured service class
+	 * @return
+	 */
 	@Override
 	protected Object getObjectToExpose(ServiceLoader<?> serviceLoader) {
 		Iterator<?> it = serviceLoader.iterator();

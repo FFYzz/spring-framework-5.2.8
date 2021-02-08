@@ -33,6 +33,13 @@ import org.springframework.beans.factory.BeanClassLoaderAware;
  */
 public class ServiceListFactoryBean extends AbstractServiceLoaderBasedFactoryBean implements BeanClassLoaderAware {
 
+	/**
+	 * 返回一个 List，List 里面是所有的注册的实现
+	 * 返回类型为一个 List
+	 *
+	 * @param serviceLoader the ServiceLoader for the configured service class
+	 * @return
+	 */
 	@Override
 	protected Object getObjectToExpose(ServiceLoader<?> serviceLoader) {
 		List<Object> result = new LinkedList<>();

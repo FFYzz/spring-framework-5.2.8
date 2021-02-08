@@ -262,6 +262,7 @@ public abstract class BeanFactoryUtils {
 			ListableBeanFactory lbf, Class<?> type, boolean includeNonSingletons, boolean allowEagerInit) {
 
 		Assert.notNull(lbf, "ListableBeanFactory must not be null");
+		// 如果是层次性的，则进行层次性查找
 		String[] result = lbf.getBeanNamesForType(type, includeNonSingletons, allowEagerInit);
 		if (lbf instanceof HierarchicalBeanFactory) {
 			HierarchicalBeanFactory hbf = (HierarchicalBeanFactory) lbf;
@@ -315,7 +316,7 @@ public abstract class BeanFactoryUtils {
 	 * hiding corresponding beans in ancestor factories.</b> This feature allows for
 	 * 'replacing' beans by explicitly choosing the same bean name in a child factory;
 	 * the bean in the ancestor factory won't be visible then, not even for by-type lookups.
-	 * @param lbf the bean factory
+	 * @param lbf the bean factory 传进来的是一个 ListableBeanFactory 类型
 	 * @param type type of bean to match
 	 * @return the Map of matching bean instances, or an empty Map if none
 	 * @throws BeansException if a bean could not be created
@@ -325,13 +326,20 @@ public abstract class BeanFactoryUtils {
 			throws BeansException {
 
 		Assert.notNull(lbf, "ListableBeanFactory must not be null");
+		// 用于存放结果
 		Map<String, T> result = new LinkedHashMap<>(4);
+		// 首先查找当前 beanfactory 的满足 type 类型的 bean
+		// 多个
 		result.putAll(lbf.getBeansOfType(type));
+		// 判断一下是否为 HierarchicalBeanFactory，具有层次性
 		if (lbf instanceof HierarchicalBeanFactory) {
 			HierarchicalBeanFactory hbf = (HierarchicalBeanFactory) lbf;
+			// parentBean 也是 ListableBeanFactory 类型
 			if (hbf.getParentBeanFactory() instanceof ListableBeanFactory) {
+				// 递归继续查找
 				Map<String, T> parentResult = beansOfTypeIncludingAncestors(
 						(ListableBeanFactory) hbf.getParentBeanFactory(), type);
+				// 都放到 result 中
 				parentResult.forEach((beanName, beanInstance) -> {
 					if (!result.containsKey(beanName) && !hbf.containsLocalBean(beanName)) {
 						result.put(beanName, beanInstance);
@@ -478,7 +486,9 @@ public abstract class BeanFactoryUtils {
 	 */
 	public static <T> T beanOfType(ListableBeanFactory lbf, Class<T> type) throws BeansException {
 		Assert.notNull(lbf, "ListableBeanFactory must not be null");
+		// 仅查找当前的 beanFactory
 		Map<String, T> beansOfType = lbf.getBeansOfType(type);
+		// 只能是一个 bean
 		return uniqueBean(type, beansOfType);
 	}
 

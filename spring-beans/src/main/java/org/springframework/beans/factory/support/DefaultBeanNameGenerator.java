@@ -37,6 +37,7 @@ public class DefaultBeanNameGenerator implements BeanNameGenerator {
 
 	@Override
 	public String generateBeanName(BeanDefinition definition, BeanDefinitionRegistry registry) {
+		// 委托给 BeanDefinitionReaderUtils 的  generateBeanName 处理
 		return BeanDefinitionReaderUtils.generateBeanName(definition, registry);
 	}
 

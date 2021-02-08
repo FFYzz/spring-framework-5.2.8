@@ -46,9 +46,18 @@ import org.springframework.lang.Nullable;
  * @see DefaultBeanDefinitionDocumentReader
  * @see NamespaceHandlerResolver
  */
+
+/**
+ * 主要有三个实现类
+ * NamespaceHandlerSupport 默认的实现，自定义的标签一般继承该类
+ * SimpleConstructorNamespaceHandler [c 命名空间]
+ * SimplePropertyNamespaceHandler [p 命名空间]
+ */
 public interface NamespaceHandler {
 
 	/**
+	 * 初始化自己
+	 *
 	 * Invoked by the {@link DefaultBeanDefinitionDocumentReader} after
 	 * construction but before any custom elements are parsed.
 	 * @see NamespaceHandlerSupport#registerBeanDefinitionParser(String, BeanDefinitionParser)
@@ -56,6 +65,8 @@ public interface NamespaceHandler {
 	void init();
 
 	/**
+	 * 将配置的标签转换成 spring 所需要的 BeanDefinition
+	 *
 	 * Parse the specified {@link Element} and register any resulting
 	 * {@link BeanDefinition BeanDefinitions} with the
 	 * {@link org.springframework.beans.factory.support.BeanDefinitionRegistry}
@@ -73,6 +84,8 @@ public interface NamespaceHandler {
 	BeanDefinition parse(Element element, ParserContext parserContext);
 
 	/**
+	 * 对 BeanDefinition 进行一些装饰
+	 *
 	 * Parse the specified {@link Node} and decorate the supplied
 	 * {@link BeanDefinitionHolder}, returning the decorated definition.
 	 * <p>The {@link Node} may be either an {@link org.w3c.dom.Attr} or an

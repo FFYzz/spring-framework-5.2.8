@@ -37,6 +37,11 @@ import org.springframework.lang.Nullable;
  * @since 1.1
  * @see org.springframework.core.io.Resource
  */
+
+/**
+ * BeanDefinition 的阅读器，有多个实现类
+ * 常用的实现是 XMLBeanDefinitionReader，用于读取 XML 中的 Spring 元配置
+ */
 public interface BeanDefinitionReader {
 
 	/**

@@ -47,6 +47,9 @@ import org.springframework.lang.Nullable;
 public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 
 	/**
+	 * 可以拦截正常 bean 的实例化，而是手动返回一个代理对象 bean，该代理对象 bean 的实例化
+	 * 在该方法中执行
+	 *
 	 * Apply this BeanPostProcessor <i>before the target bean gets instantiated</i>.
 	 * The returned bean object may be a proxy to use instead of the target bean,
 	 * effectively suppressing default instantiation of the target bean.
@@ -76,6 +79,10 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 	}
 
 	/**
+	 * 可以控制是否设置配置的属性 populate
+	 * 返回 false 表示不需要配置属性
+	 * 返回 true 表示需要配置属性，可以拦截下来在该方法中手动配置属性，而不是读取配置中的属性
+	 *
 	 * Perform operations after the bean has been instantiated, via a constructor or factory method,
 	 * but before Spring property population (from explicit properties or autowiring) occurs.
 	 * <p>This is the ideal callback for performing custom field injection on the given bean
@@ -95,6 +102,9 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 	}
 
 	/**
+	 * Spring 5.1 开始使用的新方法
+	 * 如果不对属性设置进行拦截，直接返回 null 即可
+	 *
 	 * Post-process the given property values before the factory applies them
 	 * to the given bean, without any need for property descriptors.
 	 * <p>Implementations should return {@code null} (the default) if they provide a custom
@@ -120,6 +130,9 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 	}
 
 	/**
+	 * Spring 5.1 之前推荐的方法
+	 * 如果不对属性进行拦截，直接返回 pvs，不对其进行变动即可
+	 *
 	 * Post-process the given property values before the factory applies them
 	 * to the given bean. Allows for checking whether all dependencies have been
 	 * satisfied, for example based on a "Required" annotation on bean property setters.

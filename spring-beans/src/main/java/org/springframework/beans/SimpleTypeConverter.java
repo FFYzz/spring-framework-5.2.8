@@ -33,6 +33,7 @@ package org.springframework.beans;
 public class SimpleTypeConverter extends TypeConverterSupport {
 
 	public SimpleTypeConverter() {
+		// 会委派给 typeConverterDelegate 来出来
 		this.typeConverterDelegate = new TypeConverterDelegate(this);
 		registerDefaultEditors();
 	}

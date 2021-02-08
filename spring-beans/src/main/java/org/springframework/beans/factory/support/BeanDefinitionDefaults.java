@@ -27,6 +27,11 @@ import org.springframework.util.StringUtils;
  * @since 2.5
  * @see AbstractBeanDefinition#applyDefaults
  */
+
+/**
+ * BeanDefinition 的一些默认属性
+ * 在该类中可以看出仅仅为 autowireMode 和 dependencyCheck 设置了默认的类型
+ */
 public class BeanDefinitionDefaults {
 
 	@Nullable

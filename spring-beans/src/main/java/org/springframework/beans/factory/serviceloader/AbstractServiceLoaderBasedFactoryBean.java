@@ -35,6 +35,9 @@ import org.springframework.util.ClassUtils;
 public abstract class AbstractServiceLoaderBasedFactoryBean extends AbstractFactoryBean<Object>
 		implements BeanClassLoaderAware {
 
+	/**
+	 * 指定的接口类
+	 */
 	@Nullable
 	private Class<?> serviceType;
 
@@ -69,11 +72,16 @@ public abstract class AbstractServiceLoaderBasedFactoryBean extends AbstractFact
 	 */
 	@Override
 	protected Object createInstance() {
+		// serviceType 必须要指定
 		Assert.notNull(getServiceType(), "Property 'serviceType' is required");
+		// 里面进行一次 load，和 Java 原生 API 是一样的
+		// 具体行为还得看 getObjectToExpose 的实现
 		return getObjectToExpose(ServiceLoader.load(getServiceType(), this.beanClassLoader));
 	}
 
 	/**
+	 * 是一个抽象方法，看子类的实现
+	 *
 	 * Determine the actual object to expose for the given ServiceLoader.
 	 * <p>Left to concrete subclasses.
 	 * @param serviceLoader the ServiceLoader for the configured service class

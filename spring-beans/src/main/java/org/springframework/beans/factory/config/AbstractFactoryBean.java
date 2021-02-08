@@ -152,10 +152,13 @@ public abstract class AbstractFactoryBean<T>
 	 */
 	@Override
 	public final T getObject() throws Exception {
+		// 单例
 		if (isSingleton()) {
 			return (this.initialized ? this.singletonInstance : getEarlySingletonInstance());
 		}
+		// 不是单例
 		else {
+			// 则会创建一个实例
 			return createInstance();
 		}
 	}

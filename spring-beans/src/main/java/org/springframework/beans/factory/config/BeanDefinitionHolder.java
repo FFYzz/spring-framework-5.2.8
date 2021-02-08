@@ -37,12 +37,26 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.beans.factory.support.RootBeanDefinition
  * @see org.springframework.beans.factory.support.ChildBeanDefinition
  */
+
+/**
+ * 持有一个 BeanDefinition 对象
+ * 以及 BeanDefinition 的名称和别名
+ */
 public class BeanDefinitionHolder implements BeanMetadataElement {
 
+	/**
+	 * 持有的 BeanDefinition
+	 */
 	private final BeanDefinition beanDefinition;
 
+	/**
+	 * Bean 的名字
+	 */
 	private final String beanName;
 
+	/**
+	 * 当前 bean 的别名
+	 */
 	@Nullable
 	private final String[] aliases;
 
@@ -109,6 +123,8 @@ public class BeanDefinitionHolder implements BeanMetadataElement {
 	}
 
 	/**
+	 * 返回 BeanDefinition 的来源对象
+	 *
 	 * Expose the bean definition's source object.
 	 * @see BeanDefinition#getSource()
 	 */
@@ -119,6 +135,8 @@ public class BeanDefinitionHolder implements BeanMetadataElement {
 	}
 
 	/**
+	 * 返回给定的 候选名字 是否匹配当前 BeanDefinitionHolder 中持有的 BeanDefinition
+	 *
 	 * Determine whether the given candidate name matches the bean name
 	 * or the aliases stored in this bean definition.
 	 */
@@ -130,6 +148,8 @@ public class BeanDefinitionHolder implements BeanMetadataElement {
 
 
 	/**
+	 * 返回友好的 Bean 的介绍
+	 *
 	 * Return a friendly, short description for the bean, stating name and aliases.
 	 * @see #getBeanName()
 	 * @see #getAliases()

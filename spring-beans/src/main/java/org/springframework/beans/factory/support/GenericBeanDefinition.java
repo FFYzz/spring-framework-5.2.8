@@ -37,9 +37,19 @@ import org.springframework.util.ObjectUtils;
  * @see RootBeanDefinition
  * @see ChildBeanDefinition
  */
+
+/**
+ * 通用的 BeanDefinition
+ * 继承自 AbstractBeanDefinition
+ * 有两个实现类 AnnotatedGenericBeanDefinition 以及 ScannedGenericBeanDefinition
+ * 分别表示注解标识的 GenericBeanDefinition 以及被扫描出来的 GenericBeanDefinition
+ */
 @SuppressWarnings("serial")
 public class GenericBeanDefinition extends AbstractBeanDefinition {
 
+	/**
+	 * 父类 bean 的名字
+	 */
 	@Nullable
 	private String parentName;
 
@@ -66,6 +76,10 @@ public class GenericBeanDefinition extends AbstractBeanDefinition {
 	}
 
 
+	/**
+	 * 实现设置 parentName 方法
+	 * @param parentName
+	 */
 	@Override
 	public void setParentName(@Nullable String parentName) {
 		this.parentName = parentName;
@@ -78,6 +92,10 @@ public class GenericBeanDefinition extends AbstractBeanDefinition {
 	}
 
 
+	/**
+	 * 深度拷贝一个 BeanDefinition
+	 * @return
+	 */
 	@Override
 	public AbstractBeanDefinition cloneBeanDefinition() {
 		return new GenericBeanDefinition(this);

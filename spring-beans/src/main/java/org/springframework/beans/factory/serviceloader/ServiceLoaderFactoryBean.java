@@ -28,10 +28,24 @@ import org.springframework.beans.factory.BeanClassLoaderAware;
  * @since 2.5
  * @see java.util.ServiceLoader
  */
+
+/**
+ * 通过 SPI 的方式为接口提供实现类
+ * 并且获得实现类的实例
+ * 该 FactoryBean 的作用就是生成一个 ServiceLoader 类型的 Bean
+ */
 public class ServiceLoaderFactoryBean extends AbstractServiceLoaderBasedFactoryBean implements BeanClassLoaderAware {
 
+	/**
+	 * 直接返回 serviceLoader，自己处理
+	 * 返回类型为 ServiceLoader
+	 *
+	 * @param serviceLoader the ServiceLoader for the configured service class
+	 * @return
+	 */
 	@Override
 	protected Object getObjectToExpose(ServiceLoader<?> serviceLoader) {
+		// 返回 serviceLoader
 		return serviceLoader;
 	}
 

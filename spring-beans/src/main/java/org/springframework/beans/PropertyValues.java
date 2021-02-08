@@ -34,6 +34,11 @@ import org.springframework.lang.Nullable;
  * @since 13 May 2001
  * @see PropertyValue
  */
+
+/**
+ * Spring Bean 的属性元信息
+ * 是一种组合模式，一个 PropertyValues 组合了多个 PropertyValue
+ */
 public interface PropertyValues extends Iterable<PropertyValue> {
 
 	/**
