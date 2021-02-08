@@ -38,6 +38,10 @@ import java.io.InputStream;
  * @see InputStreamResource
  * @see ByteArrayResource
  */
+
+/**
+ * 输入流接口
+ */
 public interface InputStreamSource {
 
 	/**

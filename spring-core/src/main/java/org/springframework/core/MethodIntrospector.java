@@ -85,6 +85,8 @@ public final class MethodIntrospector {
 	}
 
 	/**
+	 * 在给定的 type 上查找满足 methodFilter 的方法
+	 *
 	 * Select methods on the given target type based on a filter.
 	 * <p>Callers define methods of interest through the {@code MethodFilter} parameter.
 	 * @param targetType the target type to search methods on
@@ -147,6 +149,8 @@ public final class MethodIntrospector {
 	public interface MetadataLookup<T> {
 
 		/**
+		 * 查找给定方法的元信息，返回元信息
+		 *
 		 * Perform a lookup on the given method and return associated metadata, if any.
 		 * @param method the method to inspect
 		 * @return non-null metadata to be associated with a method if there is a match,

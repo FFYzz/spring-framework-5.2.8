@@ -58,18 +58,31 @@ import org.springframework.util.ObjectUtils;
  * @since 2.0
  * @see org.springframework.core.annotation.SynthesizingMethodParameter
  */
+
+/**
+ * 保存一个方法的参数
+ */
 public class MethodParameter {
 
 	private static final Annotation[] EMPTY_ANNOTATION_ARRAY = new Annotation[0];
 
 
+	/**
+	 * 当前参数所在的方法
+	 */
 	private final Executable executable;
 
+	/**
+	 * 参数索引
+	 */
 	private final int parameterIndex;
 
 	@Nullable
 	private volatile Parameter parameter;
 
+	/**
+	 * 嵌套级别
+	 */
 	private int nestingLevel;
 
 	/** Map from Integer level to Integer type index. */
@@ -89,6 +102,9 @@ public class MethodParameter {
 	@Nullable
 	private volatile Annotation[] parameterAnnotations;
 
+	/**
+	 * 查找参数的名称
+	 */
 	@Nullable
 	private volatile ParameterNameDiscoverer parameterNameDiscoverer;
 

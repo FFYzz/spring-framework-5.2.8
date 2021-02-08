@@ -44,6 +44,9 @@ import org.springframework.util.StringUtils;
  * @see AnnotatedElementUtils
  */
 @SuppressWarnings("serial")
+/**
+ * 继承自 LinkedHashMap
+ */
 public class AnnotationAttributes extends LinkedHashMap<String, Object> {
 
 	private static final String UNKNOWN = "unknown";
@@ -412,6 +415,8 @@ public class AnnotationAttributes extends LinkedHashMap<String, Object> {
 
 
 	/**
+	 * 将一个 Map 转成 AnnotationAttributes 类型
+	 *
 	 * Return an {@link AnnotationAttributes} instance based on the given map.
 	 * <p>If the map is already an {@code AnnotationAttributes} instance, it
 	 * will be cast and returned immediately without creating a new instance.

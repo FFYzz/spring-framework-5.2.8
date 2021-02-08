@@ -47,6 +47,8 @@ public final class Conventions {
 
 
 	/**
+	 * 确定给定 Object 的变量名
+	 *
 	 * Determine the conventional variable name for the supplied {@code Object}
 	 * based on its concrete type. The convention used is to return the
 	 * un-capitalized short name of the {@code Class}, according to JavaBeans
@@ -66,17 +68,24 @@ public final class Conventions {
 		Class<?> valueClass;
 		boolean pluralize = false;
 
+		// 如果是数组类型
 		if (value.getClass().isArray()) {
+			// 获取组件类型
+			// Integer[] 则返回 Integer.class
 			valueClass = value.getClass().getComponentType();
 			pluralize = true;
 		}
+		// 如果是 Collection 类型
 		else if (value instanceof Collection) {
 			Collection<?> collection = (Collection<?>) value;
+			// 集合中元素个数为 0，直接抛异常
 			if (collection.isEmpty()) {
 				throw new IllegalArgumentException(
 						"Cannot generate variable name for an empty Collection");
 			}
+			// 获取第一个元素
 			Object valueToCheck = peekAhead(collection);
+			// 获取元素的 class 类型
 			valueClass = getClassForValue(valueToCheck);
 			pluralize = true;
 		}
@@ -84,7 +93,11 @@ public final class Conventions {
 			valueClass = getClassForValue(value);
 		}
 
+		// 获取类名
+		// 一般类 返回类名首字母小写
+		// 内部类则是外部类名+内部类名 大写
 		String name = ClassUtils.getShortNameAsProperty(valueClass);
+		// 如果是 数组或者 Collection 在最后还要加上 List
 		return (pluralize ? pluralize(name) : name);
 	}
 
@@ -169,6 +182,7 @@ public final class Conventions {
 	public static String getVariableNameForReturnType(Method method, Class<?> resolvedType, @Nullable Object value) {
 		Assert.notNull(method, "Method must not be null");
 
+		// 如果是 Object 类型，直接解析
 		if (Object.class == resolvedType) {
 			if (value == null) {
 				throw new IllegalArgumentException(
@@ -181,10 +195,12 @@ public final class Conventions {
 		boolean pluralize = false;
 		String reactiveSuffix = "";
 
+		// 数组类型
 		if (resolvedType.isArray()) {
 			valueClass = resolvedType.getComponentType();
 			pluralize = true;
 		}
+		// Collection 类型
 		else if (Collection.class.isAssignableFrom(resolvedType)) {
 			valueClass = ResolvableType.forMethodReturnType(method).asCollection().resolveGeneric();
 			if (valueClass == null) {
@@ -211,6 +227,7 @@ public final class Conventions {
 			}
 		}
 
+		// 获取名字
 		String name = ClassUtils.getShortNameAsProperty(valueClass);
 		return (pluralize ? pluralize(name) : name + reactiveSuffix);
 	}
@@ -265,15 +282,21 @@ public final class Conventions {
 	 * @return the class to use for naming a variable
 	 */
 	private static Class<?> getClassForValue(Object value) {
+		// 获取当前类型的 class type
 		Class<?> valueClass = value.getClass();
+		// 判断是否是 代理类  JDK 动态代理
 		if (Proxy.isProxyClass(valueClass)) {
+			// 得到接口，因为是 JDK 动态代理，肯定会实现接口
 			Class<?>[] ifcs = valueClass.getInterfaces();
 			for (Class<?> ifc : ifcs) {
+				// 找到第一个不是 Java 语言相关的接口
 				if (!ClassUtils.isJavaLanguageInterface(ifc)) {
+					// 返回该类型
 					return ifc;
 				}
 			}
 		}
+		// 普通类
 		else if (valueClass.getName().lastIndexOf('$') != -1 && valueClass.getDeclaringClass() == null) {
 			// '$' in the class name but no inner class -
 			// assuming it's a special subclass (e.g. by OpenJPA)
@@ -290,6 +313,8 @@ public final class Conventions {
 	}
 
 	/**
+	 * 返回集合中的第一个元素
+	 *
 	 * Retrieve the {@code Class} of an element in the {@code Collection}.
 	 * The exact element for which the {@code Class} is retrieved will depend
 	 * on the concrete {@code Collection} implementation.

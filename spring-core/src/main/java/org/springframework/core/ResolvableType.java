@@ -80,27 +80,44 @@ import org.springframework.util.StringUtils;
  * @see #forInstance(Object)
  * @see ResolvableTypeProvider
  */
+
+/**
+ * 对 Java Type 类型的封装
+ * 方便对 Java 中 Type API 的访问
+ */
 @SuppressWarnings("serial")
 public class ResolvableType implements Serializable {
 
 	/**
+	 * 更推荐使用 NONE 而不是 null
+	 *
 	 * {@code ResolvableType} returned when no value is available. {@code NONE} is used
 	 * in preference to {@code null} so that multiple method calls can be safely chained.
 	 */
 	public static final ResolvableType NONE = new ResolvableType(EmptyType.INSTANCE, null, null, 0);
 
+	/**
+	 * 返回一个 length 为 0 的 ResolvableType 数组
+	 */
 	private static final ResolvableType[] EMPTY_TYPES_ARRAY = new ResolvableType[0];
 
+	/**
+	 * 先不深究，将其视为一个并发的 Map 容器
+	 */
 	private static final ConcurrentReferenceHashMap<ResolvableType, ResolvableType> cache =
 			new ConcurrentReferenceHashMap<>(256);
 
 
 	/**
+	 * 持有的 Type
+	 *
 	 * The underlying Java type being managed.
 	 */
 	private final Type type;
 
 	/**
+	 * 接口，定义了返回 Type 以及 Type 的来源对象 source Object
+	 *
 	 * Optional provider for the type.
 	 */
 	@Nullable
@@ -113,6 +130,8 @@ public class ResolvableType implements Serializable {
 	private final VariableResolver variableResolver;
 
 	/**
+	 * 数组的 component type，同样以 ResolvableType 表示
+	 *
 	 * The component type for an array or {@code null} if the type should be deduced.
 	 */
 	@Nullable
@@ -124,9 +143,15 @@ public class ResolvableType implements Serializable {
 	@Nullable
 	private Class<?> resolved;
 
+	/**
+	 * 超类的 ResolvableType
+	 */
 	@Nullable
 	private volatile ResolvableType superType;
 
+	/**
+	 * 接口的 ResolvableType 数组
+	 */
 	@Nullable
 	private volatile ResolvableType[] interfaces;
 
@@ -1460,11 +1485,15 @@ public class ResolvableType implements Serializable {
 	interface VariableResolver extends Serializable {
 
 		/**
+		 * 变量的来源对象
+		 *
 		 * Return the source of the resolver (used for hashCode and equals).
 		 */
 		Object getSource();
 
 		/**
+		 * 解析指定的变量为 ResolvableType
+		 *
 		 * Resolve the specified variable.
 		 * @param variable the variable to resolve
 		 * @return the resolved variable, or {@code null} if not found
@@ -1680,6 +1709,8 @@ public class ResolvableType implements Serializable {
 
 
 	/**
+	 * 空的 Type 类型
+	 *
 	 * Internal {@link Type} used to represent an empty value.
 	 */
 	@SuppressWarnings("serial")

@@ -70,6 +70,10 @@ import org.springframework.lang.Nullable;
  * @author Sam Brannen
  * @since 16.07.2003
  */
+
+/**
+ * Ant 类型的模式比较器
+ */
 public class AntPathMatcher implements PathMatcher {
 
 	/** Default path separator: "/". */

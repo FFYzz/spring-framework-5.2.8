@@ -29,6 +29,11 @@ import org.springframework.lang.Nullable;
  * @since 3.1
  * @see PropertySource
  */
+
+/**
+ * 是一个 Iterable
+ * 查找到多个属性的情况会返回第一个找到的属性
+ */
 public interface PropertySources extends Iterable<PropertySource<?>> {
 
 	/**

@@ -19,6 +19,12 @@ package org.springframework.core;
 import org.springframework.lang.Nullable;
 
 /**
+ * 该接口定义了属性操作的通用约定
+ * Bean 属性上下文的存储，附加属性
+ * 对 BeanDefinition 的定义没有任何影响
+ * 实现该接口可以实现一些扩展，比如在 BeanPostProcessor 中对 bean 的初始化进行拦截,随后将
+ * attribute 的值参与进 bean 的初始化。
+ *
  * Interface defining a generic contract for attaching and accessing metadata
  * to/from arbitrary objects.
  *
@@ -64,6 +70,8 @@ public interface AttributeAccessor {
 	boolean hasAttribute(String name);
 
 	/**
+	 * 返回所有属性的名称
+	 *
 	 * Return the names of all attributes.
 	 */
 	String[] attributeNames();

@@ -31,9 +31,15 @@ import org.springframework.util.StringUtils;
  * @since 3.1
  * @see PropertiesPropertySource
  */
+
+/**
+ * 基于 Map 的 PropertySource 实现
+ */
 public class MapPropertySource extends EnumerablePropertySource<Map<String, Object>> {
 
 	/**
+	 * source 是一个 map
+	 *
 	 * Create a new {@code MapPropertySource} with the given name and {@code Map}.
 	 * @param name the associated name
 	 * @param source the Map source (without {@code null} values in order to get
@@ -44,6 +50,12 @@ public class MapPropertySource extends EnumerablePropertySource<Map<String, Obje
 	}
 
 
+	/**
+	 * 从 source(map) 中获取数据
+	 *
+	 * @param name the property to find
+	 * @return
+	 */
 	@Override
 	@Nullable
 	public Object getProperty(String name) {

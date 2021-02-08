@@ -33,6 +33,10 @@ import java.util.Map;
  * @since 1.2
  * @see AntPathMatcher
  */
+
+/**
+ * 路径匹配
+ */
 public interface PathMatcher {
 
 	/**
@@ -91,6 +95,10 @@ public interface PathMatcher {
 	String extractPathWithinPattern(String pattern, String path);
 
 	/**
+	 * 抽取匹配的模板
+	 * 例子："/hotels/{hotel}" -> "/hotels/1"
+	 * map 元素为："hotel"->"1"
+	 *
 	 * Given a pattern and a full path, extract the URI template variables. URI template
 	 * variables are expressed through curly brackets ('{' and '}').
 	 * <p>For example: For pattern "/hotels/{hotel}" and path "/hotels/1", this method will
@@ -102,6 +110,8 @@ public interface PathMatcher {
 	Map<String, String> extractUriTemplateVariables(String pattern, String path);
 
 	/**
+	 * 获取模式比较器
+	 *
 	 * Given a full path, returns a {@link Comparator} suitable for sorting patterns
 	 * in order of explicitness for that path.
 	 * <p>The full algorithm used depends on the underlying implementation,

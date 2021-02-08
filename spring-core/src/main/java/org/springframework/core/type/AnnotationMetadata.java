@@ -38,6 +38,13 @@ import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
  * @see org.springframework.core.type.classreading.MetadataReader#getAnnotationMetadata()
  * @see AnnotatedTypeMetadata
  */
+
+/**
+ * 继承自 ClassMetadata
+ * 有两个实现：
+ * 一个是基于 Java 反射的实现
+ * 一个是基于 ASM 的实现
+ */
 public interface AnnotationMetadata extends ClassMetadata, AnnotatedTypeMetadata {
 
 	/**
@@ -124,6 +131,7 @@ public interface AnnotationMetadata extends ClassMetadata, AnnotatedTypeMetadata
 	 * @since 5.2
 	 */
 	static AnnotationMetadata introspect(Class<?> type) {
+		// 通过标准的 Java 反射来实现
 		return StandardAnnotationMetadata.from(type);
 	}
 

@@ -80,6 +80,8 @@ public abstract class CollectionUtils {
 	}
 
 	/**
+	 * array 合并到 collection 中
+	 *
 	 * Merge the given array into the given Collection.
 	 * @param array the array to merge (may be {@code null})
 	 * @param collection the target Collection to merge the array into

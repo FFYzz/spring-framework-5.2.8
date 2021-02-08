@@ -29,6 +29,13 @@ import org.springframework.lang.Nullable;
  * @param <K> the key type
  * @param <V> the value element type
  */
+
+/**
+ * 保存了文件名以及文件的关系，其中 Value 是一个 List
+ *
+ * @param <K>
+ * @param <V>
+ */
 public interface MultiValueMap<K, V> extends Map<K, List<V>> {
 
 	/**
@@ -88,6 +95,8 @@ public interface MultiValueMap<K, V> extends Map<K, List<V>> {
 	void setAll(Map<K, V> values);
 
 	/**
+	 * 取 value-List 中第一个元素
+	 *
 	 * Return a {@code Map} with the first values contained in this {@code MultiValueMap}.
 	 * @return a single value representation of this map
 	 */

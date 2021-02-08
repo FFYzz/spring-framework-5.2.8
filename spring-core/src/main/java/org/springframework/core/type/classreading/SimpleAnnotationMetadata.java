@@ -33,6 +33,10 @@ import org.springframework.lang.Nullable;
  * @author Phillip Webb
  * @since 5.2
  */
+
+/**
+ * 基于 asm 的实现
+ */
 final class SimpleAnnotationMetadata implements AnnotationMetadata {
 
 	private final String className;

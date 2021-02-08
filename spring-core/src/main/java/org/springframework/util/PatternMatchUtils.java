@@ -28,6 +28,9 @@ import org.springframework.lang.Nullable;
 public abstract class PatternMatchUtils {
 
 	/**
+	 * 字符串的简单匹配
+	 * 主要处理 * 通配符
+	 *
 	 * Match a String against the given pattern, supporting the following simple
 	 * pattern styles: "xxx*", "*xxx", "*xxx*" and "xxx*yyy" matches (with an
 	 * arbitrary number of pattern parts), as well as direct equality.
@@ -41,6 +44,7 @@ public abstract class PatternMatchUtils {
 		}
 
 		int firstIndex = pattern.indexOf('*');
+		// 没有 * 则直接比较两个字符串是否相等
 		if (firstIndex == -1) {
 			return pattern.equals(str);
 		}
