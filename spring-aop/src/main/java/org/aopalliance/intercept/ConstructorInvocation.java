@@ -32,6 +32,7 @@ import java.lang.reflect.Constructor;
 /**
  * 构造方法的调用
  * 说明构造方法也是可以作为连接点的
+ * 在 Spring 中没有实现
  */
 public interface ConstructorInvocation extends Invocation {
 

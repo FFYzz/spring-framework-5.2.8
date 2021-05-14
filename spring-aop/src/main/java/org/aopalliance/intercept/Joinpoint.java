@@ -65,6 +65,8 @@ public interface Joinpoint {
 	Object getThis();
 
 	/**
+	 * 在 Spring 中返回的是 Method 对象
+	 *
 	 * Return the static part of this joinpoint.
 	 * <p>The static part is an accessible object on which a chain of
 	 * interceptors are installed.
