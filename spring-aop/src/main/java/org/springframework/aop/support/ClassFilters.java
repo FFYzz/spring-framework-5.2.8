@@ -25,6 +25,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * ClassFilters 的工具类
+ *
  * Static utility methods for composing {@link ClassFilter ClassFilters}.
  *
  * @author Rod Johnson
@@ -101,6 +103,7 @@ public abstract class ClassFilters {
 		@Override
 		public boolean matches(Class<?> clazz) {
 			for (ClassFilter filter : this.filters) {
+				// 只要一个 match， 就返回
 				if (filter.matches(clazz)) {
 					return true;
 				}
@@ -110,6 +113,7 @@ public abstract class ClassFilters {
 
 		@Override
 		public boolean equals(@Nullable Object other) {
+			// 返回一个 或 的关系
 			return (this == other || (other instanceof UnionClassFilter &&
 					ObjectUtils.nullSafeEquals(this.filters, ((UnionClassFilter) other).filters)));
 		}
@@ -142,6 +146,8 @@ public abstract class ClassFilters {
 		@Override
 		public boolean matches(Class<?> clazz) {
 			for (ClassFilter filter : this.filters) {
+				// 只要一个不 match ，就返回 false
+				// 需要所有的 ClassFilter 都 match
 				if (!filter.matches(clazz)) {
 					return false;
 				}

@@ -24,6 +24,8 @@ import org.springframework.aop.Pointcut;
 import org.springframework.util.Assert;
 
 /**
+ * Pointcut 的工具类，与 ClassFilters 类似
+ *
  * Pointcut constants for matching getters and setters,
  * and static methods useful for manipulating and evaluating pointcuts.
  *
@@ -90,6 +92,8 @@ public abstract class Pointcuts {
 
 
 	/**
+	 * setter 防范的 Pointcut
+	 *
 	 * Pointcut implementation that matches bean property setters.
 	 */
 	@SuppressWarnings("serial")
@@ -116,6 +120,8 @@ public abstract class Pointcuts {
 
 
 	/**
+	 * Getter 方法的 Pointcut
+	 *
 	 * Pointcut implementation that matches bean property getters.
 	 */
 	@SuppressWarnings("serial")

@@ -26,6 +26,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
+ * MethodMatcher 的工具类，与 ClassFilters 类似
+ *
  * Static utility methods for composing {@link MethodMatcher MethodMatchers}.
  *
  * <p>A MethodMatcher may be evaluated statically (based on method and target
@@ -119,6 +121,7 @@ public abstract class MethodMatchers {
 
 		@Override
 		public boolean matches(Method method, Class<?> targetClass) {
+			// 是一个 或 的关系
 			return (matchesClass1(targetClass) && this.mm1.matches(method, targetClass)) ||
 					(matchesClass2(targetClass) && this.mm2.matches(method, targetClass));
 		}
