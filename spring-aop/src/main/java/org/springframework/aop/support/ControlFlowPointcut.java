@@ -45,6 +45,9 @@ public class ControlFlowPointcut implements Pointcut, ClassFilter, MethodMatcher
 	@Nullable
 	private final String methodName;
 
+	/**
+	 * 记录调用的次数
+	 */
 	private final AtomicInteger evaluations = new AtomicInteger(0);
 
 

@@ -74,6 +74,7 @@ public class JdkRegexpMethodPointcut extends AbstractRegexpMethodPointcut {
 	@Override
 	protected boolean matches(String pattern, int patternIndex) {
 		Matcher matcher = this.compiledPatterns[patternIndex].matcher(pattern);
+		// 直接判断是否匹配成功
 		return matcher.matches();
 	}
 
@@ -84,17 +85,21 @@ public class JdkRegexpMethodPointcut extends AbstractRegexpMethodPointcut {
 	@Override
 	protected boolean matchesExclusion(String candidate, int patternIndex) {
 		Matcher matcher = this.compiledExclusionPatterns[patternIndex].matcher(candidate);
+		// 直接判断是否在 exclusion 中匹配成功
 		return matcher.matches();
 	}
 
 
 	/**
+	 * 将 String 编译成 Pattern
+	 *
 	 * Compiles the supplied {@code String[]} into an array of
 	 * {@link Pattern} objects and returns that array.
 	 */
 	private Pattern[] compilePatterns(String[] source) throws PatternSyntaxException {
 		Pattern[] destination = new Pattern[source.length];
 		for (int i = 0; i < source.length; i++) {
+			// 对 pattern 进行 compile，效率更高
 			destination[i] = Pattern.compile(source[i]);
 		}
 		return destination;

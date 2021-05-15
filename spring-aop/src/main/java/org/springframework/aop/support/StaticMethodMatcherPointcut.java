@@ -21,6 +21,9 @@ import org.springframework.aop.MethodMatcher;
 import org.springframework.aop.Pointcut;
 
 /**
+ * 可以通过继承该方法来扩展 Pointcut
+ * 重写 StaticMethodMatcher#matches 方法
+ *
  * Convenient superclass when we want to force subclasses to implement the
  * {@link MethodMatcher} interface but subclasses will want to be pointcuts.
  *
@@ -32,6 +35,10 @@ import org.springframework.aop.Pointcut;
  */
 public abstract class StaticMethodMatcherPointcut extends StaticMethodMatcher implements Pointcut {
 
+	/**
+	 * ClassFilter 默认都返回 true
+	 * 所以实现类只需重写 MethodMatcher 的 matches 方法
+	 */
 	private ClassFilter classFilter = ClassFilter.TRUE;
 
 
