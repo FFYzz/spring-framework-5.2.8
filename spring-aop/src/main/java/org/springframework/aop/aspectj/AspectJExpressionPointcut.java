@@ -92,6 +92,7 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 
 	private static final Set<PointcutPrimitive> SUPPORTED_PRIMITIVES = new HashSet<>();
 
+	// 支持 10 种 aspectj 的指令原语
 	static {
 		SUPPORTED_PRIMITIVES.add(PointcutPrimitive.EXECUTION);
 		SUPPORTED_PRIMITIVES.add(PointcutPrimitive.ARGS);
@@ -115,15 +116,24 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 
 	private Class<?>[] pointcutParameterTypes = new Class<?>[0];
 
+	/**
+	 * 与 IOC 容器关联
+	 */
 	@Nullable
 	private BeanFactory beanFactory;
 
 	@Nullable
 	private transient ClassLoader pointcutClassLoader;
 
+	/**
+	 * pointcut 表达式
+	 */
 	@Nullable
 	private transient PointcutExpression pointcutExpression;
 
+	/**
+	 * 做了一个缓存，缓存 method 与 ShadowMatch 是否匹配
+	 */
 	private transient Map<Method, ShadowMatch> shadowMatchCache = new ConcurrentHashMap<>(32);
 
 
@@ -191,6 +201,8 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 
 
 	/**
+	 * 构建 pointcut 表达式
+	 *
 	 * Check whether this pointcut is ready to match,
 	 * lazily building the underlying AspectJ pointcut expression.
 	 */
@@ -200,6 +212,7 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 		}
 		if (this.pointcutExpression == null) {
 			this.pointcutClassLoader = determinePointcutClassLoader();
+			// 设置 classloader
 			this.pointcutExpression = buildPointcutExpression(this.pointcutClassLoader);
 		}
 		return this.pointcutExpression;
@@ -223,12 +236,16 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 	 * Build the underlying AspectJ pointcut expression.
 	 */
 	private PointcutExpression buildPointcutExpression(@Nullable ClassLoader classLoader) {
+		// 传入 classloader 初始化一个 PointcutParser
 		PointcutParser parser = initializePointcutParser(classLoader);
+		// 保存表达式的参数
 		PointcutParameter[] pointcutParameters = new PointcutParameter[this.pointcutParameterNames.length];
 		for (int i = 0; i < pointcutParameters.length; i++) {
+			// 将参数保存到 PointcutParameter 中
 			pointcutParameters[i] = parser.createPointcutParameter(
 					this.pointcutParameterNames[i], this.pointcutParameterTypes[i]);
 		}
+		// 进行解析 aspectj 进行解析
 		return parser.parsePointcutExpression(replaceBooleanOperators(resolveExpression()),
 				this.pointcutDeclarationScope, pointcutParameters);
 	}
@@ -272,11 +289,22 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 		return obtainPointcutExpression();
 	}
 
+	/**
+	 * 判断类型是否匹配
+	 * 对应 ClassFilter
+	 *
+	 * @param targetClass
+	 * @return
+	 */
 	@Override
 	public boolean matches(Class<?> targetClass) {
+		// 获取 PointcutExpression
 		PointcutExpression pointcutExpression = obtainPointcutExpression();
 		try {
 			try {
+				// 判断是否能够匹配
+				// 由 aspectj 的能力来判断
+				// 相当于 spring 使用了 sapectj 的能力
 				return pointcutExpression.couldMatchJoinPointsInType(targetClass);
 			}
 			catch (ReflectionWorldException ex) {
@@ -294,6 +322,17 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 		return false;
 	}
 
+	/**
+	 * 判断方法是否匹配
+	 * 对应 MethodMatcher
+	 * 具体的匹配逻辑都交由 aspectj 来处理
+	 *
+	 * @param method the candidate method
+	 * @param targetClass the target class
+	 * @param hasIntroductions {@code true} if the object on whose behalf we are
+	 * asking is the subject on one or more introductions; {@code false} otherwise
+	 * @return
+	 */
 	@Override
 	public boolean matches(Method method, Class<?> targetClass, boolean hasIntroductions) {
 		obtainPointcutExpression();
@@ -430,6 +469,14 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 		invocation.setUserAttribute(resolveExpression(), jpm);
 	}
 
+	/**
+	 * 获取 method 对应的 ShadowMatch
+	 * ShadowMatch 有 aspectj 来提供
+	 *
+	 * @param method
+	 * @param targetClass
+	 * @return
+	 */
 	private ShadowMatch getTargetShadowMatch(Method method, Class<?> targetClass) {
 		Method targetMethod = AopUtils.getMostSpecificMethod(method, targetClass);
 		if (targetMethod.getDeclaringClass().isInterface()) {
@@ -454,16 +501,21 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 
 	private ShadowMatch getShadowMatch(Method targetMethod, Method originalMethod) {
 		// Avoid lock contention for known Methods through concurrent access...
+		// 先查询查询缓存
 		ShadowMatch shadowMatch = this.shadowMatchCache.get(targetMethod);
+		// 如果缓存中查不到
 		if (shadowMatch == null) {
 			synchronized (this.shadowMatchCache) {
 				// Not found - now check again with full lock...
 				PointcutExpression fallbackExpression = null;
+				// 再检查一次
 				shadowMatch = this.shadowMatchCache.get(targetMethod);
 				if (shadowMatch == null) {
 					Method methodToMatch = targetMethod;
 					try {
 						try {
+							// 交由 aspectj 来处理了
+							// 具体逻辑就不深入了
 							shadowMatch = obtainPointcutExpression().matchesMethodExecution(methodToMatch);
 						}
 						catch (ReflectionWorldException ex) {
@@ -515,10 +567,12 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 						shadowMatch = new DefensiveShadowMatch(shadowMatch,
 								fallbackExpression.matchesMethodExecution(methodToMatch));
 					}
+					// 保存到缓存中
 					this.shadowMatchCache.put(targetMethod, shadowMatch);
 				}
 			}
 		}
+		// 返回 ShadowMatch
 		return shadowMatch;
 	}
 
