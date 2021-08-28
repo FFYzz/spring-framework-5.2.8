@@ -33,6 +33,7 @@ package org.springframework.aop;
 
 /**
  * 切入点，连接点的子集
+ * PointCut 的 API 实现
  */
 public interface Pointcut {
 

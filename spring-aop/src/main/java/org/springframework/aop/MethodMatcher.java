@@ -70,6 +70,8 @@ public interface MethodMatcher {
 	boolean matches(Method method, Class<?> targetClass);
 
 	/**
+	 * 返回方法是否可在运行时动态创建
+	 *
 	 * Is this MethodMatcher dynamic, that is, must a final call be made on the
 	 * {@link #matches(java.lang.reflect.Method, Class, Object[])} method at
 	 * runtime even if the 2-arg matches method returns {@code true}?
@@ -82,6 +84,9 @@ public interface MethodMatcher {
 	boolean isRuntime();
 
 	/**
+	 * 根据传入的参数进行匹配拦截。
+	 * 比如该方法的参数个数为 5 个的时候进行拦截。
+	 *
 	 * Check whether there a runtime (dynamic) match for this method,
 	 * which must have matched statically.
 	 * <p>This method is invoked only if the 2-arg matches method returns
