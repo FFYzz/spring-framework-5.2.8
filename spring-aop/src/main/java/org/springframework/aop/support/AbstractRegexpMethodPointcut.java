@@ -53,11 +53,15 @@ public abstract class AbstractRegexpMethodPointcut extends StaticMethodMatcherPo
 		implements Serializable {
 
 	/**
+	 * 包含在内的 pattern
+	 *
 	 * Regular expressions to match.
 	 */
 	private String[] patterns = new String[0];
 
 	/**
+	 * 排除的 pattern
+	 *
 	 * Regular expressions <strong>not</strong> to match.
 	 */
 	private String[] excludedPatterns = new String[0];
@@ -125,32 +129,44 @@ public abstract class AbstractRegexpMethodPointcut extends StaticMethodMatcherPo
 
 
 	/**
+	 * 重写 matches 方法
+	 *
 	 * Try to match the regular expression against the fully qualified name
 	 * of the target class as well as against the method's declaring class,
 	 * plus the name of the method.
 	 */
 	@Override
 	public boolean matches(Method method, Class<?> targetClass) {
+		// 主要逻辑在 matchesPattern
+		// classname.methodname 的形式
+		// 方法签名
 		return (matchesPattern(ClassUtils.getQualifiedMethodName(method, targetClass)) ||
 				(targetClass != method.getDeclaringClass() &&
 						matchesPattern(ClassUtils.getQualifiedMethodName(method, method.getDeclaringClass()))));
 	}
 
 	/**
+	 * 先走 match ，再判断是否在 exclude 中
+	 *
 	 * Match the specified candidate against the configured patterns.
 	 * @param signatureString "java.lang.Object.hashCode" style signature
 	 * @return whether the candidate matches at least one of the specified patterns
 	 */
 	protected boolean matchesPattern(String signatureString) {
 		for (int i = 0; i < this.patterns.length; i++) {
+			// 遍历 patterns，i 为匹配的那个 pattern 的 index
+			// signatureString 为方法签名
 			boolean matched = matches(signatureString, i);
 			if (matched) {
 				for (int j = 0; j < this.excludedPatterns.length; j++) {
+					// 如果匹配上 exclusion
 					boolean excluded = matchesExclusion(signatureString, j);
 					if (excluded) {
+						// 返回 false
 						return false;
 					}
 				}
+				// 最终才返回 true
 				return true;
 			}
 		}
@@ -179,6 +195,8 @@ public abstract class AbstractRegexpMethodPointcut extends StaticMethodMatcherPo
 	protected abstract void initExcludedPatternRepresentation(String[] patterns) throws IllegalArgumentException;
 
 	/**
+	 * 具体的匹配逻辑有子类实现
+	 *
 	 * Does the pattern at the given index match the given String?
 	 * @param pattern the {@code String} pattern to match
 	 * @param patternIndex index of pattern (starting from 0)
@@ -187,6 +205,8 @@ public abstract class AbstractRegexpMethodPointcut extends StaticMethodMatcherPo
 	protected abstract boolean matches(String pattern, int patternIndex);
 
 	/**
+	 * 具体的排除逻辑由子类实现
+	 *
 	 * Does the exclusion pattern at the given index match the given String?
 	 * @param pattern the {@code String} pattern to match
 	 * @param patternIndex index of pattern (starting from 0)

@@ -40,8 +40,14 @@ import org.springframework.util.ObjectUtils;
 @SuppressWarnings("serial")
 public class ControlFlowPointcut implements Pointcut, ClassFilter, MethodMatcher, Serializable {
 
+	/**
+	 * 要匹配的 class
+	 */
 	private final Class<?> clazz;
 
+	/**
+	 * 要匹配的 methodName
+	 */
 	@Nullable
 	private final String methodName;
 
@@ -99,7 +105,9 @@ public class ControlFlowPointcut implements Pointcut, ClassFilter, MethodMatcher
 		this.evaluations.incrementAndGet();
 
 		for (StackTraceElement element : new Throwable().getStackTrace()) {
+			// 仅匹配 classname 相等
 			if (element.getClassName().equals(this.clazz.getName()) &&
+					// 匹配 methodName 相等
 					(this.methodName == null || element.getMethodName().equals(this.methodName))) {
 				return true;
 			}
@@ -111,17 +119,20 @@ public class ControlFlowPointcut implements Pointcut, ClassFilter, MethodMatcher
 	 * It's useful to know how many times we've fired, for optimization.
 	 */
 	public int getEvaluations() {
+		// 返回调用的次数
 		return this.evaluations.get();
 	}
 
 
 	@Override
 	public ClassFilter getClassFilter() {
+		// 直接返回当前实例
 		return this;
 	}
 
 	@Override
 	public MethodMatcher getMethodMatcher() {
+		// 直接返回当前实例
 		return this;
 	}
 
