@@ -45,6 +45,9 @@ import org.springframework.util.Assert;
 public abstract class MethodMatchers {
 
 	/**
+	 * <p>
+	 *     两者有一个返回 true 即返回 true。
+	 * </p>
 	 * Match all methods that <i>either</i> (or both) of the given MethodMatchers matches.
 	 * @param mm1 the first MethodMatcher
 	 * @param mm2 the second MethodMatcher
@@ -57,6 +60,9 @@ public abstract class MethodMatchers {
 	}
 
 	/**
+	 * <p>
+	 *     mm1 与 cf1 是一对。mm2 与 cf2 是一对。有一对返回 true，则返回 true。获 || 的关系
+	 * </p>
 	 * Match all methods that <i>either</i> (or both) of the given MethodMatchers matches.
 	 * @param mm1 the first MethodMatcher
 	 * @param cf1 the corresponding ClassFilter for the first MethodMatcher
@@ -72,6 +78,9 @@ public abstract class MethodMatchers {
 	}
 
 	/**
+	 * <p>
+	 *     mm1 和 mm2 都要匹配才返回 true
+	 * </p>
 	 * Match all methods that <i>both</i> of the given MethodMatchers match.
 	 * @param mm1 the first MethodMatcher
 	 * @param mm2 the second MethodMatcher
@@ -84,6 +93,8 @@ public abstract class MethodMatchers {
 	}
 
 	/**
+	 * method 是否匹配 mm
+	 * <p>
 	 * Apply the given MethodMatcher to the given Method, supporting an
 	 * {@link org.springframework.aop.IntroductionAwareMethodMatcher}
 	 * (if applicable).
@@ -183,6 +194,7 @@ public abstract class MethodMatchers {
 
 		@Override
 		public boolean matches(Method method, Class<?> targetClass, boolean hasIntroductions) {
+			// 或关系，使用 ||
 			return (matchesClass1(targetClass) && MethodMatchers.matches(this.mm1, method, targetClass, hasIntroductions)) ||
 					(matchesClass2(targetClass) && MethodMatchers.matches(this.mm2, method, targetClass, hasIntroductions));
 		}
@@ -208,11 +220,13 @@ public abstract class MethodMatchers {
 
 		@Override
 		protected boolean matchesClass1(Class<?> targetClass) {
+			// 第一个 ClassFilter 是否匹配
 			return this.cf1.matches(targetClass);
 		}
 
 		@Override
 		protected boolean matchesClass2(Class<?> targetClass) {
+			// 第二个 ClassFilter 是否匹配
 			return this.cf2.matches(targetClass);
 		}
 
@@ -265,6 +279,7 @@ public abstract class MethodMatchers {
 
 		@Override
 		public boolean matches(Method method, Class<?> targetClass, boolean hasIntroductions) {
+			// 其中有一对返回 true，即返回 true。
 			return (matchesClass1(targetClass) && MethodMatchers.matches(this.mm1, method, targetClass, hasIntroductions)) ||
 					(matchesClass2(targetClass) && MethodMatchers.matches(this.mm2, method, targetClass, hasIntroductions));
 		}
@@ -290,6 +305,7 @@ public abstract class MethodMatchers {
 
 		@Override
 		public boolean matches(Method method, Class<?> targetClass) {
+			// 两个 mm 都要匹配
 			return (this.mm1.matches(method, targetClass) && this.mm2.matches(method, targetClass));
 		}
 
@@ -349,6 +365,7 @@ public abstract class MethodMatchers {
 
 		@Override
 		public boolean matches(Method method, Class<?> targetClass, boolean hasIntroductions) {
+			// 两者都要返回 true 结果才返回 true
 			return (MethodMatchers.matches(this.mm1, method, targetClass, hasIntroductions) &&
 					MethodMatchers.matches(this.mm2, method, targetClass, hasIntroductions));
 		}
