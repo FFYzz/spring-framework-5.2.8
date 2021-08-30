@@ -31,7 +31,7 @@ import org.springframework.lang.Nullable;
  */
 
 /**
- * AspectJ 的 方法前置增强
+ * 基于 AspectJ 实现的方法前置增强
  */
 @SuppressWarnings("serial")
 public class AspectJMethodBeforeAdvice extends AbstractAspectJAdvice implements MethodBeforeAdvice, Serializable {
@@ -46,8 +46,11 @@ public class AspectJMethodBeforeAdvice extends AbstractAspectJAdvice implements 
 	@Override
 	public void before(Method method, Object[] args, @Nullable Object target) throws Throwable {
 		// 调用通知方法
+		// 这个方法里面一定会解析 aspectj 表达式，检查是否匹配
 		invokeAdviceMethod(getJoinPointMatch(), null, null);
 	}
+
+	// 下面两个是互斥的方法
 
 	@Override
 	public boolean isBeforeAdvice() {

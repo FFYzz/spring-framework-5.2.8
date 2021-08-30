@@ -21,6 +21,7 @@ import java.io.Serializable;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
+import org.aspectj.lang.annotation.Before;
 import org.springframework.aop.BeforeAdvice;
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.util.Assert;
@@ -36,7 +37,8 @@ import org.springframework.util.Assert;
  */
 
 /**
- * 拦截器
+ * 1. 拦截器 MethodInterceptor
+ * 2. advice  BeforeAdvice
  */
 @SuppressWarnings("serial")
 public class MethodBeforeAdviceInterceptor implements MethodInterceptor, BeforeAdvice, Serializable {
@@ -45,7 +47,6 @@ public class MethodBeforeAdviceInterceptor implements MethodInterceptor, BeforeA
 	 * 前置增强的 AspectJMethodBeforeAdvice
 	 */
 	private final MethodBeforeAdvice advice;
-
 
 	/**
 	 * Create a new MethodBeforeAdviceInterceptor for the given advice.

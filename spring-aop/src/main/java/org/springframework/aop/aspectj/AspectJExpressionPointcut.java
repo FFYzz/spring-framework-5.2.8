@@ -187,12 +187,18 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 	}
 
 
+	/**
+	 * 类型匹配
+	 */
 	@Override
 	public ClassFilter getClassFilter() {
 		obtainPointcutExpression();
 		return this;
 	}
 
+	/**
+	 * 方法匹配
+	 */
 	@Override
 	public MethodMatcher getMethodMatcher() {
 		obtainPointcutExpression();
@@ -234,6 +240,9 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 
 	/**
 	 * Build the underlying AspectJ pointcut expression.
+	 * <p>
+	 *     构建 AspectJ 参数表达式
+	 * </p>
 	 */
 	private PointcutExpression buildPointcutExpression(@Nullable ClassLoader classLoader) {
 		// 传入 classloader 初始化一个 PointcutParser
@@ -302,9 +311,9 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 		PointcutExpression pointcutExpression = obtainPointcutExpression();
 		try {
 			try {
-				// 判断是否能够匹配
-				// 由 aspectj 的能力来判断
-				// 相当于 spring 使用了 sapectj 的能力
+				// 判断类型是否能够匹配
+				// 由 aspectJ 的能力来判断
+				// 相当于 spring 使用了 aspectJ 的能力
 				return pointcutExpression.couldMatchJoinPointsInType(targetClass);
 			}
 			catch (ReflectionWorldException ex) {
@@ -342,20 +351,24 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 		// in Spring - we can optimize since we know we have exactly this class,
 		// and there will never be matching subclass at runtime.
 		if (shadowMatch.alwaysMatches()) {
+			// 如果所有都匹配，那么直接返回 true
 			return true;
 		}
 		else if (shadowMatch.neverMatches()) {
+			// 如果什么都不匹配，返回 false
 			return false;
 		}
 		else {
 			// the maybe case
 			if (hasIntroductions) {
+				// 如果是 introduction，那么也返回 true
 				return true;
 			}
 			// A match test returned maybe - if there are any subtype sensitive variables
 			// involved in the test (this, target, at_this, at_target, at_annotation) then
 			// we say this is not a match as in Spring there will never be a different
 			// runtime subtype.
+			// 交给 aspectJ 来判断
 			RuntimeTestWalker walker = getRuntimeTestWalker(shadowMatch);
 			return (!walker.testsSubtypeSensitiveVars() || walker.testTargetInstanceOfResidue(targetClass));
 		}

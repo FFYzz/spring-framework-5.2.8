@@ -25,6 +25,8 @@ import org.springframework.aop.Advisor;
 import org.springframework.aop.MethodBeforeAdvice;
 
 /**
+ * MethodBeforeAdvice 对 AdvisorAdapter 的实现
+ *
  * Adapter to enable {@link org.springframework.aop.MethodBeforeAdvice}
  * to be used in the Spring AOP framework.
  *
@@ -34,6 +36,12 @@ import org.springframework.aop.MethodBeforeAdvice;
 @SuppressWarnings("serial")
 class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable {
 
+	/**
+	 * advice 是否为 MethodBeforeAdvice
+	 *
+	 * @param advice an Advice such as a BeforeAdvice
+	 * @return
+	 */
 	@Override
 	public boolean supportsAdvice(Advice advice) {
 		return (advice instanceof MethodBeforeAdvice);
@@ -48,6 +56,7 @@ class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable {
 	 */
 	@Override
 	public MethodInterceptor getInterceptor(Advisor advisor) {
+		// 上面判断为是的话下面直接强转
 		MethodBeforeAdvice advice = (MethodBeforeAdvice) advisor.getAdvice();
 		// 封装成 MethodBeforeAdviceInterceptor
 		return new MethodBeforeAdviceInterceptor(advice);
