@@ -18,6 +18,10 @@ package org.springframework.aop;
 
 /**
  * Tag interface for throws advice.
+ * <p>
+ *     处理异常的 advice，
+ *     Spring 中的默认实现为 ThrowsAdviceInterceptor.
+ * </p>
  *
  * <p>There are not any methods on this interface, as methods are invoked by
  * reflection. Implementing classes must implement methods of the form:

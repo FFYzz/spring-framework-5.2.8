@@ -30,8 +30,9 @@ import org.springframework.lang.Nullable;
  */
 
 /**
- * 返回之后通知
- * 空实现
+ * 返回之后通知,
+ * 空实现,
+ * Spring 内置的实现为 AfterReturningAdviceInterceptor.
  */
 public interface AfterReturningAdvice extends AfterAdvice {
 

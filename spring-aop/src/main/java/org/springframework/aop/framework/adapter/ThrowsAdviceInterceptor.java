@@ -41,6 +41,8 @@ import org.springframework.util.Assert;
  * <p>Only the last argument is required.
  *
  * <p>Some examples of valid methods would be:
+ * afterThrowing 的方法签名有严格的要求，参数必须为 4 个或者 1 个
+ * 方法名必须为 afterThrowing
  *
  * <pre class="code">public void afterThrowing(Exception ex)</pre>
  * <pre class="code">public void afterThrowing(RemoteException)</pre>
@@ -60,12 +62,16 @@ public class ThrowsAdviceInterceptor implements MethodInterceptor, AfterAdvice {
 
 	private static final Log logger = LogFactory.getLog(ThrowsAdviceInterceptor.class);
 
-
+	/**
+	 * 并没有指定是 ThrowsAdvice 接口，而是 Object 对象
+	 */
 	private final Object throwsAdvice;
 
+	/**
+	 * 缓存
+	 */
 	/** Methods on throws advice, keyed by exception class. */
 	private final Map<Class<?>, Method> exceptionHandlerMap = new HashMap<>();
-
 
 	/**
 	 * Create a new ThrowsAdviceInterceptor for the given ThrowsAdvice.
@@ -76,13 +82,19 @@ public class ThrowsAdviceInterceptor implements MethodInterceptor, AfterAdvice {
 		Assert.notNull(throwsAdvice, "Advice must not be null");
 		this.throwsAdvice = throwsAdvice;
 
+		// 获取所有的 public 方法
 		Method[] methods = throwsAdvice.getClass().getMethods();
 		for (Method method : methods) {
+			// 方法名必须为 AFTER_THROWING
 			if (method.getName().equals(AFTER_THROWING) &&
+					// 参数个数必须为 1 个或者 4 个
 					(method.getParameterCount() == 1 || method.getParameterCount() == 4)) {
+				// 获取最后一个参数，最后一个参数一般为 异常 Exception
 				Class<?> throwableParam = method.getParameterTypes()[method.getParameterCount() - 1];
 				if (Throwable.class.isAssignableFrom(throwableParam)) {
 					// An exception handler to register...
+					// 记录缓存
+					// 如果有多个相同类型的 Exception，那么后面的会覆盖前面的
 					this.exceptionHandlerMap.put(throwableParam, method);
 					if (logger.isDebugEnabled()) {
 						logger.debug("Found exception handler method on throws advice: " + method);
@@ -109,11 +121,16 @@ public class ThrowsAdviceInterceptor implements MethodInterceptor, AfterAdvice {
 	@Override
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		try {
+			// 执行方法
 			return mi.proceed();
 		}
 		catch (Throwable ex) {
+			// 如果上面的方法执行抛出异常
+			// 找到对应的异常捕获处理方法
 			Method handlerMethod = getExceptionHandler(ex);
 			if (handlerMethod != null) {
+				// 调用异常处理方法
+				// 也就是 throwsAdvice 方法
 				invokeHandlerMethod(mi, ex, handlerMethod);
 			}
 			throw ex;
