@@ -38,10 +38,19 @@ import org.springframework.util.Assert;
  */
 public class AspectJPointcutAdvisor implements PointcutAdvisor, Ordered {
 
+	/**
+	 * 持有一个 advice
+	 */
 	private final AbstractAspectJAdvice advice;
 
+	/**
+	 * 持有一个 pointcut
+	 */
 	private final Pointcut pointcut;
 
+	/**
+	 * 可以定义 Order
+	 */
 	@Nullable
 	private Integer order;
 

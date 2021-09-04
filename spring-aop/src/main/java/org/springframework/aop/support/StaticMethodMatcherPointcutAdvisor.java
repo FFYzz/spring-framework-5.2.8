@@ -36,8 +36,15 @@ import org.springframework.util.Assert;
 public abstract class StaticMethodMatcherPointcutAdvisor extends StaticMethodMatcherPointcut
 		implements PointcutAdvisor, Ordered, Serializable {
 
+	/**
+	 * 持有的 advice，
+	 * StaticMethodMatcherPointcut 中定义了 Pointcut
+	 */
 	private Advice advice = EMPTY_ADVICE;
 
+	/**
+	 * 支持指定 Order，默认是最低 Order
+	 */
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
 

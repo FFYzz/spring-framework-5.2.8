@@ -30,6 +30,9 @@ import org.springframework.util.Assert;
 /**
  * Abstract BeanFactory-based PointcutAdvisor that allows for any Advice
  * to be configured as reference to an Advice bean in a BeanFactory.
+ * <p>
+ *     支持通过依赖查找获取 advice
+ * </p>
  *
  * <p>Specifying the name of an advice bean instead of the advice object itself
  * (if running within a BeanFactory) increases loose coupling at initialization time,
@@ -43,15 +46,27 @@ import org.springframework.util.Assert;
 @SuppressWarnings("serial")
 public abstract class AbstractBeanFactoryPointcutAdvisor extends AbstractPointcutAdvisor implements BeanFactoryAware {
 
+	/**
+	 * 要查找的 advice 的 name
+	 */
 	@Nullable
 	private String adviceBeanName;
 
+	/**
+	 * Spring context
+	 */
 	@Nullable
 	private BeanFactory beanFactory;
 
+	/**
+	 * 可以通过依赖查找绑定，也可以通过 set 设置
+	 */
 	@Nullable
 	private transient volatile Advice advice;
 
+	/**
+	 * 锁对象
+	 */
 	private transient volatile Object adviceMonitor = new Object();
 
 
@@ -81,6 +96,9 @@ public abstract class AbstractBeanFactoryPointcutAdvisor extends AbstractPointcu
 		resetAdviceMonitor();
 	}
 
+	/**
+	 * 重置锁对象
+	 */
 	private void resetAdviceMonitor() {
 		if (this.beanFactory instanceof ConfigurableBeanFactory) {
 			this.adviceMonitor = ((ConfigurableBeanFactory) this.beanFactory).getSingletonMutex();
@@ -111,19 +129,24 @@ public abstract class AbstractBeanFactoryPointcutAdvisor extends AbstractPointcu
 		Assert.state(this.adviceBeanName != null, "'adviceBeanName' must be specified");
 		Assert.state(this.beanFactory != null, "BeanFactory must be set to resolve 'adviceBeanName'");
 
+		// 如果是单例模式的 advice
 		if (this.beanFactory.isSingleton(this.adviceBeanName)) {
 			// Rely on singleton semantics provided by the factory.
+			// 依赖查找
 			advice = this.beanFactory.getBean(this.adviceBeanName, Advice.class);
 			this.advice = advice;
 			return advice;
 		}
+		// prototype 类型的 advice
 		else {
 			// No singleton guarantees from the factory -> let's lock locally but
 			// reuse the factory's singleton lock, just in case a lazy dependency
 			// of our advice bean happens to trigger the singleton lock implicitly...
+			// 需要加上锁
 			synchronized (this.adviceMonitor) {
 				advice = this.advice;
 				if (advice == null) {
+					// 会去 createBean
 					advice = this.beanFactory.getBean(this.adviceBeanName, Advice.class);
 					this.advice = advice;
 				}

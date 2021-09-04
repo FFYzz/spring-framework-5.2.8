@@ -31,6 +31,10 @@ import org.springframework.lang.Nullable;
 @SuppressWarnings("serial")
 public class AspectJExpressionPointcutAdvisor extends AbstractGenericPointcutAdvisor implements BeanFactoryAware {
 
+	/**
+	 * 持有一个 pointcut，
+	 * AbstractGenericPointcutAdvisor 中持有一个 advice
+	 */
 	private final AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
 
 
@@ -43,6 +47,9 @@ public class AspectJExpressionPointcutAdvisor extends AbstractGenericPointcutAdv
 		return this.pointcut.getExpression();
 	}
 
+	/**
+	 * 用于 debug 调试
+	 */
 	public void setLocation(@Nullable String location) {
 		this.pointcut.setLocation(location);
 	}

@@ -24,6 +24,9 @@ import org.springframework.aop.Pointcut;
 import org.springframework.lang.Nullable;
 
 /**
+ * 一个适配器，将 Pointcut 与 Advisor 适配到一起
+ * 一对一适配
+ *
  * Convenient Pointcut-driven Advisor implementation.
  *
  * <p>This is the most commonly used Advisor implementation. It can be used
@@ -38,6 +41,10 @@ import org.springframework.lang.Nullable;
 @SuppressWarnings("serial")
 public class DefaultPointcutAdvisor extends AbstractGenericPointcutAdvisor implements Serializable {
 
+	/**
+	 * 默认全量匹配
+	 * ClassFilter + MethodMatcher
+	 */
 	private Pointcut pointcut = Pointcut.TRUE;
 
 
@@ -59,6 +66,8 @@ public class DefaultPointcutAdvisor extends AbstractGenericPointcutAdvisor imple
 	}
 
 	/**
+	 * 构造函数中可以指定 Pointcut
+	 *
 	 * Create a DefaultPointcutAdvisor, specifying Pointcut and Advice.
 	 * @param pointcut the Pointcut targeting the Advice
 	 * @param advice the Advice to run when Pointcut matches
@@ -70,6 +79,8 @@ public class DefaultPointcutAdvisor extends AbstractGenericPointcutAdvisor imple
 
 
 	/**
+	 * 也可以通过 set 设置 Pointcut
+	 *
 	 * Specify the pointcut targeting the advice.
 	 * <p>Default is {@code Pointcut.TRUE}.
 	 * @see #setAdvice

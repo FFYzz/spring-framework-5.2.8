@@ -38,6 +38,9 @@ import org.springframework.util.ObjectUtils;
 @SuppressWarnings("serial")
 public abstract class AbstractPointcutAdvisor implements PointcutAdvisor, Ordered, Serializable {
 
+	/**
+	 * 可以设定 order，支持 PointcutAdvisor 的排序
+	 */
 	@Nullable
 	private Integer order;
 
@@ -60,6 +63,7 @@ public abstract class AbstractPointcutAdvisor implements PointcutAdvisor, Ordere
 
 	@Override
 	public boolean isPerInstance() {
+		// 每个实例一个 pointcutAdvisor
 		return true;
 	}
 
