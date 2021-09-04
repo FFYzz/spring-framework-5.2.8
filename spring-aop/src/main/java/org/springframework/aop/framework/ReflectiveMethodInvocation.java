@@ -86,6 +86,9 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	/**
 	 * List of MethodInterceptor and InterceptorAndDynamicMethodMatcher
 	 * that need dynamic checks.
+	 * <p>
+	 *     保存所有的 MethodInterceptor
+	 * </p>
 	 */
 	protected final List<?> interceptorsAndDynamicMethodMatchers;
 
