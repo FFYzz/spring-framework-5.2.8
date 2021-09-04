@@ -42,10 +42,19 @@ import org.springframework.util.ClassUtils;
 @SuppressWarnings("serial")
 public class DefaultIntroductionAdvisor implements IntroductionAdvisor, ClassFilter, Ordered, Serializable {
 
+	/**
+	 * 持有一个 Advice
+	 */
 	private final Advice advice;
 
+	/**
+	 * 管理的接口
+	 */
 	private final Set<Class<?>> interfaces = new LinkedHashSet<>();
 
+	/**
+	 * 默认最低优先级执行
+	 */
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
 
@@ -62,7 +71,9 @@ public class DefaultIntroductionAdvisor implements IntroductionAdvisor, ClassFil
 	/**
 	 * Create a DefaultIntroductionAdvisor for the given advice.
 	 * @param advice the Advice to apply
+	 *               指定 Advice
 	 * @param introductionInfo the IntroductionInfo that describes
+	 *                         指定 introductionInfo
 	 * the interface to introduce (may be {@code null})
 	 */
 	public DefaultIntroductionAdvisor(Advice advice, @Nullable IntroductionInfo introductionInfo) {
@@ -74,6 +85,7 @@ public class DefaultIntroductionAdvisor implements IntroductionAdvisor, ClassFil
 				throw new IllegalArgumentException("IntroductionAdviceSupport implements no interfaces");
 			}
 			for (Class<?> ifc : introducedInterfaces) {
+				// 添加
 				addInterface(ifc);
 			}
 		}
@@ -100,6 +112,7 @@ public class DefaultIntroductionAdvisor implements IntroductionAdvisor, ClassFil
 		if (!ifc.isInterface()) {
 			throw new IllegalArgumentException("Specified class [" + ifc.getName() + "] must be an interface");
 		}
+		// 添加到 Set 中去，去重
 		this.interfaces.add(ifc);
 	}
 

@@ -31,6 +31,8 @@ package org.springframework.aop;
 public interface IntroductionInfo {
 
 	/**
+	 * 可以配置要代理的 Interface
+	 * <p>
 	 * Return the additional interfaces introduced by this Advisor or Advice.
 	 * @return the introduced interfaces
 	 */

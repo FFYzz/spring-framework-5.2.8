@@ -28,6 +28,9 @@ import org.springframework.aop.support.DelegatingIntroductionInterceptor;
 /**
  * Introduction advisor delegating to the given object.
  * Implements AspectJ annotation-style behavior for the DeclareParents annotation.
+ * <p>
+ *     aspectJ 对于 IntroductionAdvisor 的实现
+ * </p>
  *
  * @author Rod Johnson
  * @author Ramnivas Laddad
@@ -35,10 +38,19 @@ import org.springframework.aop.support.DelegatingIntroductionInterceptor;
  */
 public class DeclareParentsAdvisor implements IntroductionAdvisor {
 
+	/**
+	 * 持有的 advice
+	 */
 	private final Advice advice;
 
+	/**
+	 * 要代理的 Interface
+	 */
 	private final Class<?> introducedInterface;
 
+	/**
+	 * 类过滤器
+	 */
 	private final ClassFilter typePatternClassFilter;
 
 
