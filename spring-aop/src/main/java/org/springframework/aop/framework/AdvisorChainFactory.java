@@ -23,6 +23,9 @@ import org.springframework.lang.Nullable;
 
 /**
  * Factory interface for advisor chains.
+ * <p>
+ *     advisor chains 的工厂接口
+ * </p>
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
@@ -30,6 +33,9 @@ import org.springframework.lang.Nullable;
 public interface AdvisorChainFactory {
 
 	/**
+	 * <p>
+	 *     返回所有的 Interceptor 以及 DynamicInterception
+	 * </p>
 	 * Determine a list of {@link org.aopalliance.intercept.MethodInterceptor} objects
 	 * for the given advisor chain configuration.
 	 * @param config the AOP configuration in the form of an Advised object

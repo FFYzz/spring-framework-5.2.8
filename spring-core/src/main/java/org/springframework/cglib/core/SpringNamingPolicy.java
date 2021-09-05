@@ -31,6 +31,9 @@ public class SpringNamingPolicy extends DefaultNamingPolicy {
 
 	public static final SpringNamingPolicy INSTANCE = new SpringNamingPolicy();
 
+	/**
+	 * 通过 CGLIB 增强生成的类会带一个定义的后缀
+	 */
 	@Override
 	protected String getTag() {
 		return "BySpringCGLIB";

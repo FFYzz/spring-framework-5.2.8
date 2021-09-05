@@ -95,6 +95,9 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	/**
 	 * Index from 0 of the current interceptor we're invoking.
 	 * -1 until we invoke: then the current interceptor.
+	 * <p>
+	 *     从 -1 开始
+	 * </p>
 	 */
 	private int currentInterceptorIndex = -1;
 
@@ -208,6 +211,7 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	 */
 	@Nullable
 	protected Object invokeJoinpoint() throws Throwable {
+		// 调用目标方法
 		return AopUtils.invokeJoinpointUsingReflection(this.target, this.method, this.arguments);
 	}
 

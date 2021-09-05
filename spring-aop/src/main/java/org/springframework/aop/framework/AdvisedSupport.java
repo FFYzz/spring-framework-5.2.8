@@ -58,6 +58,10 @@ import org.springframework.util.CollectionUtils;
  * @author Juergen Hoeller
  * @see org.springframework.aop.framework.AopProxy
  */
+
+/**
+ * 可以认为是一个配置类
+ */
 public class AdvisedSupport extends ProxyConfig implements Advised {
 
 	/** use serialVersionUID from Spring 2.0 for interoperability. */
@@ -84,12 +88,17 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	private transient Map<MethodCacheKey, List<Object>> methodCache;
 
 	/**
+	 * 目标对象类所有实现的接口
+	 * <p>
 	 * Interfaces to be implemented by the proxy. Held in List to keep the order
 	 * of registration, to create JDK proxy with specified order of interfaces.
 	 */
 	private List<Class<?>> interfaces = new ArrayList<>();
 
 	/**
+	 * List 与下面的数组保存的是同一份东西,
+	 * 仅仅是容器不同，可以存在多个 Before/after/... 类型的 Advisor
+	 * <p>
 	 * List of Advisors. If an Advice is added, it will be wrapped
 	 * in an Advisor before being added to this List.
 	 */
@@ -106,6 +115,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	 * No-arg constructor for use as a JavaBean.
 	 */
 	public AdvisedSupport() {
+		// 是一个 ConcurrentHashMap
 		this.methodCache = new ConcurrentHashMap<>(32);
 	}
 
@@ -131,6 +141,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 
 	@Override
 	public void setTargetSource(@Nullable TargetSource targetSource) {
+		// 若 targetSource 为空，则受用默认的 EmptyTargetSource
 		this.targetSource = (targetSource != null ? targetSource : EMPTY_TARGET_SOURCE);
 	}
 
@@ -231,6 +242,12 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 		return ClassUtils.toClassArray(this.interfaces);
 	}
 
+	/**
+	 * 返回当前接口中是否有 intf 的子类
+	 *
+	 * @param intf the interface to check
+	 * @return
+	 */
 	@Override
 	public boolean isInterfaceProxied(Class<?> intf) {
 		for (Class<?> proxyIntf : this.interfaces) {
@@ -353,21 +370,35 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 		}
 	}
 
+	/**
+	 * 添加 advise 最终都会调用到这个方法
+	 * <p>
+	 * @param pos
+	 * @param advisor
+	 * @throws AopConfigException
+	 */
 	private void addAdvisorInternal(int pos, Advisor advisor) throws AopConfigException {
 		Assert.notNull(advisor, "Advisor must not be null");
+		// 配置如果是冻结的，那么则直接抛出异常
 		if (isFrozen()) {
 			throw new AopConfigException("Cannot add advisor: Configuration is frozen.");
 		}
+		// 并发操作，导致 index 变了
 		if (pos > this.advisors.size()) {
 			throw new IllegalArgumentException(
 					"Illegal position " + pos + " in advisor list with size " + this.advisors.size());
 		}
+		// 添加到 List 中
 		this.advisors.add(pos, advisor);
+		// 克隆一份以数组的形式保存
 		updateAdvisorArray();
+		// advice 变动事件
 		adviceChanged();
 	}
 
 	/**
+	 * 将 list 中的数据拷贝一份到数组
+	 * <p>
 	 * Bring the array up to date with the list.
 	 */
 	protected final void updateAdvisorArray() {
@@ -386,6 +417,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 
 	@Override
 	public void addAdvice(Advice advice) throws AopConfigException {
+		// 计算下标
 		int pos = this.advisors.size();
 		addAdvice(pos, advice);
 	}
@@ -491,6 +523,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	 * Invoked when advice has changed.
 	 */
 	protected void adviceChanged() {
+		// advise 变动目前仅仅是清空缓存
 		this.methodCache.clear();
 	}
 
@@ -577,6 +610,8 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 
 
 	/**
+	 * 缓存，method 做为 key
+	 * <p>
 	 * Simple wrapper class around a Method. Used as the key when
 	 * caching methods, for efficient equals and hashCode comparisons.
 	 */

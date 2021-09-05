@@ -35,6 +35,8 @@ import org.springframework.aop.framework.adapter.GlobalAdvisorAdapterRegistry;
 import org.springframework.lang.Nullable;
 
 /**
+ * AdvisorChainFactory 的唯一实现，是一个 Advisor chain
+ * <p>
  * A simple but definitive way of working out an advice chain for a Method,
  * given an {@link Advised} object. Always rebuilds each advice chain;
  * caching can be provided by subclasses.
@@ -55,8 +57,11 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 		// but we need to preserve order in the ultimate list.
 		// registry 为 DefaultAdvisorAdapterRegistry 类型
 		AdvisorAdapterRegistry registry = GlobalAdvisorAdapterRegistry.getInstance();
+		// 获取所有的 advisors
 		Advisor[] advisors = config.getAdvisors();
+		// 默认 interceptor 的个数与 advisor 的个数一致
 		List<Object> interceptorList = new ArrayList<>(advisors.length);
+		// 被代理类型
 		Class<?> actualClass = (targetClass != null ? targetClass : method.getDeclaringClass());
 		Boolean hasIntroductions = null;
 
@@ -79,6 +84,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 					else {
 						match = mm.matches(method, actualClass);
 					}
+					// 如果当前 method 匹配当前 PointcutAdvisor
 					if (match) {
 						// advisor 转成 MethodInterceptor
 						MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
@@ -86,6 +92,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 							// Creating a new object instance in the getInterceptors() method
 							// isn't a problem as we normally cache created chains.
 							for (MethodInterceptor interceptor : interceptors) {
+								// interceptor 封装成 InterceptorAndDynamicMethodMatcher
 								interceptorList.add(new InterceptorAndDynamicMethodMatcher(interceptor, mm));
 							}
 						}

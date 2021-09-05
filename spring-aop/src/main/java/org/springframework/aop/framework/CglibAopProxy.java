@@ -57,6 +57,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
 /**
+ * 实现 AOP 的一种方式
+ *
  * CGLIB-based {@link AopProxy} implementation for the Spring AOP framework.
  *
  * <p>Objects of this type should be obtained through proxy factories,
@@ -84,6 +86,7 @@ import org.springframework.util.ReflectionUtils;
 class CglibAopProxy implements AopProxy, Serializable {
 
 	// Constants for CGLIB callback array indices
+	//
 	private static final int AOP_PROXY = 0;
 	private static final int INVOKE_TARGET = 1;
 	private static final int NO_OVERRIDE = 2;
@@ -100,7 +103,11 @@ class CglibAopProxy implements AopProxy, Serializable {
 	private static final Map<Class<?>, Boolean> validatedClasses = new WeakHashMap<>();
 
 
-	/** The configuration used to configure this proxy. */
+	/**
+	 *  The configuration used to configure this proxy.
+	 *  <p>
+	 *  配置类，会传递一个 Advisor。
+	 */
 	protected final AdvisedSupport advised;
 
 	@Nullable
@@ -128,6 +135,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 		if (config.getAdvisors().length == 0 && config.getTargetSource() == AdvisedSupport.EMPTY_TARGET_SOURCE) {
 			throw new AopConfigException("No advisors and no TargetSource specified");
 		}
+		// 指定配置类
 		this.advised = config;
 		this.advisedDispatcher = new AdvisedDispatcher(this.advised);
 	}
@@ -174,10 +182,14 @@ class CglibAopProxy implements AopProxy, Serializable {
 			Assert.state(rootClass != null, "Target class must be available for creating a CGLIB proxy");
 
 			Class<?> proxySuperClass = rootClass;
+			// 检查是否为已经被 CGLib 代理过的类
 			if (rootClass.getName().contains(ClassUtils.CGLIB_CLASS_SEPARATOR)) {
+				// 获取原始的被代理类
 				proxySuperClass = rootClass.getSuperclass();
 				Class<?>[] additionalInterfaces = rootClass.getInterfaces();
+				// 获取新增的接口
 				for (Class<?> additionalInterface : additionalInterfaces) {
+					// 加到 AdvisedSupport 中的 Interfaces 列表中去
 					this.advised.addInterface(additionalInterface);
 				}
 			}
@@ -189,7 +201,9 @@ class CglibAopProxy implements AopProxy, Serializable {
 			// Configure CGLIB Enhancer...
 			// 创建及配置 Enhancer
 			Enhancer enhancer = createEnhancer();
+			// CGLib 增强模板代码
 			if (classLoader != null) {
+				// 设置类加载器
 				enhancer.setClassLoader(classLoader);
 				if (classLoader instanceof SmartClassLoader &&
 						((SmartClassLoader) classLoader).isClassReloadable(proxySuperClass)) {
@@ -197,8 +211,11 @@ class CglibAopProxy implements AopProxy, Serializable {
 				}
 			}
 			// cglib 生成代理类的属性设置
+			// 设置父类
 			enhancer.setSuperclass(proxySuperClass);
+			// 设置接口
 			enhancer.setInterfaces(AopProxyUtils.completeProxiedInterfaces(this.advised));
+			// 设置命名策略，默认的命名策略为后缀为 $$BySpringCGLIB
 			enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
 			enhancer.setStrategy(new ClassLoaderAwareGeneratorStrategy(classLoader));
 
@@ -561,6 +578,9 @@ class CglibAopProxy implements AopProxy, Serializable {
 
 	/**
 	 * Dispatcher for any methods declared on the Advised class.
+	 * <p>
+	 *     加载类，是一个 Callback
+	 * </p>
 	 */
 	private static class AdvisedDispatcher implements Dispatcher, Serializable {
 
@@ -572,6 +592,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 
 		@Override
 		public Object loadObject() {
+			// 加载的 Object 就是 advised
 			return this.advised;
 		}
 	}
@@ -666,6 +687,9 @@ class CglibAopProxy implements AopProxy, Serializable {
 	/**
 	 * General purpose AOP callback. Used when the target is dynamic or when the
 	 * proxy is not frozen.
+	 * <p>
+	 *     是一个 MethodInterceptor
+	 * </p>
 	 */
 	private static class DynamicAdvisedInterceptor implements MethodInterceptor, Serializable {
 
@@ -675,6 +699,9 @@ class CglibAopProxy implements AopProxy, Serializable {
 			this.advised = advised;
 		}
 
+		/**
+		 * 必须要有的 intercept 方法
+		 */
 		@Override
 		@Nullable
 		public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
@@ -744,7 +771,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 	/**
 	 * Implementation of AOP Alliance MethodInvocation used by this AOP proxy.
 	 *
-	 * 内部实现 CGLIB 实现代理对象的方法调用
+	 * 内部实现 CGLIB 实现代理对象的方法调用，继承了 ReflectiveMethodInvocation
 	 */
 	private static class CglibMethodInvocation extends ReflectiveMethodInvocation {
 
@@ -768,6 +795,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 		@Nullable
 		public Object proceed() throws Throwable {
 			try {
+				// 调用了 ReflectiveMethodInvocation 的 proceed 方法
 				return super.proceed();
 			}
 			catch (RuntimeException ex) {
