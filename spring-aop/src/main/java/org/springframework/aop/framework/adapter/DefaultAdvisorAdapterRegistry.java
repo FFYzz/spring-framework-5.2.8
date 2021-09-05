@@ -29,6 +29,9 @@ import org.springframework.aop.support.DefaultPointcutAdvisor;
 /**
  * Default implementation of the {@link AdvisorAdapterRegistry} interface.
  * Supports {@link org.aopalliance.intercept.MethodInterceptor},
+ * <p>
+ *     注册中心 AdvisorAdapterRegistry 的默认实现
+ * </p>
  * {@link org.springframework.aop.MethodBeforeAdvice},
  * {@link org.springframework.aop.AfterReturningAdvice},
  * {@link org.springframework.aop.ThrowsAdvice}.
@@ -40,6 +43,9 @@ import org.springframework.aop.support.DefaultPointcutAdvisor;
 @SuppressWarnings("serial")
 public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Serializable {
 
+	/**
+	 * 保存所有注册的 AdvisorAdapter
+	 */
 	private final List<AdvisorAdapter> adapters = new ArrayList<>(3);
 
 
@@ -47,12 +53,16 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 	 * Create a new DefaultAdvisorAdapterRegistry, registering well-known adapters.
 	 */
 	public DefaultAdvisorAdapterRegistry() {
+		// 添加三种类型的 adapter 到 adapters list 中去
 		registerAdvisorAdapter(new MethodBeforeAdviceAdapter());
 		registerAdvisorAdapter(new AfterReturningAdviceAdapter());
 		registerAdvisorAdapter(new ThrowsAdviceAdapter());
 	}
 
 
+	/**
+	 * 将 advice 封装成 Advisor
+	 */
 	@Override
 	public Advisor wrap(Object adviceObject) throws UnknownAdviceTypeException {
 		// 如果本身是 Advisor 类型，直接返回

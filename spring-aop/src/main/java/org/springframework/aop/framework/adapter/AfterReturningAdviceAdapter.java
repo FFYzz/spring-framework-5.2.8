@@ -25,6 +25,9 @@ import org.springframework.aop.Advisor;
 import org.springframework.aop.AfterReturningAdvice;
 
 /**
+ * AfterReturningAdvice 对 AdvisorAdapter 的实现，
+ * 将 Advisor 适配成 AfterReturningAdviceInterceptor
+ * <p>
  * Adapter to enable {@link org.springframework.aop.AfterReturningAdvice}
  * to be used in the Spring AOP framework.
  *
@@ -34,11 +37,24 @@ import org.springframework.aop.AfterReturningAdvice;
 @SuppressWarnings("serial")
 class AfterReturningAdviceAdapter implements AdvisorAdapter, Serializable {
 
+	/**
+	 * advice 是否为 AfterReturningAdvice
+	 *
+	 * @param advice an Advice such as a BeforeAdvice
+	 * @return
+	 */
 	@Override
 	public boolean supportsAdvice(Advice advice) {
 		return (advice instanceof AfterReturningAdvice);
 	}
 
+	/**
+	 * 将转换成一个 AfterReturningAdviceInterceptor
+	 *
+	 * @param advisor the Advisor. The supportsAdvice() method must have
+	 *                returned true on this object
+	 * @return
+	 */
 	@Override
 	public MethodInterceptor getInterceptor(Advisor advisor) {
 		AfterReturningAdvice advice = (AfterReturningAdvice) advisor.getAdvice();

@@ -21,6 +21,9 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 
 /**
+ * 一个简单的 pojo
+ * <p>
+ *
  * Convenience superclass for configuration used in creating proxies,
  * to ensure that all proxy creators have consistent properties.
  *
@@ -33,6 +36,7 @@ public class ProxyConfig implements Serializable {
 	/** use serialVersionUID from Spring 1.2 for interoperability. */
 	private static final long serialVersionUID = -8409359707199703185L;
 
+	// 下面的属性都是可以配置的
 
 	/**
 	 * 为 true 是目标类本身被代理而不是目标类接口被代理
@@ -51,6 +55,10 @@ public class ProxyConfig implements Serializable {
 
 	boolean exposeProxy = false;
 
+	/**
+	 * 是否冻结,
+	 * 配置信息是否会发生变化
+	 */
 	private boolean frozen = false;
 
 

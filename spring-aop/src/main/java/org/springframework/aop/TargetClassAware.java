@@ -19,6 +19,8 @@ package org.springframework.aop;
 import org.springframework.lang.Nullable;
 
 /**
+ * 不是常规的 Spring 中的 Aware 接口。
+ * <p>
  * Minimal interface for exposing the target class behind a proxy.
  *
  * <p>Implemented by AOP proxy objects and proxy factories

@@ -25,20 +25,36 @@ import org.springframework.aop.Advisor;
 import org.springframework.aop.ThrowsAdvice;
 
 /**
+ * ThrowsAdvice 对 AdvisorAdapter 的实现，
+ * 将 Advisor 适配成 ThrowsAdviceInterceptor
+ *
  * Adapter to enable {@link org.springframework.aop.MethodBeforeAdvice}
  * to be used in the Spring AOP framework.
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
- */
+ **/
 @SuppressWarnings("serial")
 class ThrowsAdviceAdapter implements AdvisorAdapter, Serializable {
 
+	/**
+	 * advice 是否为 ThrowsAdvice 类型
+	 *
+	 * @param advice an Advice such as a BeforeAdvice
+	 * @return
+	 */
 	@Override
 	public boolean supportsAdvice(Advice advice) {
 		return (advice instanceof ThrowsAdvice);
 	}
 
+	/**
+	 * 转换成 ThrowsAdviceInterceptor
+	 *
+	 * @param advisor the Advisor. The supportsAdvice() method must have
+	 * returned true on this object
+	 * @return
+	 */
 	@Override
 	public MethodInterceptor getInterceptor(Advisor advisor) {
 		return new ThrowsAdviceInterceptor(advisor.getAdvice());

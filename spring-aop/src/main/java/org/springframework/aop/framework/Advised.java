@@ -27,6 +27,10 @@ import org.springframework.aop.TargetSource;
  * of a factory of AOP proxies. This configuration includes the
  * Interceptors and other advice, Advisors, and the proxied interfaces.
  *
+ * <p>
+ *     AOP 代理配置的顶层接口
+ * </p>
+ *
  * <p>Any AOP proxy obtained from Spring can be cast to this interface to
  * allow manipulation of its AOP advice.
  *
@@ -38,6 +42,9 @@ import org.springframework.aop.TargetSource;
 public interface Advised extends TargetClassAware {
 
 	/**
+	 * <p>
+	 *     返回 advised 的配置在运行时是否可修改
+	 * </p>
 	 * Return whether the Advised configuration is frozen,
 	 * in which case no advice changes can be made.
 	 */
@@ -45,23 +52,35 @@ public interface Advised extends TargetClassAware {
 
 	/**
 	 * Are we proxying the full target class instead of specified interfaces?
+	 * <p>
+	 *     使用 JDK dynamic 动态代理还是 CGLib 增强
+	 * </p>
 	 */
 	boolean isProxyTargetClass();
 
 	/**
 	 * Return the interfaces proxied by the AOP proxy.
+	 * <p>
+	 *     返回代理的接口
+	 * </p>
 	 * <p>Will not include the target class, which may also be proxied.
 	 */
 	Class<?>[] getProxiedInterfaces();
 
 	/**
 	 * Determine whether the given interface is proxied.
+	 * <p>
+	 *     返回给定的接口是否被代理
+	 * </p>
 	 * @param intf the interface to check
 	 */
 	boolean isInterfaceProxied(Class<?> intf);
 
 	/**
 	 * Change the {@code TargetSource} used by this {@code Advised} object.
+	 * <p>
+	 *     动态修改 TargetSource
+	 * </p>
 	 * <p>Only works if the configuration isn't {@linkplain #isFrozen frozen}.
 	 * @param targetSource new TargetSource to use
 	 */
