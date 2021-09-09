@@ -31,10 +31,18 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
  * Base class for dynamic {@link org.springframework.aop.TargetSource} implementations
  * that create new prototype bean instances to support a pooling or
  * new-instance-per-invocation strategy.
+ * <p>
+ *     实现动态 TargetSource 的基类。该动态 TargetSource 能够创建 prototype 类型的 bean，以支持
+ *     Pooling 或者 每次调用得到新实例的策略。
+ * </p>
  *
  * <p>Such TargetSources must run in a {@link BeanFactory}, as it needs to
  * call the {@code getBean} method to create a new prototype instance.
  * Therefore, this base class extends {@link AbstractBeanFactoryBasedTargetSource}.
+ * <p>
+ *     这种类型的 TargetSources 必须在 BeanFactory 中运行，应为需要调用 getBean 方法
+ *     获取到一个新的 prototype 实例。所以该类继承了 AbstractBeanFactoryBasedTargetSource。
+ * </p>
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
@@ -51,6 +59,7 @@ public abstract class AbstractPrototypeBasedTargetSource extends AbstractBeanFac
 		super.setBeanFactory(beanFactory);
 
 		// Check whether the target bean is defined as prototype.
+		// 检查 target bean 是否为 prototype 类型
 		if (!beanFactory.isPrototype(getTargetBeanName())) {
 			throw new BeanDefinitionStoreException(
 					"Cannot use prototype-based TargetSource against non-prototype bean with name '" +
@@ -60,17 +69,24 @@ public abstract class AbstractPrototypeBasedTargetSource extends AbstractBeanFac
 
 	/**
 	 * Subclasses should call this method to create a new prototype instance.
+	 * <p>
+	 *     创建一个 prototype 类型的 bean
+	 * </p>
 	 * @throws BeansException if bean creation failed
 	 */
 	protected Object newPrototypeInstance() throws BeansException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Creating new instance of bean '" + getTargetBeanName() + "'");
 		}
+		// 通过 getBean 创建
 		return getBeanFactory().getBean(getTargetBeanName());
 	}
 
 	/**
 	 * Subclasses should call this method to destroy an obsolete prototype instance.
+	 * <p>
+	 *     销毁一个 prototype 类型的 bean
+	 * </p>
 	 * @param target the bean instance to destroy
 	 */
 	protected void destroyPrototypeInstance(Object target) {
@@ -78,10 +94,13 @@ public abstract class AbstractPrototypeBasedTargetSource extends AbstractBeanFac
 			logger.debug("Destroying instance of bean '" + getTargetBeanName() + "'");
 		}
 		if (getBeanFactory() instanceof ConfigurableBeanFactory) {
+			// 调用 destroyBean 销毁
+			// 其实就是封装成 DisposableBeanAdapter，并调用其 destroy 方法
 			((ConfigurableBeanFactory) getBeanFactory()).destroyBean(getTargetBeanName(), target);
 		}
 		else if (target instanceof DisposableBean) {
 			try {
+				// 直接调用 DisposableBean#destroy 方法
 				((DisposableBean) target).destroy();
 			}
 			catch (Throwable ex) {

@@ -23,6 +23,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * TargetSource 的默认实现
+ * <p></p>
  * Canonical {@code TargetSource} when there is no target
  * (or just the target class known), and behavior is supplied
  * by interfaces and advisors only.

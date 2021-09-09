@@ -40,6 +40,7 @@ public class PrototypeTargetSource extends AbstractPrototypeBasedTargetSource {
 	 */
 	@Override
 	public Object getTarget() throws BeansException {
+		// 每次创建一个新的
 		return newPrototypeInstance();
 	}
 
@@ -49,6 +50,7 @@ public class PrototypeTargetSource extends AbstractPrototypeBasedTargetSource {
 	 */
 	@Override
 	public void releaseTarget(Object target) {
+		// release 就是 destroy
 		destroyPrototypeInstance(target);
 	}
 

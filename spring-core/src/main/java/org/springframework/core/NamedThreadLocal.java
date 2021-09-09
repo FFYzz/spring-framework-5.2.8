@@ -29,6 +29,9 @@ import org.springframework.util.Assert;
  */
 public class NamedThreadLocal<T> extends ThreadLocal<T> {
 
+	/**
+	 * 当前 ThreadLocal 的 name
+	 */
 	private final String name;
 
 

@@ -51,6 +51,11 @@ import org.springframework.lang.Nullable;
  * @see #releaseTarget
  * @see #destroy
  */
+
+/**
+ * 也是原型类型的 targetSource。
+ * 实现 CommonsPool2TargetSource
+ */
 @SuppressWarnings("serial")
 public abstract class AbstractPoolingTargetSource extends AbstractPrototypeBasedTargetSource
 		implements PoolingConfig, DisposableBean {
@@ -80,6 +85,7 @@ public abstract class AbstractPoolingTargetSource extends AbstractPrototypeBased
 	public final void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		super.setBeanFactory(beanFactory);
 		try {
+			// 创建池子
 			createPool();
 		}
 		catch (Throwable ex) {

@@ -62,11 +62,20 @@ public class ThreadLocalTargetSource extends AbstractPrototypeBasedTargetSource
 
 	/**
 	 * Set of managed targets, enabling us to keep track of the targets we've created.
+	 * <p>
+	 *     当前 ThreadLocal 管理的对象集合
+	 * </p>
 	 */
 	private final Set<Object> targetSet = new HashSet<>();
 
+	/**
+	 * 调用次数
+	 */
 	private int invocationCount;
 
+	/**
+	 * 命中次数
+	 */
 	private int hitCount;
 
 
@@ -77,21 +86,26 @@ public class ThreadLocalTargetSource extends AbstractPrototypeBasedTargetSource
 	 */
 	@Override
 	public Object getTarget() throws BeansException {
+		// 调用次数 + 1
 		++this.invocationCount;
 		Object target = this.targetInThread.get();
 		if (target == null) {
+			// 未命中
 			if (logger.isDebugEnabled()) {
 				logger.debug("No target for prototype '" + getTargetBeanName() + "' bound to thread: " +
 						"creating one and binding it to thread '" + Thread.currentThread().getName() + "'");
 			}
 			// Associate target with ThreadLocal.
+			// 创建新的 prototype 类型的 target
 			target = newPrototypeInstance();
 			this.targetInThread.set(target);
 			synchronized (this.targetSet) {
+				// 放到 set 中去
 				this.targetSet.add(target);
 			}
 		}
 		else {
+			// 命中，次数 + 1
 			++this.hitCount;
 		}
 		return target;
@@ -99,6 +113,9 @@ public class ThreadLocalTargetSource extends AbstractPrototypeBasedTargetSource
 
 	/**
 	 * Dispose of targets if necessary; clear ThreadLocal.
+	 * <p>
+	 *     清空当前 ThreadLocal
+	 * </p>
 	 * @see #destroyPrototypeInstance
 	 */
 	@Override
@@ -106,11 +123,14 @@ public class ThreadLocalTargetSource extends AbstractPrototypeBasedTargetSource
 		logger.debug("Destroying ThreadLocalTargetSource bindings");
 		synchronized (this.targetSet) {
 			for (Object target : this.targetSet) {
+				// 遍历销毁所有的 target 对象
 				destroyPrototypeInstance(target);
 			}
+			// 清空 Set
 			this.targetSet.clear();
 		}
 		// Clear ThreadLocal, just in case.
+		// 清理 ThreadLocal
 		this.targetInThread.remove();
 	}
 

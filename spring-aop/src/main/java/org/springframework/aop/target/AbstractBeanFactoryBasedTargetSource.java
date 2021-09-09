@@ -56,15 +56,28 @@ public abstract class AbstractBeanFactoryBasedTargetSource implements TargetSour
 	/** Logger available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	/** Name of the target bean we will create on each invocation. */
+	/**
+	 * Name of the target bean we will create on each invocation.
+	 * <p>
+	 *     每次创建 target bean 的时候，bean 的名称
+	 * </p>
+	 **/
 	private String targetBeanName;
 
-	/** Class of the target. */
+	/**
+	 * Class of the target.
+	 * <p>
+	 *     目标类型
+	 * </p>
+	 **/
 	private volatile Class<?> targetClass;
 
 	/**
 	 * BeanFactory that owns this TargetSource. We need to hold onto this
 	 * reference so that we can create new prototype instances as necessary.
+	 * <p>
+	 *     targetSource 所在的 BeanFactory
+	 * </p>
 	 */
 	private BeanFactory beanFactory;
 
@@ -102,6 +115,9 @@ public abstract class AbstractBeanFactoryBasedTargetSource implements TargetSour
 	/**
 	 * Set the owning BeanFactory. We need to save a reference so that we can
 	 * use the {@code getBean} method on every invocation.
+	 * <p>
+	 *     实现了 BeanFactoryAware 接口，相当于注入了 BeanFactory
+	 * </p>
 	 */
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) {
@@ -125,19 +141,27 @@ public abstract class AbstractBeanFactoryBasedTargetSource implements TargetSour
 		if (targetClass != null) {
 			return targetClass;
 		}
+		// 如果 targetClass 为 null
+		// 说明是第一次调用该实例，原型模式，所以需要加锁保证线程安全
 		synchronized (this) {
 			// Full check within synchronization, entering the BeanFactory interaction algorithm only once...
+			// 类似于一个双检锁
 			targetClass = this.targetClass;
 			if (targetClass == null && this.beanFactory != null) {
 				// Determine type of the target bean.
+				// 根据名称获取类型
+				// targetBeanName 不能为 null
 				targetClass = this.beanFactory.getType(this.targetBeanName);
 				if (targetClass == null) {
 					if (logger.isTraceEnabled()) {
 						logger.trace("Getting bean with name '" + this.targetBeanName + "' for type determination");
 					}
+					// 创建 bean
 					Object beanInstance = this.beanFactory.getBean(this.targetBeanName);
+					// 回去创建的 bean 的返回类型
 					targetClass = beanInstance.getClass();
 				}
+				// 设置给 targetClass
 				this.targetClass = targetClass;
 			}
 			return targetClass;

@@ -60,6 +60,10 @@ import org.springframework.lang.Nullable;
 @SuppressWarnings("serial")
 public class LazyInitTargetSource extends AbstractBeanFactoryBasedTargetSource {
 
+	/**
+	 * targetSource 对象，
+	 * 一般情况下也是一个单例。
+	 */
 	@Nullable
 	private Object target;
 
@@ -67,7 +71,9 @@ public class LazyInitTargetSource extends AbstractBeanFactoryBasedTargetSource {
 	@Override
 	@Nullable
 	public synchronized Object getTarget() throws BeansException {
+		// 调用 getTarget 的时候才会去创建
 		if (this.target == null) {
+			// 创建
 			this.target = getBeanFactory().getBean(getTargetBeanName());
 			postProcessTargetObject(this.target);
 		}
@@ -77,6 +83,9 @@ public class LazyInitTargetSource extends AbstractBeanFactoryBasedTargetSource {
 	/**
 	 * Subclasses may override this method to perform additional processing on
 	 * the target object when it is first loaded.
+	 * <p>
+	 *     留的一个 hook
+	 * </p>
 	 * @param targetObject the target object that has just been instantiated (and configured)
 	 */
 	protected void postProcessTargetObject(Object targetObject) {

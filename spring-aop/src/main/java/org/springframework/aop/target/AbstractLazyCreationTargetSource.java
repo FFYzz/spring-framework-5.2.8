@@ -25,10 +25,16 @@ import org.springframework.lang.Nullable;
 /**
  * {@link org.springframework.aop.TargetSource} implementation that will
  * lazily create a user-managed object.
+ * <p>
+ *     会懒加载一个用于管理的对象
+ * </p>
  *
  * <p>Creation of the lazy target object is controlled by the user by implementing
  * the {@link #createObject()} method. This {@code TargetSource} will invoke
  * this method the first time the proxy is accessed.
+ * <p>
+ *     创建一个 lazy target object 由用户控制，通过调用 createObject 方法。
+ * </p>
  *
  * <p>Useful when you need to pass a reference to some dependency to an object
  * but you don't actually want the dependency to be created until it is first used.
@@ -45,13 +51,21 @@ public abstract class AbstractLazyCreationTargetSource implements TargetSource {
 	/** Logger available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	/** The lazily initialized target object. */
+	/**
+	 * The lazily initialized target object.
+	 * <p>
+	 *     懒加载的目标对象
+	 * </p>
+	 **/
 	private Object lazyTarget;
 
 
 	/**
 	 * Return whether the lazy target object of this TargetSource
 	 * has already been fetched.
+	 * <p>
+	 *     返回对象是否已经创建
+	 * </p>
 	 */
 	public synchronized boolean isInitialized() {
 		return (this.lazyTarget != null);
@@ -73,6 +87,7 @@ public abstract class AbstractLazyCreationTargetSource implements TargetSource {
 
 	@Override
 	public boolean isStatic() {
+		// 不可修改，某种程序上可以认为是一种单例的形式
 		return false;
 	}
 
@@ -85,6 +100,7 @@ public abstract class AbstractLazyCreationTargetSource implements TargetSource {
 	public synchronized Object getTarget() throws Exception {
 		if (this.lazyTarget == null) {
 			logger.debug("Initializing lazy target object");
+			// 会通过调用 createObject 创建，只有在调用的时候才会去加载，因此称作懒加载
 			this.lazyTarget = createObject();
 		}
 		return this.lazyTarget;

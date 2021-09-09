@@ -27,6 +27,9 @@ import org.springframework.util.ObjectUtils;
  * that holds a given object. This is the default implementation of the TargetSource
  * interface, as used by the Spring AOP framework. There is usually no need to
  * create objects of this class in application code.
+ * <p>
+ *     单例的 TargetSource，与 Prototype 是对应的
+ * </p>
  *
  * <p>This class is serializable. However, the actual serializability of a
  * SingletonTargetSource will depend on whether the target is serializable.
@@ -41,7 +44,12 @@ public class SingletonTargetSource implements TargetSource, Serializable {
 	private static final long serialVersionUID = 9031246629662423738L;
 
 
-	/** Target cached and invoked using reflection. */
+	/**
+	 * Target cached and invoked using reflection.
+	 * <p>
+	 *     当前 Target 对象，每次返回对象都相同，即该 target 对象。
+	 * </p>
+	 **/
 	private final Object target;
 
 
@@ -72,6 +80,7 @@ public class SingletonTargetSource implements TargetSource, Serializable {
 
 	@Override
 	public boolean isStatic() {
+		// 不可修改
 		return true;
 	}
 

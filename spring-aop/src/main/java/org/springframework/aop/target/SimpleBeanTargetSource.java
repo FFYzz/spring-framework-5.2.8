@@ -32,6 +32,7 @@ public class SimpleBeanTargetSource extends AbstractBeanFactoryBasedTargetSource
 
 	@Override
 	public Object getTarget() throws Exception {
+		// 每次直接依赖查找，获取新的对象，没有 destroy
 		return getBeanFactory().getBean(getTargetBeanName());
 	}
 

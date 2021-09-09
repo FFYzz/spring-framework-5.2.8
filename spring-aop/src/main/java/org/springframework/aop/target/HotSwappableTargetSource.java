@@ -31,6 +31,9 @@ import org.springframework.util.Assert;
  *
  * <p>This TargetSource is serializable if the target is at the time
  * of serialization.
+ * <p>
+ *     热替换
+ * </p>
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
@@ -88,6 +91,7 @@ public class HotSwappableTargetSource implements TargetSource, Serializable {
 	 */
 	public synchronized Object swap(Object newTarget) throws IllegalArgumentException {
 		Assert.notNull(newTarget, "Target object must not be null");
+		// 将 target 替换成新的对象
 		Object old = this.target;
 		this.target = newTarget;
 		return old;
