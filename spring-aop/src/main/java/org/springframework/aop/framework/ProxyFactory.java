@@ -46,6 +46,8 @@ public class ProxyFactory extends ProxyCreatorSupport {
 	}
 
 	/**
+	 * target 被代理对象
+	 *
 	 * Create a new ProxyFactory.
 	 * <p>Will proxy all interfaces that the given target implements.
 	 * @param target the target object to be proxied
