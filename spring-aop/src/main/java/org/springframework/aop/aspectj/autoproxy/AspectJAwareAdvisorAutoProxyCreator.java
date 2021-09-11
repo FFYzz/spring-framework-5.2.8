@@ -46,6 +46,9 @@ import org.springframework.util.ClassUtils;
 @SuppressWarnings("serial")
 public class AspectJAwareAdvisorAutoProxyCreator extends AbstractAdvisorAutoProxyCreator {
 
+	/**
+	 * 默认的比较器
+	 */
 	private static final Comparator<Advisor> DEFAULT_PRECEDENCE_COMPARATOR = new AspectJPrecedenceComparator();
 
 

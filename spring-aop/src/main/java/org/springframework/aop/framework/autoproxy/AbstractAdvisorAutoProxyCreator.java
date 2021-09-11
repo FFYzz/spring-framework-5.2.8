@@ -51,6 +51,9 @@ import org.springframework.util.Assert;
 @SuppressWarnings("serial")
 public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyCreator {
 
+	/**
+	 * 辅助类，用于查找 IoC 容器中所有的 Advisor 类型的 Bean
+	 */
 	@Nullable
 	private BeanFactoryAdvisorRetrievalHelper advisorRetrievalHelper;
 
@@ -62,6 +65,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 			throw new IllegalArgumentException(
 					"AdvisorAutoProxyCreator requires a ConfigurableListableBeanFactory: " + beanFactory);
 		}
+		// 初始化
 		initBeanFactory((ConfigurableListableBeanFactory) beanFactory);
 	}
 
@@ -191,6 +195,9 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	/**
 	 * Subclass of BeanFactoryAdvisorRetrievalHelper that delegates to
 	 * surrounding AbstractAdvisorAutoProxyCreator facilities.
+	 * <p>
+	 *     是一个 Adapter，继承了 BeanFactoryAdvisorRetrievalHelper 的能力
+	 * </p>
 	 */
 	private class BeanFactoryAdvisorRetrievalHelperAdapter extends BeanFactoryAdvisorRetrievalHelper {
 
@@ -198,6 +205,9 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 			super(beanFactory);
 		}
 
+		/**
+		 * 委托给当前类判断
+		 */
 		@Override
 		protected boolean isEligibleBean(String beanName) {
 			return AbstractAdvisorAutoProxyCreator.this.isEligibleAdvisorBean(beanName);

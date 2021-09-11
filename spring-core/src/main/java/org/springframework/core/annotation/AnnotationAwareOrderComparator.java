@@ -48,6 +48,9 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 
 	/**
 	 * Shared default instance of {@code AnnotationAwareOrderComparator}.
+	 * <p>
+	 *     默认会使用该比较器
+	 * </p>
 	 */
 	public static final AnnotationAwareOrderComparator INSTANCE = new AnnotationAwareOrderComparator();
 
@@ -61,10 +64,12 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 	@Override
 	@Nullable
 	protected Integer findOrder(Object obj) {
+		// 获取 order 的数字
 		Integer order = super.findOrder(obj);
 		if (order != null) {
 			return order;
 		}
+		// 如果没有，则从注解中找定义的 order
 		return findOrderFromAnnotation(obj);
 	}
 
@@ -72,7 +77,9 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 	private Integer findOrderFromAnnotation(Object obj) {
 		AnnotatedElement element = (obj instanceof AnnotatedElement ? (AnnotatedElement) obj : obj.getClass());
 		MergedAnnotations annotations = MergedAnnotations.from(element, SearchStrategy.TYPE_HIERARCHY);
+		// 获取 order
 		Integer order = OrderUtils.getOrderFromAnnotations(element, annotations);
+		// 递归查找
 		if (order == null && obj instanceof DecoratingProxy) {
 			return findOrderFromAnnotation(((DecoratingProxy) obj).getDecoratedClass());
 		}
@@ -84,6 +91,9 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 	 * value, allowing for additional semantics over the regular @{@link Order}
 	 * annotation: typically, selecting one object over another in case of
 	 * multiple matches but only one object to be returned.
+	 * <p>
+	 *     从 javax 的 Priority 注解中获取值
+	 * </p>
 	 */
 	@Override
 	@Nullable
@@ -92,6 +102,7 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 			return OrderUtils.getPriority((Class<?>) obj);
 		}
 		Integer priority = OrderUtils.getPriority(obj.getClass());
+		// 递归找 priority
 		if (priority == null  && obj instanceof DecoratingProxy) {
 			return getPriority(((DecoratingProxy) obj).getDecoratedClass());
 		}

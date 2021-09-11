@@ -44,5 +44,9 @@ package org.springframework.core;
  * @see org.springframework.beans.factory.config.PropertyOverrideConfigurer
  * @see org.springframework.beans.factory.config.PropertyPlaceholderConfigurer
  */
+
+/**
+ * 标记接口，优先级比 Ordered 都高
+ */
 public interface PriorityOrdered extends Ordered {
 }

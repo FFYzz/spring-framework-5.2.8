@@ -42,8 +42,14 @@ public class BeanFactoryAdvisorRetrievalHelper {
 
 	private static final Log logger = LogFactory.getLog(BeanFactoryAdvisorRetrievalHelper.class);
 
+	/**
+	 * 持有 beanFactory，Spring 应用上下文
+	 */
 	private final ConfigurableListableBeanFactory beanFactory;
 
+	/**
+	 * 缓存所有的 Advisor bean name
+	 */
 	@Nullable
 	private volatile String[] cachedAdvisorBeanNames;
 
@@ -73,6 +79,7 @@ public class BeanFactoryAdvisorRetrievalHelper {
 			// Do not initialize FactoryBeans here: We need to leave all regular beans
 			// uninitialized to let the auto-proxy creator apply to them!
 			// 从 IOC 容器中找，找到之后缓存到 cachedAdvisorBeanNames 中
+			// 根据类型查找
 			advisorNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 					this.beanFactory, Advisor.class, true, false);
 			this.cachedAdvisorBeanNames = advisorNames;

@@ -74,8 +74,10 @@ public class OrderComparator implements Comparator<Object> {
 	}
 
 	private int doCompare(@Nullable Object o1, @Nullable Object o2, @Nullable OrderSourceProvider sourceProvider) {
+		// 如果是 PriorityOrdered，则根据 PriorityOrdered 的规则比较
 		boolean p1 = (o1 instanceof PriorityOrdered);
 		boolean p2 = (o2 instanceof PriorityOrdered);
+		// 如果是 PriorityOrdered 类型，则 PriorityOrdered 类型的优先级高
 		if (p1 && !p2) {
 			return -1;
 		}
@@ -83,6 +85,8 @@ public class OrderComparator implements Comparator<Object> {
 			return 1;
 		}
 
+		// 相等则比较数字
+		// 不是的话根据 order 上的数字比较
 		int i1 = getOrder(o1, sourceProvider);
 		int i2 = getOrder(o2, sourceProvider);
 		return Integer.compare(i1, i2);
