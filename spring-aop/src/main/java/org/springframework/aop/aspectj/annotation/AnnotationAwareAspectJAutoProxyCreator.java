@@ -46,6 +46,10 @@ import org.springframework.util.Assert;
  * @since 2.0
  * @see org.springframework.aop.aspectj.annotation.AspectJAdvisorFactory
  */
+
+/**
+ * AnnotationAwareAspectJAutoProxyCreator 其实是一个 SmartInstantiationAwareBeanPostProcessor。
+ */
 @SuppressWarnings("serial")
 public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorAutoProxyCreator {
 
