@@ -53,6 +53,9 @@ public class ProxyConfig implements Serializable {
 
 	boolean opaque = false;
 
+	/**
+	 * 是否需要暴露代理，如果需要暴露代理的话，会设置到 AopContext 中去
+	 */
 	boolean exposeProxy = false;
 
 	/**

@@ -135,6 +135,8 @@ public @interface EnableAspectJAutoProxy {
 	boolean proxyTargetClass() default false;
 
 	/**
+	 * 是否需要暴露代理，如果需要暴露代理的话，会设置到 AopContext 中去
+	 * <p>
 	 * Indicate that the proxy should be exposed by the AOP framework as a {@code ThreadLocal}
 	 * for retrieval via the {@link org.springframework.aop.framework.AopContext} class.
 	 * Off by default, i.e. no guarantees that {@code AopContext} access will work.
