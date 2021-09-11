@@ -46,6 +46,9 @@ import org.springframework.util.StringUtils;
 @SuppressWarnings("serial")
 public class BeanNameAutoProxyCreator extends AbstractAutoProxyCreator {
 
+	/**
+	 * 可以指定多个 Bean
+	 */
 	@Nullable
 	private List<String> beanNames;
 
@@ -80,14 +83,21 @@ public class BeanNameAutoProxyCreator extends AbstractAutoProxyCreator {
 			Class<?> beanClass, String beanName, @Nullable TargetSource targetSource) {
 
 		if (this.beanNames != null) {
+			// 遍历 beanNames
 			for (String mappedName : this.beanNames) {
+				// 传入的 beanClass 如果是 FactoryBean
 				if (FactoryBean.class.isAssignableFrom(beanClass)) {
+					// 当前遍历到的 mappedName 是以 & 开头的，说明 mappedName 是一个 FactoryBean
 					if (!mappedName.startsWith(BeanFactory.FACTORY_BEAN_PREFIX)) {
+						// 跳过
 						continue;
 					}
+					// 走到这里说明是个 FactoryBean，去掉前缀拿到 name
 					mappedName = mappedName.substring(BeanFactory.FACTORY_BEAN_PREFIX.length());
 				}
+				// 是否匹配， * 号匹配
 				if (isMatch(beanName, mappedName)) {
+					// 匹配到则返回，需要代理
 					return PROXY_WITHOUT_ADDITIONAL_INTERCEPTORS;
 				}
 				BeanFactory beanFactory = getBeanFactory();
@@ -101,6 +111,7 @@ public class BeanNameAutoProxyCreator extends AbstractAutoProxyCreator {
 				}
 			}
 		}
+		// 返回 null
 		return DO_NOT_PROXY;
 	}
 

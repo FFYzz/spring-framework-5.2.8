@@ -42,8 +42,14 @@ public class DefaultAdvisorAutoProxyCreator extends AbstractAdvisorAutoProxyCrea
 	public static final String SEPARATOR = ".";
 
 
+	/**
+	 * 是不是使用前缀
+	 */
 	private boolean usePrefix = false;
 
+	/**
+	 * 前缀
+	 */
 	@Nullable
 	private String advisorBeanNamePrefix;
 
@@ -99,10 +105,12 @@ public class DefaultAdvisorAutoProxyCreator extends AbstractAdvisorAutoProxyCrea
 	 */
 	@Override
 	protected boolean isEligibleAdvisorBean(String beanName) {
+		// 不检查前缀
 		if (!isUsePrefix()) {
 			return true;
 		}
 		String prefix = getAdvisorBeanNamePrefix();
+		// 检查前缀
 		return (prefix != null && beanName.startsWith(prefix));
 	}
 

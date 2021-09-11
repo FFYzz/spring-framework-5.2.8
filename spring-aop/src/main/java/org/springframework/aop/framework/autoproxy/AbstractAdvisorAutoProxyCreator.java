@@ -143,6 +143,9 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	/**
 	 * Return whether the Advisor bean with the given name is eligible
 	 * for proxying in the first place.
+	 * <p>
+	 *     筛选 Bean
+	 * </p>
 	 * @param beanName the name of the Advisor bean
 	 * @return whether the bean is eligible
 	 */

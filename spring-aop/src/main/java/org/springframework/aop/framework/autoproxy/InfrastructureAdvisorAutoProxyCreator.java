@@ -42,7 +42,9 @@ public class InfrastructureAdvisorAutoProxyCreator extends AbstractAdvisorAutoPr
 
 	@Override
 	protected boolean isEligibleAdvisorBean(String beanName) {
+		// 筛选
 		return (this.beanFactory != null && this.beanFactory.containsBeanDefinition(beanName) &&
+				// bean 的 role 需要为 ROLE_INFRASTRUCTURE
 				this.beanFactory.getBeanDefinition(beanName).getRole() == BeanDefinition.ROLE_INFRASTRUCTURE);
 	}
 
