@@ -35,6 +35,9 @@ public interface TargetSourceCreator {
 
 	/**
 	 * Create a special TargetSource for the given bean, if any.
+	 * <p>
+	 *     根据 bean 的名字和类型创建一个 TargetSource
+	 * </p>
 	 * @param beanClass the class of the bean to create a TargetSource for
 	 * @param beanName the name of the bean
 	 * @return a special TargetSource or {@code null} if this TargetSourceCreator isn't

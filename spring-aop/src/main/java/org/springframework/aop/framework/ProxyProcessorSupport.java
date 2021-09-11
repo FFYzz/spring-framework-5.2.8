@@ -102,11 +102,14 @@ public class ProxyProcessorSupport extends ProxyConfig implements Ordered, BeanC
 	 * @param proxyFactory the ProxyFactory for the bean
 	 */
 	protected void evaluateProxyInterfaces(Class<?> beanClass, ProxyFactory proxyFactory) {
+		// 获取 beanClass 实现的接口
 		Class<?>[] targetInterfaces = ClassUtils.getAllInterfacesForClass(beanClass, getProxyClassLoader());
 		boolean hasReasonableProxyInterface = false;
+		// 遍历接口
 		for (Class<?> ifc : targetInterfaces) {
 			if (!isConfigurationCallbackInterface(ifc) && !isInternalLanguageInterface(ifc) &&
 					ifc.getMethods().length > 0) {
+				// 存在合适的代理接口
 				hasReasonableProxyInterface = true;
 				break;
 			}
@@ -115,11 +118,12 @@ public class ProxyProcessorSupport extends ProxyConfig implements Ordered, BeanC
 		if (hasReasonableProxyInterface) {
 			// Must allow for introductions; can't just set interfaces to the target's interfaces only.
 			for (Class<?> ifc : targetInterfaces) {
+				// 添加到代理工厂的代理接口列表中去
 				proxyFactory.addInterface(ifc);
 			}
 		}
 		else {
-			// 没有实现接口，将 proxy target class 属性设置为 true
+			// 没有实现合理的接口，将 proxy target class 属性设置为 true
 			// 表示使用 CGLIB 代理
 			proxyFactory.setProxyTargetClass(true);
 		}
@@ -128,6 +132,9 @@ public class ProxyProcessorSupport extends ProxyConfig implements Ordered, BeanC
 	/**
 	 * Determine whether the given interface is just a container callback and
 	 * therefore not to be considered as a reasonable proxy interface.
+	 * <p>
+	 *     检查 ifc 是否仅仅是一个容器回调接口，如果是容器回调接口，那么不被作为代理接口。
+	 * </p>
 	 * <p>If no reasonable proxy interface is found for a given bean, it will get
 	 * proxied with its full target class, assuming that as the user's intention.
 	 * @param ifc the interface to check
@@ -143,6 +150,9 @@ public class ProxyProcessorSupport extends ProxyConfig implements Ordered, BeanC
 	 * and therefore not to be considered as a reasonable proxy interface.
 	 * <p>If no reasonable proxy interface is found for a given bean, it will get
 	 * proxied with its full target class, assuming that as the user's intention.
+	 * <p>
+	 *     排除内部接口
+	 * </p>
 	 * @param ifc the interface to check
 	 * @return whether the given interface is an internal language interface
 	 */
