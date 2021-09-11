@@ -59,6 +59,8 @@ public abstract class AopUtils {
 
 	/**
 	 * Check whether the given object is a JDK dynamic proxy or a CGLIB proxy.
+	 * <p>
+	 *     判断对象是否为代理对象
 	 * <p>This method additionally checks if the given object is an instance
 	 * of {@link SpringProxy}.
 	 * @param object the object to check
@@ -66,12 +68,16 @@ public abstract class AopUtils {
 	 * @see #isCglibProxy
 	 */
 	public static boolean isAopProxy(@Nullable Object object) {
+		// 前者判断是否为 JDK 动态代理生成的
 		return (object instanceof SpringProxy && (Proxy.isProxyClass(object.getClass()) ||
+				// 后者判断是否为 CGLib 生成的，类名是否包含 $$，CGLib 增强生成的代理对象
 				object.getClass().getName().contains(ClassUtils.CGLIB_CLASS_SEPARATOR)));
 	}
 
 	/**
 	 * Check whether the given object is a JDK dynamic proxy.
+	 * <p>
+	 *     判断对象是否为 JDK 动态代理对象
 	 * <p>This method goes beyond the implementation of
 	 * {@link Proxy#isProxyClass(Class)} by additionally checking if the
 	 * given object is an instance of {@link SpringProxy}.
@@ -79,11 +85,14 @@ public abstract class AopUtils {
 	 * @see java.lang.reflect.Proxy#isProxyClass
 	 */
 	public static boolean isJdkDynamicProxy(@Nullable Object object) {
+		// 是 SpringProxy 且由 Proxy 生成
 		return (object instanceof SpringProxy && Proxy.isProxyClass(object.getClass()));
 	}
 
 	/**
 	 * Check whether the given object is a CGLIB proxy.
+	 * <p>
+	 *     返回是否为 CGLib 生成的代理对象
 	 * <p>This method goes beyond the implementation of
 	 * {@link ClassUtils#isCglibProxy(Object)} by additionally checking if
 	 * the given object is an instance of {@link SpringProxy}.
@@ -97,6 +106,8 @@ public abstract class AopUtils {
 
 	/**
 	 * Determine the target class of the given bean instance which might be an AOP proxy.
+	 * <p>
+	 *     从 bean 实例(对象)中获取目标类型
 	 * <p>Returns the target class for an AOP proxy or the plain class otherwise.
 	 * @param candidate the instance to check (might be an AOP proxy)
 	 * @return the target class (or the plain class of the given object as fallback;
@@ -144,6 +155,8 @@ public abstract class AopUtils {
 	}
 
 	/**
+	 * 返回当前方法是否为 equals 方法
+	 *
 	 * Determine whether the given method is an "equals" method.
 	 * @see java.lang.Object#equals
 	 */
@@ -152,6 +165,8 @@ public abstract class AopUtils {
 	}
 
 	/**
+	 * 返回当前方法是否为 hashcode 方法
+	 *
 	 * Determine whether the given method is a "hashCode" method.
 	 * @see java.lang.Object#hashCode
 	 */
@@ -300,6 +315,9 @@ public abstract class AopUtils {
 	/**
 	 * Determine the sublist of the {@code candidateAdvisors} list
 	 * that is applicable to the given class.
+	 * <p>
+	 *     从 candidateAdvisors 中找到适合 clazz 的 advisor
+	 * </p>
 	 * @param candidateAdvisors the Advisors to evaluate
 	 * @param clazz the target class
 	 * @return sublist of Advisors that can apply to an object of the given class
@@ -337,6 +355,8 @@ public abstract class AopUtils {
 
 	/**
 	 * Invoke the given target via reflection, as part of an AOP method invocation.
+	 * <p>
+	 *     使用 Java 反射调用 Joinpoint （目标方法）
 	 * @param target the target object
 	 * @param method the method to invoke
 	 * @param args the arguments for the method

@@ -17,6 +17,8 @@
 package org.springframework.aop;
 
 /**
+ * 标记接口，被所有的 AOP 代理类实现，用于判断该类是否为 Spring 创建的代理类
+ *
  * Marker interface implemented by all AOP proxies. Used to detect
  * whether or not objects are Spring-generated proxies.
  *

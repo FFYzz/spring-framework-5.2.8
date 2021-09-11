@@ -19,7 +19,8 @@ package org.springframework.aop;
 import org.springframework.lang.Nullable;
 
 /**
- * 不是常规的 Spring 中的 Aware 接口。
+ * 不是常规的 Spring 中的 Aware 接口。因为 Aware 一般提供 set 方法。
+ * 其实更适合命名为 TargetClassCapable。
  * <p>
  * Minimal interface for exposing the target class behind a proxy.
  *
