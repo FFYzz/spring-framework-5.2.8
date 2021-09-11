@@ -21,7 +21,7 @@ package org.springframework.aop.framework;
  * AOP infrastructure. In particular, this implies that any such bean
  * is not subject to auto-proxying, even if a pointcut would match.
  * <p>
- *     标记接口，标记该对象是 Spring AOP 相关的实例。
+ *     标记接口，标记该对象是 Spring AOP 相关的实例。意味着这 Bean 不会被自动代理。
  * </p>
  *
  * @author Juergen Hoeller
