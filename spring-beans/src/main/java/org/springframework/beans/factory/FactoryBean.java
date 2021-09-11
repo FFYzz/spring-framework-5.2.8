@@ -62,6 +62,10 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.aop.framework.ProxyFactoryBean
  * @see org.springframework.jndi.JndiObjectFactoryBean
  */
+
+/**
+ * 特殊的 bean。能够动态生成 bean
+ */
 public interface FactoryBean<T> {
 
 	/**

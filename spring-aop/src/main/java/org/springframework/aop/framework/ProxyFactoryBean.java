@@ -49,6 +49,8 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
+ * 适合与 Spring IOC 结合起来一起使用
+ *
  * {@link org.springframework.beans.factory.FactoryBean} implementation that builds an
  * AOP proxy based on beans in Spring {@link org.springframework.beans.factory.BeanFactory}.
  *
@@ -100,9 +102,16 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	/**
+	 * 添加的 interceptor 的名字
+	 * 也是 bean 的引用
+	 */
 	@Nullable
 	private String[] interceptorNames;
 
+	/**
+	 * 指定要包装的 bean 的名字
+	 */
 	@Nullable
 	private String targetName;
 
@@ -247,8 +256,10 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	@Override
 	@Nullable
 	public Object getObject() throws BeansException {
+		// 初始化 advisor 链
 		initializeAdvisorChain();
 		if (isSingleton()) {
+			// 单例
 			return getSingletonInstance();
 		}
 		else {
@@ -273,17 +284,23 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 				return this.singletonInstance.getClass();
 			}
 		}
+		// 当前 targetSource 所实现的接口
 		Class<?>[] ifcs = getProxiedInterfaces();
 		if (ifcs.length == 1) {
 			return ifcs[0];
 		}
 		else if (ifcs.length > 1) {
+			// 组合的方式，比如 A 实现了 ifcs，那么就返回 A。
+			// 通过动态代理的方式创建 A 类
 			return createCompositeInterface(ifcs);
 		}
+		// ifcs.length < 1
 		else if (this.targetName != null && this.beanFactory != null) {
+			// 获取 Type，做一个依赖查找
 			return this.beanFactory.getType(this.targetName);
 		}
 		else {
+			// 最后兜底返回 targetSource 的类型
 			return getTargetClass();
 		}
 	}
@@ -295,6 +312,8 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 
 
 	/**
+	 * 组合类型
+	 * <p>
 	 * Create a composite interface Class for the given interfaces,
 	 * implementing the given interfaces in one single Class.
 	 * <p>The default implementation builds a JDK proxy class for the
@@ -314,6 +333,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	 */
 	private synchronized Object getSingletonInstance() {
 		if (this.singletonInstance == null) {
+			// 获取对象
 			this.targetSource = freshTargetSource();
 			if (this.autodetectInterfaces && getProxiedInterfaces().length == 0 && !isProxyTargetClass()) {
 				// Rely on AOP infrastructure to tell us what interfaces to proxy.
@@ -325,6 +345,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 			}
 			// Initialize the shared singleton instance.
 			super.setFrozen(this.freezeProxy);
+			// 调用 getProxy 方法
 			this.singletonInstance = getProxy(createAopProxy());
 		}
 		return this.singletonInstance;
@@ -425,6 +446,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 			return;
 		}
 
+		// 依赖查找 interceptorNames 关联的 bean
 		if (!ObjectUtils.isEmpty(this.interceptorNames)) {
 			if (this.beanFactory == null) {
 				throw new IllegalStateException("No BeanFactory available anymore (probably due to serialization) " +
@@ -438,7 +460,9 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 			}
 
 			// Materialize interceptor chain from bean names.
+			// 遍历依赖查找
 			for (String name : this.interceptorNames) {
+				// 如果是以 * 结尾，模糊查找
 				if (name.endsWith(GLOBAL_SUFFIX)) {
 					if (!(this.beanFactory instanceof ListableBeanFactory)) {
 						throw new AopConfigException(
@@ -448,19 +472,23 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 							name.substring(0, name.length() - GLOBAL_SUFFIX.length()));
 				}
 
+				// 精确的 bean
 				else {
 					// If we get here, we need to add a named interceptor.
 					// We must check if it's a singleton or prototype.
 					Object advice;
 					if (this.singleton || this.beanFactory.isSingleton(name)) {
 						// Add the real Advisor/Advice to the chain.
+						// 依赖查找
 						advice = this.beanFactory.getBean(name);
 					}
 					else {
 						// It's a prototype Advice or Advisor: replace with a prototype.
 						// Avoid unnecessary creation of prototype bean just for advisor chain initialization.
+						// 如果不是单例，则封装成 PrototypePlaceholderAdvisor
 						advice = new PrototypePlaceholderAdvisor(name);
 					}
+					// 放到链上
 					addAdvisorOnChainCreation(advice);
 				}
 			}
@@ -511,6 +539,7 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 				BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory, Interceptor.class);
 		if (globalAdvisorNames.length > 0 || globalInterceptorNames.length > 0) {
 			List<Object> beans = new ArrayList<>(globalAdvisorNames.length + globalInterceptorNames.length);
+			// 依赖查找
 			for (String name : globalAdvisorNames) {
 				if (name.startsWith(prefix)) {
 					beans.add(beanFactory.getBean(name));
@@ -521,7 +550,9 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 					beans.add(beanFactory.getBean(name));
 				}
 			}
+			// 排个序
 			AnnotationAwareOrderComparator.sort(beans);
+			// 添加到链上
 			for (Object bean : beans) {
 				addAdvisorOnChainCreation(bean);
 			}
@@ -548,11 +579,13 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	 * it in a TargetSource if necessary.
 	 */
 	private TargetSource freshTargetSource() {
+		// 先检查 targetName 是否为空
 		if (this.targetName == null) {
 			// Not refreshing target: bean name not specified in 'interceptorNames'
 			return this.targetSource;
 		}
 		else {
+			// targetName 不为空
 			if (this.beanFactory == null) {
 				throw new IllegalStateException("No BeanFactory available anymore (probably due to serialization) " +
 						"- cannot resolve target with name '" + this.targetName + "'");
@@ -560,7 +593,9 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 			if (logger.isDebugEnabled()) {
 				logger.debug("Refreshing target with name '" + this.targetName + "'");
 			}
+			// 依赖查找
 			Object target = this.beanFactory.getBean(this.targetName);
+			// 封装成 TargetSource
 			return (target instanceof TargetSource ? (TargetSource) target : new SingletonTargetSource(target));
 		}
 	}
@@ -613,11 +648,20 @@ public class ProxyFactoryBean extends ProxyCreatorSupport
 	/**
 	 * Used in the interceptor chain where we need to replace a bean with a prototype
 	 * on creating a proxy.
+	 * <p>
+	 *     prototype 类型的 bean
+	 * </p>
 	 */
 	private static class PrototypePlaceholderAdvisor implements Advisor, Serializable {
 
+		/**
+		 * bean 的名字
+		 */
 		private final String beanName;
 
+		/**
+		 * debug 信息
+		 */
 		private final String message;
 
 		public PrototypePlaceholderAdvisor(String beanName) {
