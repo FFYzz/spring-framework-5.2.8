@@ -33,6 +33,9 @@ import org.springframework.util.ReflectionUtils;
  */
 public class SimpleAspectInstanceFactory implements AspectInstanceFactory {
 
+	/**
+	 * aspect class 类型
+	 */
 	private final Class<?> aspectClass;
 
 
@@ -53,9 +56,13 @@ public class SimpleAspectInstanceFactory implements AspectInstanceFactory {
 		return this.aspectClass;
 	}
 
+	// 通过反射获取实例对象
+
 	@Override
 	public final Object getAspectInstance() {
 		try {
+			// 反射获取实例对象
+			// 没传参数，因此 aspectClass 这个类需要一个默认的构造器
 			return ReflectionUtils.accessibleConstructor(this.aspectClass).newInstance();
 		}
 		catch (NoSuchMethodException ex) {

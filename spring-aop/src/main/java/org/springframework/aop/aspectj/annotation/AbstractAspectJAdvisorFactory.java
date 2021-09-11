@@ -55,10 +55,17 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @since 2.0
  */
+
+/**
+ * 抽象实现
+ */
 public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFactory {
 
 	private static final String AJC_MAGIC = "ajc$";
 
+	/**
+	 * 支持的标记注解
+	 */
 	private static final Class<?>[] ASPECTJ_ANNOTATION_CLASSES = new Class<?>[] {
 			Pointcut.class, Around.class, Before.class, After.class, AfterReturning.class, AfterThrowing.class};
 
@@ -80,6 +87,9 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 		return (hasAspectAnnotation(clazz) && !compiledByAjc(clazz));
 	}
 
+	/**
+	 * 返回类上是否有 Aspect 注解
+	 */
 	private boolean hasAspectAnnotation(Class<?> clazz) {
 		return (AnnotationUtils.findAnnotation(clazz, Aspect.class) != null);
 	}
@@ -159,6 +169,9 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 
 	/**
 	 * Enum for AspectJ annotation types.
+	 * <p>
+	 *     AspectJ 中支持的增强注解
+	 * </p>
 	 * @see AspectJAnnotation#getAnnotationType()
 	 */
 	protected enum AspectJAnnotationType {
@@ -170,12 +183,21 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	/**
 	 * Class modelling an AspectJ annotation, exposing its type enumeration and
 	 * pointcut String.
+	 * <p>
+	 *     增强注解类
+	 * </p>
 	 * @param <A> the annotation type
 	 */
 	protected static class AspectJAnnotation<A extends Annotation> {
 
+		/**
+		 * 属性名
+		 */
 		private static final String[] EXPRESSION_ATTRIBUTES = new String[] {"pointcut", "value"};
 
+		/**
+		 * 支持的注解类型
+		 */
 		private static Map<Class<?>, AspectJAnnotationType> annotationTypeMap = new HashMap<>(8);
 
 		static {
@@ -187,20 +209,35 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 			annotationTypeMap.put(AfterThrowing.class, AspectJAnnotationType.AtAfterThrowing);
 		}
 
+		/**
+		 * 当前注解
+		 */
 		private final A annotation;
 
+		/**
+		 * 注解的 AspectJAnnotationType 类型
+		 */
 		private final AspectJAnnotationType annotationType;
 
+		/**
+		 * 注解上的表达式
+		 */
 		private final String pointcutExpression;
 
+		/**
+		 * argumentNames == argNames
+		 */
 		private final String argumentNames;
 
 		public AspectJAnnotation(A annotation) {
 			this.annotation = annotation;
 			this.annotationType = determineAnnotationType(annotation);
 			try {
+				// 注解上的表达式，可能是表达式，可能是方法引用
 				this.pointcutExpression = resolveExpression(annotation);
+				// 获取 argNames 属性的名字，用于判断是否有设置 argNames 属性
 				Object argNames = AnnotationUtils.getValue(annotation, "argNames");
+				// 如果有设置则将其赋值给 argumentNames
 				this.argumentNames = (argNames instanceof String ? (String) argNames : "");
 			}
 			catch (Exception ex) {
@@ -208,7 +245,11 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 			}
 		}
 
+		/**
+		 * 根据注解返回 AspectJAnnotationType
+		 */
 		private AspectJAnnotationType determineAnnotationType(A annotation) {
+			// 直接在 map 中找
 			AspectJAnnotationType type = annotationTypeMap.get(annotation.annotationType());
 			if (type != null) {
 				return type;
@@ -216,16 +257,23 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 			throw new IllegalStateException("Unknown annotation type: " + annotation);
 		}
 
+		/**
+		 * 解析注解上的 aspectJ 表达式
+		 */
 		private String resolveExpression(A annotation) {
+			// 遍历支持的属性
 			for (String attributeName : EXPRESSION_ATTRIBUTES) {
+				// 获取注解上是否有设置该属性
 				Object val = AnnotationUtils.getValue(annotation, attributeName);
 				if (val instanceof String) {
 					String str = (String) val;
 					if (!str.isEmpty()) {
+						// 返回的要么是 表达式，要么是 方法引用
 						return str;
 					}
 				}
 			}
+			// 如果没有设置属性，则抛出异常
 			throw new IllegalStateException("Failed to resolve expression: " + annotation);
 		}
 
@@ -264,16 +312,19 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 			if (method.getParameterCount() == 0) {
 				return new String[0];
 			}
+			// 获取 增强注解，比如 Before/After
 			AspectJAnnotation<?> annotation = findAspectJAnnotationOnMethod(method);
 			if (annotation == null) {
 				return null;
 			}
+			// 封装成 StringTokenizer
 			StringTokenizer nameTokens = new StringTokenizer(annotation.getArgumentNames(), ",");
 			if (nameTokens.countTokens() > 0) {
 				String[] names = new String[nameTokens.countTokens()];
 				for (int i = 0; i < names.length; i++) {
 					names[i] = nameTokens.nextToken();
 				}
+				// 返回方法上注解中属性的个数
 				return names;
 			}
 			else {

@@ -22,6 +22,9 @@ import org.springframework.lang.Nullable;
 /**
  * Interface implemented to provide an instance of an AspectJ aspect.
  * Decouples from Spring's bean factory.
+ * <p>
+ *     AspectJ 实例工厂，可排序
+ * </p>
  *
  * <p>Extends the {@link org.springframework.core.Ordered} interface
  * to express an order value for the underlying aspect in a chain.
@@ -35,12 +38,18 @@ public interface AspectInstanceFactory extends Ordered {
 
 	/**
 	 * Create an instance of this factory's aspect.
+	 * <p>
+	 *     返回一个 Aspect 实例
+	 * </p>
 	 * @return the aspect instance (never {@code null})
 	 */
 	Object getAspectInstance();
 
 	/**
 	 * Expose the aspect class loader that this factory uses.
+	 * <p>
+	 *     返回当前工厂类使用的 ClassLoader
+	 * </p>
 	 * @return the aspect class loader (or {@code null} for the bootstrap loader)
 	 * @see org.springframework.util.ClassUtils#getDefaultClassLoader()
 	 */

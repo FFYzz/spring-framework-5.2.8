@@ -16,16 +16,23 @@
 
 package org.springframework.aop.aspectj.annotation;
 
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.aop.aspectj.AspectInstanceFactory;
 import org.springframework.lang.Nullable;
 
 /**
  * Subinterface of {@link org.springframework.aop.aspectj.AspectInstanceFactory}
  * that returns {@link AspectMetadata} associated with AspectJ-annotated classes.
+ * <p>
+ *     返回 AspectJ 注解标注的类的 AspectJ 注解元信息
+ * </p>
  *
  * <p>Ideally, AspectInstanceFactory would include this method itself, but because
  * AspectMetadata uses Java-5-only {@link org.aspectj.lang.reflect.AjType},
  * we need to split out this subinterface.
+ * <p>
+ *     jdk5 不支持 AspectMetadata，所以才需要将以下方法拆分出来。
+ * </p>
  *
  * @author Rod Johnson
  * @since 2.0
@@ -36,12 +43,18 @@ public interface MetadataAwareAspectInstanceFactory extends AspectInstanceFactor
 
 	/**
 	 * Return the AspectJ AspectMetadata for this factory's aspect.
+	 * <p>
+	 *     返回 AspectMetadata 注解元信息
+	 * </p>
 	 * @return the aspect metadata
 	 */
 	AspectMetadata getAspectMetadata();
 
 	/**
 	 * Return the best possible creation mutex for this factory.
+	 * <p>
+	 *     返回一个同步对象
+	 * </p>
 	 * @return the mutex object (may be {@code null} for no mutex to use)
 	 * @since 4.3
 	 */

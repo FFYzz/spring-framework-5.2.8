@@ -70,6 +70,9 @@ import org.springframework.util.comparator.InstanceComparator;
 @SuppressWarnings("serial")
 public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFactory implements Serializable {
 
+	/**
+	 * 方法比较器，同一个增强类型的排序
+	 */
 	private static final Comparator<Method> METHOD_COMPARATOR;
 
 	static {
@@ -173,11 +176,13 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 		ReflectionUtils.doWithMethods(aspectClass, method -> {
 			// Exclude pointcuts
 			// 排除 Pointcut 方法
+			// 仅仅选择 Before / Around ... 那类方法
 			if (AnnotationUtils.getAnnotation(method, Pointcut.class) == null) {
 				methods.add(method);
 			}
 		}, ReflectionUtils.USER_DECLARED_METHODS);
 		if (methods.size() > 1) {
+			// 多于 1 个需要排序
 			methods.sort(METHOD_COMPARATOR);
 		}
 		return methods;

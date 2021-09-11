@@ -29,6 +29,9 @@ import org.springframework.lang.Nullable;
 /**
  * Interface for factories that can create Spring AOP Advisors from classes
  * annotated with AspectJ annotation syntax.
+ * <p>
+ *     AspectJAdvisor 的创建工厂
+ * </p>
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
@@ -46,6 +49,9 @@ public interface AspectJAdvisorFactory {
 	 * Will return true for some aspects that Spring AOP cannot process,
 	 * such as those with unsupported instantiation models.
 	 * Use the {@link #validate} method to handle these cases if necessary.
+	 * <p>
+	 *     返回给定的 clazz 是否为 Aspect。是否用 Aspect 注解标注。
+	 * </p>
 	 * @param clazz the supposed annotation-style AspectJ class
 	 * @return whether or not this class is recognized by AspectJ as an aspect class
 	 */
@@ -53,6 +59,9 @@ public interface AspectJAdvisorFactory {
 
 	/**
 	 * Is the given class a valid AspectJ aspect class?
+	 * <p>
+	 *     返回是否是有效的 aspect
+	 * </p>
 	 * @param aspectClass the supposed AspectJ annotation-style class to validate
 	 * @throws AopConfigException if the class is an invalid aspect
 	 * (which can never be legal)
@@ -64,6 +73,9 @@ public interface AspectJAdvisorFactory {
 	/**
 	 * Build Spring AOP Advisors for all annotated At-AspectJ methods
 	 * on the specified aspect instance.
+	 * <p>
+	 *     返回所有的 Advisor
+	 * </p>
 	 * @param aspectInstanceFactory the aspect instance factory
 	 * (not the aspect instance itself in order to avoid eager instantiation)
 	 * @return a list of advisors for this class
@@ -72,6 +84,9 @@ public interface AspectJAdvisorFactory {
 
 	/**
 	 * Build a Spring AOP Advisor for the given AspectJ advice method.
+	 * <p>
+	 *     根据给定的 candidateAdviceMethod，返回一个 Advisor
+	 * </p>
 	 * @param candidateAdviceMethod the candidate advice method
 	 * @param aspectInstanceFactory the aspect instance factory
 	 * @param declarationOrder the declaration order within the aspect

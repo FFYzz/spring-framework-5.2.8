@@ -45,7 +45,7 @@ import org.springframework.aop.support.ComposablePointcut;
  */
 
 /**
- * AspectJ 注解的元信息储存对象
+ * AspectJ 注解的元信息储存对象，切面元信息对象
  */
 @SuppressWarnings("serial")
 public class AspectMetadata implements Serializable {
@@ -54,18 +54,28 @@ public class AspectMetadata implements Serializable {
 	 * The name of this aspect as defined to Spring (the bean name) -
 	 * allows us to determine if two pieces of advice come from the
 	 * same aspect and hence their relative precedence.
+	 * <p>
+	 *     切面的名字，一般是类名
+	 * </p>
 	 */
 	private final String aspectName;
 
 	/**
 	 * The aspect class, stored separately for re-resolution of the
 	 * corresponding AjType on deserialization.
+	 * <p>
+	 *     切面类
+	 * </p>
 	 */
 	private final Class<?> aspectClass;
 
 	/**
 	 * AspectJ reflection information (AspectJ 5 / Java 5 specific).
 	 * Re-resolved on deserialization since it isn't serializable itself.
+	 * <p>
+	 *     aspectJ 运行时的类型
+	 *     ?????
+	 * </p>
 	 */
 	private transient AjType<?> ajType;
 
@@ -73,6 +83,9 @@ public class AspectMetadata implements Serializable {
 	 * Spring AOP pointcut corresponding to the per clause of the
 	 * aspect. Will be the Pointcut.TRUE canonical instance in the
 	 * case of a singleton, otherwise an AspectJExpressionPointcut.
+	 * <p>
+	 *     切点
+	 * </p>
 	 */
 	private final Pointcut perClausePointcut;
 
@@ -83,11 +96,14 @@ public class AspectMetadata implements Serializable {
 	 * @param aspectName the name of the aspect
 	 */
 	public AspectMetadata(Class<?> aspectClass, String aspectName) {
+		// 赋值 name
 		this.aspectName = aspectName;
 
 		Class<?> currClass = aspectClass;
 		AjType<?> ajType = null;
+		// 一直往上找，直到找到 Aspect 类型
 		while (currClass != Object.class) {
+			// 封装成 AjType
 			AjType<?> ajTypeToCheck = AjTypeSystem.getAjType(currClass);
 			if (ajTypeToCheck.isAspect()) {
 				ajType = ajTypeToCheck;

@@ -28,11 +28,21 @@ import org.springframework.util.Assert;
  * @author Juergen Hoeller
  * @since 2.0
  */
+
+/**
+ * 装饰者模式，使被装饰对象具有 MetadataAwareAspectInstanceFactory 的能力
+ */
 @SuppressWarnings("serial")
 public class LazySingletonAspectInstanceFactoryDecorator implements MetadataAwareAspectInstanceFactory, Serializable {
 
+	/**
+	 * 持有一个 MetadataAwareAspectInstanceFactory
+	 */
 	private final MetadataAwareAspectInstanceFactory maaif;
 
+	/**
+	 * 被装饰对象
+	 */
 	@Nullable
 	private volatile Object materialized;
 
