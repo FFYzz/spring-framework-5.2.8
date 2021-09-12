@@ -50,6 +50,9 @@ import org.springframework.util.Assert;
 public class EventPublicationInterceptor
 		implements MethodInterceptor, ApplicationEventPublisherAware, InitializingBean {
 
+	/**
+	 * 这个构造器必须是包含一个参数的构造器，需要提前通过 set 方法注入
+	 */
 	@Nullable
 	private Constructor<?> applicationEventClassConstructor;
 
@@ -59,6 +62,8 @@ public class EventPublicationInterceptor
 
 	/**
 	 * Set the application event class to publish.
+	 * <p>
+	 *     设置要发布的应用事件类
 	 * <p>The event class <b>must</b> have a constructor with a single
 	 * {@code Object} argument for the event source. The interceptor
 	 * will pass in the invoked object.
@@ -72,6 +77,7 @@ public class EventPublicationInterceptor
 			throw new IllegalArgumentException("'applicationEventClass' needs to extend ApplicationEvent");
 		}
 		try {
+			// 有一个限制，必须有一个包含一个参数，且参数类型是 Object 类型的构造方法，
 			this.applicationEventClassConstructor = applicationEventClass.getConstructor(Object.class);
 		}
 		catch (NoSuchMethodException ex) {
@@ -93,17 +99,24 @@ public class EventPublicationInterceptor
 	}
 
 
+	/**
+	 * MethodInterceptor#invoke 调用逻辑
+	 */
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
+		// 执行方法逻辑
 		Object retVal = invocation.proceed();
 
 		Assert.state(this.applicationEventClassConstructor != null, "No ApplicationEvent class set");
+		// 创建一个应用事件
 		ApplicationEvent event = (ApplicationEvent)
 				this.applicationEventClassConstructor.newInstance(invocation.getThis());
 
 		Assert.state(this.applicationEventPublisher != null, "No ApplicationEventPublisher available");
+		// 发布事件
 		this.applicationEventPublisher.publishEvent(event);
 
+		// 返回方法的执行结果
 		return retVal;
 	}
 
