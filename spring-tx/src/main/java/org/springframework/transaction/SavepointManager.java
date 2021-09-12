@@ -34,6 +34,10 @@ package org.springframework.transaction;
  * @see TransactionDefinition#PROPAGATION_NESTED
  * @see java.sql.Savepoint
  */
+
+/**
+ * 保存点管理，常用在大事务中的部分回滚场景。比如嵌套事务。
+ */
 public interface SavepointManager {
 
 	/**
@@ -42,6 +46,9 @@ public interface SavepointManager {
 	 * that you don't need anymore via {@code releaseSavepoint}.
 	 * <p>Note that most transaction managers will automatically release
 	 * savepoints at transaction completion.
+	 * <p>
+	 *     创建一个保存点
+	 * </p>
 	 * @return a savepoint object, to be passed into
 	 * {@link #rollbackToSavepoint} or {@link #releaseSavepoint}
 	 * @throws NestedTransactionNotSupportedException if the underlying
@@ -57,6 +64,9 @@ public interface SavepointManager {
 	 * <p>The savepoint will <i>not</i> be automatically released afterwards.
 	 * You may explicitly call {@link #releaseSavepoint(Object)} or rely on
 	 * automatic release on transaction completion.
+	 * <p>
+	 *     回滚到保存点
+	 * </p>
 	 * @param savepoint the savepoint to roll back to
 	 * @throws NestedTransactionNotSupportedException if the underlying
 	 * transaction does not support savepoints
@@ -71,6 +81,9 @@ public interface SavepointManager {
 	 * savepoints on transaction completion.
 	 * <p>Implementations should fail as silently as possible if proper
 	 * resource cleanup will eventually happen at transaction completion.
+	 * <p>
+	 *     释放保存点
+	 * </p>
 	 * @param savepoint the savepoint to release
 	 * @throws NestedTransactionNotSupportedException if the underlying
 	 * transaction does not support savepoints

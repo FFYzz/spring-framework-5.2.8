@@ -27,6 +27,10 @@ import org.springframework.transaction.TransactionDefinition;
  * @author Juergen Hoeller
  * @since 1.2
  */
+
+/**
+ * 事务传播行为枚举类，与 TransactionDefinition 中定义的常量是一致的。
+ */
 public enum Propagation {
 
 	/**
