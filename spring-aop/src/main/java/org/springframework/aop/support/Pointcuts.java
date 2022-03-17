@@ -92,7 +92,7 @@ public abstract class Pointcuts {
 
 
 	/**
-	 * setter 防范的 Pointcut
+	 * setter 方法的 Pointcut
 	 *
 	 * Pointcut implementation that matches bean property setters.
 	 */

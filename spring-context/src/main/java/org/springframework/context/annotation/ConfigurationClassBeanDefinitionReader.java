@@ -141,6 +141,7 @@ class ConfigurationClassBeanDefinitionReader {
 			registerBeanDefinitionForImportedConfigurationClass(configClass);
 		}
 		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
+			// 加载 @Bean 标注的方法
 			loadBeanDefinitionsForBeanMethod(beanMethod);
 		}
 
@@ -180,6 +181,7 @@ class ConfigurationClassBeanDefinitionReader {
 		MethodMetadata metadata = beanMethod.getMetadata();
 		String methodName = metadata.getMethodName();
 
+		// 判断 Conditional
 		// Do we need to mark the bean as skipped by its condition?
 		if (this.conditionEvaluator.shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN)) {
 			configClass.skippedBeanMethods.add(methodName);
@@ -189,6 +191,7 @@ class ConfigurationClassBeanDefinitionReader {
 			return;
 		}
 
+		// 获取注解上的信息
 		AnnotationAttributes bean = AnnotationConfigUtils.attributesFor(metadata, Bean.class);
 		Assert.state(bean != null, "No @Bean annotation attributes");
 
@@ -214,6 +217,8 @@ class ConfigurationClassBeanDefinitionReader {
 		ConfigurationClassBeanDefinition beanDef = new ConfigurationClassBeanDefinition(configClass, metadata);
 		beanDef.setSource(this.sourceExtractor.extractSource(metadata, configClass.getResource()));
 
+		// 判断标注了 @Bean 注解的方法是否为 static 方法
+		// 类 + 静态方法
 		if (metadata.isStatic()) {
 			// static @Bean method
 			if (configClass.getMetadata() instanceof StandardAnnotationMetadata) {
@@ -224,8 +229,10 @@ class ConfigurationClassBeanDefinitionReader {
 			}
 			beanDef.setUniqueFactoryMethodName(methodName);
 		}
+		// @Bean 标注的方法不是 static 方法
 		else {
 			// instance @Bean method
+			// 实例方法会在 BeanDefinition 中设置 factoryBeanName
 			beanDef.setFactoryBeanName(configClass.getBeanName());
 			beanDef.setUniqueFactoryMethodName(methodName);
 		}

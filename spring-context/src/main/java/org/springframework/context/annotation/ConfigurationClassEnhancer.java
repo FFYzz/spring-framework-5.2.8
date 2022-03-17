@@ -70,6 +70,10 @@ import org.springframework.util.ReflectionUtils;
  * @see #enhance
  * @see ConfigurationClassPostProcessor
  */
+
+/**
+ * 配置类增强器
+ */
 class ConfigurationClassEnhancer {
 
 	// The callbacks to use. Note that these callbacks must be stateless.
@@ -115,13 +119,19 @@ class ConfigurationClassEnhancer {
 	}
 
 	/**
+	 * 创建一个 Enhancer 实例
+	 *
 	 * Creates a new CGLIB {@link Enhancer} instance.
 	 */
 	private Enhancer newEnhancer(Class<?> configSuperClass, @Nullable ClassLoader classLoader) {
 		Enhancer enhancer = new Enhancer();
+		// 设置父类
+		// Spring 中一般配置了 @Configuration 注解的类为父类
 		enhancer.setSuperclass(configSuperClass);
+		// 默认添加一个 EnhancedConfiguration 接口
 		enhancer.setInterfaces(new Class<?>[] {EnhancedConfiguration.class});
 		enhancer.setUseFactory(false);
+		// 生成类的命名策略
 		enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
 		enhancer.setStrategy(new BeanFactoryAwareGeneratorStrategy(classLoader));
 		enhancer.setCallbackFilter(CALLBACK_FILTER);

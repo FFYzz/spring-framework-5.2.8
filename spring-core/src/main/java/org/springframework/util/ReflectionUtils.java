@@ -506,6 +506,9 @@ public abstract class ReflectionUtils {
 
 	/**
 	 * Determine whether the given method is an "equals" method.
+	 * <p>
+	 *    返回 method 是否为 Object 类中定义的 equals 方法
+	 * </p>
 	 * @see java.lang.Object#equals(Object)
 	 */
 	public static boolean isEqualsMethod(@Nullable Method method) {
@@ -520,6 +523,9 @@ public abstract class ReflectionUtils {
 
 	/**
 	 * Determine whether the given method is a "hashCode" method.
+	 * <p>
+	 *    返回 method 是否为 Object 类中定义的 hashcode 方法
+	 * </p>
 	 * @see java.lang.Object#hashCode()
 	 */
 	public static boolean isHashCodeMethod(@Nullable Method method) {
@@ -528,6 +534,9 @@ public abstract class ReflectionUtils {
 
 	/**
 	 * Determine whether the given method is a "toString" method.
+	 * <p>
+	 *    返回 method 是否为 Object 类中定义的 toString 方法
+	 * </p>
 	 * @see java.lang.Object#toString()
 	 */
 	public static boolean isToStringMethod(@Nullable Method method) {
@@ -536,6 +545,9 @@ public abstract class ReflectionUtils {
 
 	/**
 	 * Determine whether the given method is originally declared by {@link java.lang.Object}.
+	 * <p>
+	 *    返回 method 是否定义在 Object 类中
+	 * </p>
 	 */
 	public static boolean isObjectMethod(@Nullable Method method) {
 		return (method != null && (method.getDeclaringClass() == Object.class ||

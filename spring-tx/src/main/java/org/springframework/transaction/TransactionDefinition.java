@@ -43,9 +43,14 @@ import org.springframework.lang.Nullable;
  */
 public interface TransactionDefinition {
 
+	// 定义了传播行为
+
 	/**
 	 * Support a current transaction; create a new one if none exists.
 	 * Analogous to the EJB transaction attribute of the same name.
+	 * <p>
+	 *     默认的传播行为
+	 * </p>
 	 * <p>This is typically the default setting of a transaction definition,
 	 * and typically defines a transaction synchronization scope.
 	 */
@@ -131,10 +136,14 @@ public interface TransactionDefinition {
 	 */
 	int PROPAGATION_NESTED = 6;
 
+	// 定义了隔离级别
 
 	/**
 	 * Use the default isolation level of the underlying datastore.
 	 * All other levels correspond to the JDBC isolation levels.
+	 * <p>
+	 *     使用数据库的默认的隔离级别
+	 * </p>
 	 * @see java.sql.Connection
 	 */
 	int ISOLATION_DEFAULT = -1;
@@ -187,6 +196,9 @@ public interface TransactionDefinition {
 	/**
 	 * Use the default timeout of the underlying transaction system,
 	 * or none if timeouts are not supported.
+	 * <p>
+	 *     事务的超时时间
+	 * </p>
 	 */
 	int TIMEOUT_DEFAULT = -1;
 
@@ -243,6 +255,9 @@ public interface TransactionDefinition {
 
 	/**
 	 * Return whether to optimize as a read-only transaction.
+	 * <p>
+	 *     返回是否为只读事务
+	 * </p>
 	 * <p>The read-only flag applies to any transaction context, whether backed
 	 * by an actual resource transaction ({@link #PROPAGATION_REQUIRED}/
 	 * {@link #PROPAGATION_REQUIRES_NEW}) or operating non-transactionally at

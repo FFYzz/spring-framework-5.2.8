@@ -206,6 +206,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	public void setInterfaces(Class<?>... interfaces) {
 		Assert.notNull(interfaces, "Interfaces must not be null");
 		this.interfaces.clear();
+		// 遍历添加需要代理的接口
 		for (Class<?> ifc : interfaces) {
 			addInterface(ifc);
 		}
@@ -221,7 +222,9 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 			throw new IllegalArgumentException("[" + intf.getName() + "] is not an interface");
 		}
 		if (!this.interfaces.contains(intf)) {
+			// 将接口添加到代理实现接口 list 中
 			this.interfaces.add(intf);
+			// 调用 listener 的 changed 方法
 			adviceChanged();
 		}
 	}

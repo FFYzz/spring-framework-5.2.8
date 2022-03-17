@@ -173,7 +173,7 @@ public abstract class AbstractRefreshableWebApplicationContext extends AbstractR
 
 		// 注册 Scope
 		WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, this.servletContext);
-		// 注册 EnvironmentBeans
+		// 注册 Environment Beans
 		WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, this.servletContext, this.servletConfig);
 	}
 

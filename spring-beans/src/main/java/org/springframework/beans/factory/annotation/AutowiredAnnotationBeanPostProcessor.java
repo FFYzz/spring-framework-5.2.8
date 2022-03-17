@@ -635,6 +635,8 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 		}
 
 		/**
+		 * @Autowired 注解原理
+		 *
 		 * @param bean 注解类/标注了 @Configuration 的类的 bean
 		 * @param beanName
 		 * @param pvs

@@ -331,6 +331,7 @@ class ConfigurationClassParser {
 		Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(sourceClass);
 		// 将 @Bean 标注的方法丢进去
 		for (MethodMetadata methodMetadata : beanMethods) {
+			// 将 MethodMetadata 封装成 BeanMethod，放入到 configClass 中
 			configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
 		}
 
@@ -402,6 +403,8 @@ class ConfigurationClassParser {
 	}
 
 	/**
+	 * 返回所有标注了 @Bean 的方法，封装成 MethodMetadata，保存在 Set 中
+	 *
 	 * Retrieve the metadata for all <code>@Bean</code> methods.
 	 */
 	private Set<MethodMetadata> retrieveBeanMethodMetadata(SourceClass sourceClass) {

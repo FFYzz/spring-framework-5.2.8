@@ -107,7 +107,7 @@ public abstract class AopUtils {
 	/**
 	 * Determine the target class of the given bean instance which might be an AOP proxy.
 	 * <p>
-	 *     从 bean 实例(对象)中获取目标类型
+	 *     从 bean 实例(对象)中获取目标类型，即原始类型。
 	 * <p>Returns the target class for an AOP proxy or the plain class otherwise.
 	 * @param candidate the instance to check (might be an AOP proxy)
 	 * @return the target class (or the plain class of the given object as fallback;
@@ -122,6 +122,7 @@ public abstract class AopUtils {
 			result = ((TargetClassAware) candidate).getTargetClass();
 		}
 		if (result == null) {
+			// 如果是 cglib 增强，则会找父类
 			result = (isCglibProxy(candidate) ? candidate.getClass().getSuperclass() : candidate.getClass());
 		}
 		return result;

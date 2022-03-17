@@ -21,6 +21,8 @@ import java.io.Serializable;
 import org.springframework.lang.Nullable;
 
 /**
+ * 抽象实现
+ *
  * Abstract superclass for expression pointcuts,
  * offering location and expression properties.
  *
@@ -33,9 +35,15 @@ import org.springframework.lang.Nullable;
 @SuppressWarnings("serial")
 public abstract class AbstractExpressionPointcut implements ExpressionPointcut, Serializable {
 
+	/**
+	 * 用于调试
+	 */
 	@Nullable
 	private String location;
 
+	/**
+	 * 表达式以 String 的形式呈现
+	 */
 	@Nullable
 	private String expression;
 
@@ -75,6 +83,8 @@ public abstract class AbstractExpressionPointcut implements ExpressionPointcut, 
 	}
 
 	/**
+	 * 预留一个 hook
+	 *
 	 * Called when a new pointcut expression is set.
 	 * The expression should be parsed at this point if possible.
 	 * <p>This implementation is empty.
