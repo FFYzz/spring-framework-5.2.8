@@ -28,6 +28,7 @@ import org.springframework.util.ClassUtils;
 /**
  * A simple {@link TypeFilter} which matches classes with a given annotation,
  * checking inherited annotations as well.
+ * 过滤标注了 annotationType 注解的 class，如果父类注解也包括的话，则也会被选中。
  *
  * <p>By default, the matching logic mirrors that of
  * {@link AnnotationUtils#getAnnotation(java.lang.reflect.AnnotatedElement, Class)},
@@ -44,6 +45,9 @@ import org.springframework.util.ClassUtils;
  */
 public class AnnotationTypeFilter extends AbstractTypeHierarchyTraversingFilter {
 
+	/**
+	 * 要过滤的注解的类型
+	 */
 	private final Class<? extends Annotation> annotationType;
 
 	private final boolean considerMetaAnnotations;
